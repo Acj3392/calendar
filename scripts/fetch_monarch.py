@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """Pull recent Monarch Money transactions and write data/spending.json.
 
-Auth comes from environment variables (set as GitHub Actions secrets):
+Auth (set as GitHub Actions secrets). Two modes — token is strongly preferred:
+
+  MONARCH_TOKEN        a saved session token minted locally via scripts/mint_token.py.
+                       Used as-is, so the scheduled job never hits Monarch's login
+                       endpoint (which 429s from cloud IPs). This is the path the
+                       GitHub Action uses.
+
+  -- OR, fallback for local runs only --
   MONARCH_EMAIL        your Monarch login email
   MONARCH_PASSWORD     your Monarch password
   MONARCH_MFA_SECRET   the TOTP setup secret from Monarch's authenticator setup
@@ -36,13 +43,25 @@ OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "spending.json"
 
 
 async def fetch() -> dict:
-    email = os.environ["MONARCH_EMAIL"]
-    password = os.environ["MONARCH_PASSWORD"]
-    mfa_secret = os.environ.get("MONARCH_MFA_SECRET") or None
     lookback = int(os.environ.get("LOOKBACK_DAYS", "90"))
+    token = os.environ.get("MONARCH_TOKEN") or None
 
-    mm = MonarchMoney()
-    await mm.login(email, password, mfa_secret_key=mfa_secret)
+    if token:
+        # Token path: reuse a session minted locally — no login call, no 429.
+        mm = MonarchMoney(token=token)
+    else:
+        # Fallback (local use): real login with email/password (+ MFA seed).
+        email = os.environ["MONARCH_EMAIL"]
+        password = os.environ["MONARCH_PASSWORD"]
+        mfa_secret = os.environ.get("MONARCH_MFA_SECRET") or None
+        mm = MonarchMoney()
+        await mm.login(
+            email,
+            password,
+            use_saved_session=False,
+            save_session=False,
+            mfa_secret_key=mfa_secret,
+        )
 
     end = datetime.now(timezone.utc).date()
     start = end - timedelta(days=lookback)
