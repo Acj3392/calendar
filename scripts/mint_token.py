@@ -21,10 +21,23 @@ import sys
 from monarchmoney import MonarchMoney
 
 
+def normalize_seed(raw: str) -> str:
+    """Monarch shows the setup key in spaced groups; base32 needs it clean.
+
+    Strip whitespace, uppercase, and pad to a multiple of 8 with '=' so the
+    TOTP library can base32-decode it without an 'Incorrect padding' error.
+    """
+    s = "".join(raw.split()).upper()
+    if len(s) % 8:
+        s += "=" * (8 - len(s) % 8)
+    return s
+
+
 async def main() -> int:
     email = input("Monarch email: ").strip()
     password = getpass.getpass("Monarch password (hidden): ")
-    mfa = getpass.getpass("MFA setup key / base32 seed (hidden, blank if 2FA off): ").strip() or None
+    mfa_raw = getpass.getpass("MFA setup key / base32 seed (hidden, blank if 2FA off): ").strip()
+    mfa = normalize_seed(mfa_raw) if mfa_raw else None
 
     mm = MonarchMoney()
     try:
