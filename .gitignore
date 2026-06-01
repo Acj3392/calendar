@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Monarch session cache (the library writes a session token file on login)
+.mm/
+.monarch*
+*.session
+
+# Env / secrets — never commit
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# Session scratch / handoff notes — not part of the project
+docs/SESSION-HANDOFF.md

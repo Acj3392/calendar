@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spending Calendar</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e8e6e1; font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+    .display { font-family: 'Archivo', sans-serif; font-weight: 900; letter-spacing: -0.03em; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    let RAW_DATA = [];
+
+    let TODAY = "";
+    const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const DAY_NAMES_SHORT = ["S","M","T","W","T","F","S"];
+    const DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const DAY_NAMES_FULL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+    function SpendingCalendar() {
+      const [view, setView] = useState("month");
+      const [lowThreshold, setLowThreshold] = useState(75);
+      const [highThreshold, setHighThreshold] = useState(300);
+      const [selectedDay, setSelectedDay] = useState(null);
+      const [showSettings, setShowSettings] = useState(false);
+      const [currentMonth, setCurrentMonth] = useState(() => parseInt(TODAY.split("-")[1]) - 1);
+      const [currentYear, setCurrentYear] = useState(() => parseInt(TODAY.split("-")[0]));
+      const [weekOffset, setWeekOffset] = useState(0);
+
+      const spendingMap = useMemo(() => {
+        const map = {};
+        RAW_DATA.forEach(d => { map[d.date] = d; });
+        return map;
+      }, []);
+
+      const MIN_DATE = RAW_DATA.length ? RAW_DATA[0].date : TODAY;
+
+      const getLevel = (total) => {
+        if (total === undefined || total === null) return "none";
+        if (total <= lowThreshold) return "low";
+        if (total <= highThreshold) return "medium";
+        return "high";
+      };
+
+      // Level for a calendar date string: in-range days with no transactions
+      // are a "$0 spent" celebration (special green), distinct from low-spend green.
+      const getDateLevel = (ds) => {
+        const dd = spendingMap[ds];
+        if (dd) return getLevel(dd.total);
+        if (ds >= MIN_DATE && ds <= TODAY) return "zero";
+        return "none";
+      };
+
+      const levelStyle = {
+        none:   { bg: "#eae7e1", text: "#a8a399", accent: "#cfc9bd", badge: "#e0dcd2" },
+        zero:   { bg: "#9ed9b8", text: "#14543c", accent: "#2f9e6e", badge: "#7cc9a0" },
+        low:    { bg: "#cfe6d6", text: "#2f6b50", accent: "#6aa988", badge: "#b6dcc2" },
+        medium: { bg: "#f0e0bd", text: "#7a5a1a", accent: "#c79a3e", badge: "#e4cd96" },
+        high:   { bg: "#e6c3bd", text: "#7a322a", accent: "#c27a6f", badge: "#d9a99f" },
+      };
+
+      const getStyle = (total) => levelStyle[getLevel(total)];
+      const TODAY_RING = "#3a3a38";
+      const numeral = { fontVariantNumeric: "tabular-nums" };
+      const formatDate = (y, m, d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const getDaysInMonth = (y, m) => new Date(y, m+1, 0).getDate();
+      const getFirstDayOfMonth = (y, m) => new Date(y, m, 1).getDay();
+      const prevMonth = () => { if (currentMonth===0){setCurrentMonth(11);setCurrentYear(y=>y-1);}else setCurrentMonth(m=>m-1); };
+      const nextMonth = () => { if (currentMonth===11){setCurrentMonth(0);setCurrentYear(y=>y+1);}else setCurrentMonth(m=>m+1); };
+      const toggleDay = (ds) => setSelectedDay(prev => prev===ds ? null : ds);
+
+      const getWeekDates = (offset) => {
+        const base = new Date(TODAY + "T12:00:00");
+        base.setDate(base.getDate() - base.getDay() + offset*7);
+        return Array.from({length:7},(_,i)=>{ const d=new Date(base); d.setDate(base.getDate()+i); return d.toISOString().split("T")[0]; });
+      };
+
+      const todayObj = new Date(TODAY + "T12:00:00");
+
+      const navBtn = { background:"#e0ddd5", border:"none", borderRadius:"50%", width:36, height:36, cursor:"pointer", fontSize:18, display:"flex", alignItems:"center", justifyContent:"center", color:"#3a3a38" };
+
+      function DayDetail() {
+        if (!selectedDay) return null;
+        const dd = spendingMap[selectedDay];
+        const lvl = getDateLevel(selectedDay);
+        const s = levelStyle[lvl];
+        const isLow = lvl === "low";
+        const isZero = lvl === "zero";
+        const [y,m,d] = selectedDay.split("-");
+        const label = `${MONTH_NAMES[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+        return (
+          <div style={{background:s.bg,borderRadius:18,padding:18,marginTop:14,border:`1.5px solid ${s.badge}`,boxShadow:"0 8px 24px rgba(0,0,0,0.06)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+              <div>
+                <div style={{fontWeight:600,fontSize:13,color:s.text,opacity:0.75,textTransform:"uppercase",letterSpacing:0.6}}>{label} {isLow?"🏆":isZero?"💚":""}</div>
+                {dd ? <div style={{fontWeight:800,fontSize:30,color:s.text,...numeral}}>${dd.total.toFixed(2)}</div>
+                    : isZero ? <div style={{fontWeight:800,fontSize:30,color:s.text,...numeral}}>$0 <span style={{fontSize:15,fontWeight:700}}>— no spending!</span></div>
+                    : <div style={{color:s.text,opacity:0.6,fontSize:14,marginTop:4}}>No data for this day</div>}
+              </div>
+              <button onClick={()=>setSelectedDay(null)} style={{background:"rgba(0,0,0,0.06)",border:"none",borderRadius:"50%",width:28,height:28,cursor:"pointer",color:s.text,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+            </div>
+            {dd?.transactions.map((t,i)=>(
+              <div key={i} style={{background:"rgba(255,255,255,0.7)",borderRadius:12,padding:"11px 13px",marginBottom:6,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div>
+                  <div style={{fontWeight:600,fontSize:13,color:"#1a1a1e"}}>{t.merchant}</div>
+                  <div style={{fontSize:11,color:"#9ca3af"}}>{t.category}</div>
+                </div>
+                <div style={{fontWeight:700,fontSize:14,color:"#1a1a1e",...numeral}}>${t.amount.toFixed(2)}</div>
+              </div>
+            ))}
+            {isZero && <div style={{fontSize:13,color:s.text,fontWeight:600,padding:"4px 2px"}}>You didn't spend anything this day. Nice work. 🌱</div>}
+          </div>
+        );
+      }
+
+      function TodayView() {
+        const dd = spendingMap[TODAY];
+        const lvl = getDateLevel(TODAY); const s = levelStyle[lvl];
+        const isLow = lvl === "low"; const isZero = lvl === "zero";
+        const dnum = String(todayObj.getDate()).padStart(2,"0");
+        const mnum = String(todayObj.getMonth()+1).padStart(2,"0");
+        const total = dd ? dd.total : (isZero ? 0 : null);
+        const statusLabel = isZero ? "No spend 💚" : isLow ? "Low spend 🏆" : lvl==="medium" ? "Moderate" : lvl==="high" ? "High spend" : "—";
+        return (
+          <div>
+            <div style={{background:s.bg,borderRadius:28,padding:"26px 24px",marginBottom:14}}>
+              <div style={{color:s.text,fontWeight:600,fontSize:15,opacity:0.85,marginBottom:6}}>{DAY_NAMES_FULL[todayObj.getDay()]}</div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16}}>
+                <div>
+                  <div className="display" style={{color:s.text,fontSize:60,lineHeight:0.92,...numeral}}>{dnum}.{mnum}</div>
+                  <div className="display" style={{color:s.text,fontSize:60,lineHeight:0.95}}>{MONTH_NAMES[todayObj.getMonth()].slice(0,3).toUpperCase()}</div>
+                </div>
+                <div style={{borderLeft:`1.5px solid ${s.text}`,opacity:0.9,paddingLeft:16,minWidth:120}}>
+                  {total!==null && <div style={{color:s.text,fontWeight:800,fontSize:30,...numeral}}>${total.toFixed(0)}</div>}
+                  {total!==null && <div style={{color:s.text,fontSize:13,opacity:0.75,marginTop:2}}>spent today</div>}
+                  <div style={{display:"inline-block",background:s.badge,borderRadius:100,padding:"6px 13px",marginTop:14,fontWeight:700,fontSize:13,color:s.text}}>{statusLabel}</div>
+                </div>
+              </div>
+            </div>
+            {dd?.transactions.map((t,i)=>(
+              <div key={i} style={{background:"#fdfcfa",borderRadius:14,padding:"14px 16px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",boxShadow:"0 1px 3px rgba(0,0,0,0.07)"}}>
+                <div>
+                  <div style={{fontWeight:600,fontSize:15}}>{t.merchant}</div>
+                  <div style={{fontSize:12,color:"#999",marginTop:2}}>{t.category}</div>
+                </div>
+                <div style={{fontWeight:700,fontSize:16}}>${t.amount.toFixed(2)}</div>
+              </div>
+            ))}
+            {!dd && !isZero && <div style={{textAlign:"center",color:"#aaa",padding:32}}>No transaction data for today</div>}
+          </div>
+        );
+      }
+
+      function WeekView() {
+        const dates = getWeekDates(weekOffset);
+        return (
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <button onClick={()=>setWeekOffset(w=>w-1)} style={navBtn}>‹</button>
+              <span style={{fontWeight:600,fontSize:14,color:"#555"}}>{weekOffset===0?"This Week":weekOffset===-1?"Last Week":`${weekOffset>0?"+":""}${weekOffset} weeks`}</span>
+              <button onClick={()=>setWeekOffset(w=>w+1)} style={navBtn}>›</button>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:6}}>
+              {dates.map((ds,i)=>{
+                const dd=spendingMap[ds]; const lvl=getDateLevel(ds); const s=levelStyle[lvl];
+                const isToday=ds===TODAY; const isSel=selectedDay===ds;
+                const isLow=lvl==="low"; const isZero=lvl==="zero";
+                const dayNum=parseInt(ds.split("-")[2]);
+                return (
+                  <div key={ds} onClick={()=>toggleDay(ds)} style={{background:s.bg,borderRadius:16,padding:"10px 6px",border:isSel?`2px solid ${TODAY_RING}`:isToday?`2px solid ${s.accent}`:"2px solid transparent",cursor:"pointer",textAlign:"center",minHeight:90}}>
+                    <div style={{fontSize:10,fontWeight:600,color:s.text,opacity:0.6,marginBottom:4,textTransform:"uppercase",letterSpacing:0.5}}>{DAY_NAMES[i]}</div>
+                    <div style={{fontSize:20,fontWeight:700,color:s.text,lineHeight:1,...numeral}}>{dayNum}</div>
+                    {dd?<div style={{fontSize:10,fontWeight:700,color:s.text,marginTop:6,...numeral}}>${dd.total.toFixed(0)}</div>:isZero?<div style={{fontSize:10,fontWeight:700,color:s.text,marginTop:6,...numeral}}>$0</div>:<div style={{fontSize:10,color:s.text,opacity:0.4,marginTop:6}}>—</div>}
+                    {isLow&&<div style={{fontSize:14,marginTop:4}}>🏆</div>}
+                    {isZero&&<div style={{fontSize:14,marginTop:4}}>💚</div>}
+                  </div>
+                );
+              })}
+            </div>
+            {selectedDay&&<DayDetail/>}
+          </div>
+        );
+      }
+
+      function MonthView() {
+        const dim=getDaysInMonth(currentYear,currentMonth);
+        const fd=getFirstDayOfMonth(currentYear,currentMonth);
+        const cells=[];
+        for(let i=0;i<fd;i++) cells.push(<div key={`e${i}`}/>);
+        for(let d=1;d<=dim;d++){
+          const ds=formatDate(currentYear,currentMonth,d);
+          const dd=spendingMap[ds]; const lvl=getDateLevel(ds); const s=levelStyle[lvl];
+          const isToday=ds===TODAY; const isSel=selectedDay===ds;
+          const isLow=lvl==="low"; const isZero=lvl==="zero";
+          cells.push(
+            <div key={d} onClick={()=>toggleDay(ds)} style={{background:s.bg,borderRadius:10,padding:"7px 5px",border:isSel?`2px solid ${TODAY_RING}`:isToday?`2px solid ${s.accent}`:"2px solid transparent",cursor:"pointer",minHeight:56,position:"relative"}}>
+              <div style={{fontSize:13,fontWeight:isToday?800:500,color:s.text,...numeral}}>{d}</div>
+              {dd&&<div style={{fontSize:10,fontWeight:700,color:s.text,marginTop:2,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>}
+              {isZero&&<div style={{fontSize:10,fontWeight:700,color:s.text,marginTop:2,...numeral}}>$0</div>}
+              {isLow&&<div style={{fontSize:12,position:"absolute",bottom:3,right:4}}>🏆</div>}
+              {isZero&&<div style={{fontSize:12,position:"absolute",bottom:3,right:4}}>💚</div>}
+            </div>
+          );
+        }
+        return (
+          <div style={{background:"#fdfcfa",borderRadius:20,padding:16}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:6}}>
+              {DAY_NAMES_SHORT.map((d,i)=><div key={i} style={{textAlign:"center",fontSize:11,fontWeight:600,color:"#bbb",padding:"2px 0"}}>{d}</div>)}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>{cells}</div>
+            {selectedDay&&<DayDetail/>}
+          </div>
+        );
+      }
+
+      function YearView() {
+        return (
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+            {MONTH_NAMES.map((mName,mi)=>{
+              const dim=getDaysInMonth(currentYear,mi);
+              const fd=getFirstDayOfMonth(currentYear,mi);
+              let tot=0,has=false;
+              for(let d=1;d<=dim;d++){const ds=formatDate(currentYear,mi,d);if(spendingMap[ds]){tot+=spendingMap[ds].total;has=true;}}
+              const s=getStyle(has?tot/dim:undefined);
+              return (
+                <div key={mi} style={{background:s.bg,borderRadius:14,padding:"10px 8px"}}>
+                  <div style={{fontWeight:700,fontSize:11,color:s.text,marginBottom:6}}>{mName.slice(0,3).toUpperCase()}</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
+                    {Array(fd).fill(null).map((_,i)=><div key={`ep${i}`}/>)}
+                    {Array(dim).fill(null).map((_,i)=>{
+                      const d=i+1; const ds=formatDate(currentYear,mi,d);
+                      const dd=spendingMap[ds]; const lvl=getDateLevel(ds); const ds2=levelStyle[lvl];
+                      const clickable=dd||lvl==="zero";
+                      return <div key={d} onClick={()=>clickable&&toggleDay(ds)} style={{width:7,height:7,borderRadius:"50%",background:clickable?ds2.accent:"#e0e0e0",border:ds===TODAY?`1.5px solid ${TODAY_RING}`:"none",cursor:clickable?"pointer":"default"}}/>;
+                    })}
+                  </div>
+                  {has&&<div style={{fontSize:10,fontWeight:700,color:s.text,marginTop:6}}>${tot.toFixed(0)}</div>}
+                </div>
+              );
+            })}
+            {selectedDay&&<div style={{gridColumn:"1/-1"}}><DayDetail/></div>}
+          </div>
+        );
+      }
+
+      return (
+        <div style={{maxWidth:520,margin:"0 auto",fontFamily:"inherit",background:"#e8e6e1",minHeight:"100vh",padding:"20px 14px 40px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+            <div style={{display:"flex",background:"#fdfcfa",borderRadius:100,padding:4,gap:3}}>
+              {["Today","Week","Month","Year"].map(v=>(
+                <button key={v} onClick={()=>setView(v.toLowerCase())} style={{background:view===v.toLowerCase()?"#1f1f1d":"transparent",color:view===v.toLowerCase()?"white":"#7a766d",border:"none",borderRadius:100,padding:"10px 17px",fontWeight:600,fontSize:13,cursor:"pointer"}}>{v}</button>
+              ))}
+            </div>
+            <button onClick={()=>setShowSettings(s=>!s)} style={{background:"#e0ddd5",border:"none",borderRadius:"50%",width:42,height:42,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>⚙️</button>
+          </div>
+
+          {showSettings&&(
+            <div style={{background:"#fdfcfa",borderRadius:18,padding:18,marginBottom:14,boxShadow:"0 2px 8px rgba(0,0,0,0.08)"}}>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:14}}>Spending Thresholds</div>
+              <div style={{marginBottom:16}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+                  <label style={{fontSize:13,fontWeight:600,color:"#065f46"}}>🏆 Low spending (celebrate!)</label>
+                  <span style={{fontWeight:700,fontSize:13}}>&lt; ${lowThreshold}</span>
+                </div>
+                <input type="range" min={0} max={500} step={5} value={lowThreshold} onChange={e=>setLowThreshold(Number(e.target.value))} style={{width:"100%",accentColor:"#34d399"}}/>
+              </div>
+              <div style={{marginBottom:12}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+                  <label style={{fontSize:13,fontWeight:600,color:"#991b1b"}}>🔴 High spending</label>
+                  <span style={{fontWeight:700,fontSize:13}}>&gt; ${highThreshold}</span>
+                </div>
+                <input type="range" min={0} max={3000} step={25} value={highThreshold} onChange={e=>setHighThreshold(Number(e.target.value))} style={{width:"100%",accentColor:"#f87171"}}/>
+              </div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[{label:"💚 $0 / No spend",bg:"#9ed9b8",text:"#14543c"},{label:"🏆 Low",bg:"#cfe6d6",text:"#2f6b50"},{label:"⚡ Medium",bg:"#f0e0bd",text:"#7a5a1a"},{label:"🔴 High",bg:"#e6c3bd",text:"#7a322a"},{label:"— No data",bg:"#eae7e1",text:"#a8a399"}].map(({label,bg,text})=>(
+                  <div key={label} style={{background:bg,color:text,borderRadius:100,padding:"5px 12px",fontSize:12,fontWeight:600}}>{label}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(view==="month"||view==="year")&&(
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:18,marginBottom:14,padding:"10px 4px",background:"#fdfcfa",borderRadius:100}}>
+              <span style={{fontWeight:700,fontSize:15,color:"#bdb8ad",letterSpacing:0.5}}>{MONTH_NAMES[(currentMonth+11)%12].slice(0,3).toUpperCase()}</span>
+              <button onClick={prevMonth} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:"#3a3a38"}}>‹</button>
+              <span className="display" style={{fontSize:22,color:"#1f1f1d"}}>{MONTH_NAMES[currentMonth].slice(0,3).toUpperCase()}</span>
+              <button onClick={nextMonth} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:"#3a3a38"}}>›</button>
+              <span style={{fontWeight:700,fontSize:15,color:"#bdb8ad",letterSpacing:0.5}}>{MONTH_NAMES[(currentMonth+1)%12].slice(0,3).toUpperCase()}</span>
+            </div>
+          )}
+
+          {view==="today"&&<TodayView/>}
+          {view==="week"&&<WeekView/>}
+          {view==="month"&&<MonthView/>}
+          {view==="year"&&<YearView/>}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<div style={{fontFamily:"Archivo,sans-serif",padding:40,color:"#7a766d"}}>Loading your spending…</div>);
+    fetch("data/spending.json", { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error("data fetch failed"); return r.json(); })
+      .then(j => {
+        RAW_DATA = j.data || [];
+        TODAY = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
+        root.render(<SpendingCalendar/>);
+      })
+      .catch(err => {
+        root.render(<div style={{fontFamily:"Archivo,sans-serif",padding:40,color:"#9f2f23"}}>Couldn't load spending data ({String(err.message)}). The 6-hour refresh may not have run yet.</div>);
+      });
+  </script>
+</body>
+</html>
