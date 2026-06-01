@@ -7,8 +7,8 @@ glow a special green (💚). Data comes from Monarch Money and refreshes every 6
 ## How it works
 
 ```
-GitHub Action (every 6h)
-  → scripts/fetch_monarch.py  (logs into Monarch, builds the JSON)
+Monarch Money MCP connector (from a Claude session)
+  → scripts/build_from_mcp.py  (transforms the transaction dump into JSON)
   → commits data/spending.json
   → push triggers a Vercel redeploy
 index.html (static)
@@ -16,7 +16,16 @@ index.html (static)
 ```
 
 No database, no backend. The only thing that changes between deploys is
-`data/spending.json`. Monarch credentials live only in GitHub Actions secrets.
+`data/spending.json`.
+
+**Why not a scheduled GitHub Action?** That was the original plan, but the
+unofficial `monarchmoney` library can't authenticate from cloud IPs — Monarch's
+edge blocks it (HTTP 405/429). Auth works reliably only through the official
+**Monarch MCP connector**, which runs inside a Claude session, not in CI. So
+refresh is **on-demand**: ask Claude to "refresh my spending" and it pulls the
+latest transactions via the MCP and pushes a new `data/spending.json`. The
+GitHub Action (`refresh.yml`) is kept for manual dispatch only, in case the
+library login is ever restored.
 
 ## Files
 
@@ -65,16 +74,23 @@ Repo → Settings → Secrets and variables → Actions → New repository secre
 Actions tab → "Refresh Monarch data" → Run workflow. It logs in, writes
 `data/spending.json`, commits, and Vercel redeploys automatically.
 
-## Run the fetch locally
+## Refresh the data (on-demand)
 
-```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-export MONARCH_EMAIL=... MONARCH_PASSWORD=... MONARCH_MFA_SECRET=...
-python scripts/fetch_monarch.py
-```
+In a Claude session with the Monarch MCP connector authenticated:
 
-Then serve the folder:
+1. Ask Claude to pull recent transactions via the Monarch MCP `get_transactions`
+   (it saves the dump to a file).
+2. Run the transform:
+   ```bash
+   python scripts/build_from_mcp.py <mcp_dump.txt> --today $(date +%F)
+   ```
+3. Commit + push `data/spending.json`; Vercel redeploys automatically.
+
+If the MCP returns `401 Unauthorized`, the keyring session expired — re-run the
+connector's `login_setup.py` (it uses your real `monarchDeviceUUID` + browser
+headers to pass Monarch's edge check), then reconnect the MCP server.
+
+To preview locally:
 
 ```bash
 python3 -m http.server 7823
@@ -83,8 +99,8 @@ python3 -m http.server 7823
 
 ## Caveats
 
-- **Unofficial Monarch API.** The `monarchmoney` library is community-maintained and
-  can break if Monarch changes its auth. If that happens the Action fails loudly
-  (you get a GitHub email) but never corrupts existing data.
+- **Auth is the hard part.** Monarch has no official public API. The `monarchmoney`
+  library is blocked from cloud IPs, so the only reliable path is the Monarch MCP
+  connector from a Claude session — hence on-demand refresh rather than a cron.
 - **Spending only.** Income, transfers, and credit-card payments are excluded so
   totals reflect real outflow, not money moving between accounts.
