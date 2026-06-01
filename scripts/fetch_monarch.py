@@ -38,7 +38,7 @@ OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "spending.json"
 async def fetch() -> dict:
     email = os.environ["MONARCH_EMAIL"]
     password = os.environ["MONARCH_PASSWORD"]
-    mfa_secret = os.environ.get("MONARCH_MFA_SECRET")
+    mfa_secret = os.environ.get("MONARCH_MFA_SECRET") or None
     lookback = int(os.environ.get("LOOKBACK_DAYS", "90"))
 
     mm = MonarchMoney()
