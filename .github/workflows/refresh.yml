@@ -1,9 +1,11 @@
 name: Refresh Monarch data
 
 on:
-  schedule:
-    # Every 6 hours, on the hour (UTC).
-    - cron: "0 */6 * * *"
+  # NOTE: the every-6h cron is disabled. Monarch's login endpoint blocks the
+  # unofficial monarchmoney library (HTTP 405/429) from cloud IPs, so this CI
+  # path cannot authenticate. Live data is now refreshed via the Monarch MCP
+  # connector from a Claude session (see scripts/build_from_mcp.py). Kept here
+  # for manual runs only, in case Monarch's library login is ever restored.
   workflow_dispatch: {}  # allow manual runs from the Actions tab
 
 permissions:

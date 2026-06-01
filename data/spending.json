@@ -1,9 +1,1544 @@
 {
-  "today": "2026-05-31",
+  "today": "2026-06-01",
+  "generatedAt": "2026-06-01T19:08:51.954102+00:00",
   "data": [
     {
+      "date": "2026-03-03",
+      "total": 156.93,
+      "transactions": [
+        {
+          "merchant": "East West Integrated",
+          "amount": 137.93,
+          "category": "Medical"
+        },
+        {
+          "merchant": "Allie Gordon",
+          "amount": 19.0,
+          "category": "Entertainment & Recreation"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-04",
+      "total": 205.69,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 5.8,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.89,
+          "category": "Auto Payment"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-05",
+      "total": 2674.53,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Teos Tacos",
+          "amount": 27.1,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Xcel Energy",
+          "amount": 55.55,
+          "category": "Gas & Electric"
+        },
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2377.94,
+          "category": "Mortgage"
+        },
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy"
+        },
+        {
+          "merchant": "Melany Hallgren",
+          "amount": 15.0,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Amy Jackson",
+          "amount": 15.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-06",
+      "total": 2536.26,
+      "transactions": [
+        {
+          "merchant": "Backcountry Pizza",
+          "amount": 13.1,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Obsidian Oakville",
+          "amount": 5.0,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "ServiceMac",
+          "amount": 2518.16,
+          "category": "Mortgage"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-07",
+      "total": 54.29,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 0.12,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 2.72,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 1.44,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Hazel's Beverage World",
+          "amount": 24.01,
+          "category": "Beer & Liquor"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 26.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-08",
+      "total": 183.2,
+      "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 144.59,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 1.57,
+          "category": "Streaming"
+        },
+        {
+          "merchant": "Cafe Alejandro Boulder Co",
+          "amount": 20.64,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Fleishman?s Bagels Anboulder Co",
+          "amount": 16.4,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-09",
+      "total": 39.34,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 13.0,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 3.93,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 22.41,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-10",
+      "total": 30.63,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "New York Times",
+          "amount": 23.0,
+          "category": "Subscriptions"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-11",
+      "total": 20.47,
+      "transactions": [
+        {
+          "merchant": "Quiero Arepas Avan",
+          "amount": 20.47,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-12",
+      "total": 289.0,
+      "transactions": [
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 5.92,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Teos Tacos",
+          "amount": 32.52,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 230.56,
+          "category": "Insurance"
+        },
+        {
+          "merchant": "Eli Jay",
+          "amount": 20.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-13",
+      "total": 379.86,
+      "transactions": [
+        {
+          "merchant": "Google One",
+          "amount": 2.12,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 2.71,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.94,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Colorado Speed Enforce",
+          "amount": 75.0,
+          "category": "Parking & Tolls"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 6.09,
+          "category": "Insurance"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 274.0,
+          "category": "Water"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-14",
+      "total": 390.0,
+      "transactions": [
+        {
+          "merchant": "Lifetime Fitness",
+          "amount": 1.99,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Early Bird Eats Longmont Co",
+          "amount": 8.31,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Fleishman?s Bagels Anboulder Co",
+          "amount": 34.78,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 134.34,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 6.22,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy"
+        },
+        {
+          "merchant": "Dean Chapla",
+          "amount": 30.0,
+          "category": "Gifts"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-15",
+      "total": 33.54,
+      "transactions": [
+        {
+          "merchant": "Car Washes",
+          "amount": 33.54,
+          "category": "Auto Maintenance"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-16",
+      "total": 170.0,
+      "transactions": [
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-17",
+      "total": 614.55,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 97.57,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "TikTok",
+          "amount": 249.24,
+          "category": "Shopping"
+        },
+        {
+          "merchant": "Material Materialkitchny",
+          "amount": 119.91,
+          "category": "Gifts"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 50.0,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Spot & Tango",
+          "amount": 97.83,
+          "category": "Dog food"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-18",
+      "total": 123.83,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 9.8,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Chewy",
+          "amount": 81.54,
+          "category": "Dog food"
+        },
+        {
+          "merchant": "Roku",
+          "amount": 18.56,
+          "category": "Streaming"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 13.93,
+          "category": "Books"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-19",
+      "total": 578.78,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 181.48,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 49.39,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Gabee Coffee Boulder Co",
+          "amount": 13.08,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Southboulderanimal",
+          "amount": 215.31,
+          "category": "Pets"
+        },
+        {
+          "merchant": "Chipotle",
+          "amount": 19.52,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Pawsitive Energy Dog Grooming",
+          "amount": 100.0,
+          "category": "Pets"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-21",
+      "total": 656.3,
+      "transactions": [
+        {
+          "merchant": "LendingClub - Personal & Business",
+          "amount": 114.91,
+          "category": "Loan Repayment"
+        },
+        {
+          "merchant": "Semiprecious",
+          "amount": 19.37,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Twilio",
+          "amount": 20.0,
+          "category": "Business Utilities & Communication"
+        },
+        {
+          "merchant": "Pizzeria Locale Bo",
+          "amount": 161.7,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Bank of America",
+          "amount": 300.0,
+          "category": "Loan Repayment"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 34.87,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 5.45,
+          "category": "Streaming"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-22",
+      "total": 35.69,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 5.1,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Boxcar Coffee | Pearlboulder Co",
+          "amount": 13.76,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Boxcar Coffee | Pearlboulder Co",
+          "amount": 5.64,
+          "category": "Coffee Shops"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-23",
+      "total": 400.23,
+      "transactions": [
+        {
+          "merchant": "Pho & Bar",
+          "amount": 45.94,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "eBay",
+          "amount": 51.36,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Xcel Energy",
+          "amount": 262.93,
+          "category": "Gas & Electric"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Groceries"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-24",
+      "total": 212.19,
+      "transactions": [
+        {
+          "merchant": "Lending Club",
+          "amount": 114.91,
+          "category": "Loan Repayment"
+        },
+        {
+          "merchant": "Sanebox Email Filter",
+          "amount": 97.28,
+          "category": "Subscriptions"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-25",
+      "total": 24.14,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 23.86,
+          "category": "Amazon"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-26",
+      "total": 108.96,
+      "transactions": [
+        {
+          "merchant": "The Coffee Ride",
+          "amount": 11.47,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "DoorDash",
+          "amount": 71.04,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.35,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.15,
+          "category": "Amazon"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-27",
+      "total": 152.87,
+      "transactions": [
+        {
+          "merchant": "The Golden Mill",
+          "amount": 36.8,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "City of Boulder",
+          "amount": 112.12,
+          "category": "Water"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-28",
+      "total": 206.72,
+      "transactions": [
+        {
+          "merchant": "Ace Eat Serve",
+          "amount": 95.79,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Hacky Labs",
+          "amount": 33.0,
+          "category": "Gifts"
+        },
+        {
+          "merchant": "Beyond Yoga",
+          "amount": 6.28,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 5.13,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 2.52,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 13.09,
+          "category": "Books"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 10.91,
+          "category": "Books"
+        },
+        {
+          "merchant": "Eli Jay",
+          "amount": 40.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-29",
+      "total": 375.72,
+      "transactions": [
+        {
+          "merchant": "Lyft",
+          "amount": 83.53,
+          "category": "Taxi & Ride Shares"
+        },
+        {
+          "merchant": "Historians Ale House",
+          "amount": 86.35,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 37.61,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Denver Public Parking",
+          "amount": 7.0,
+          "category": "Parking & Tolls"
+        },
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 136.23,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Kyle Bickel",
+          "amount": 25.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-30",
+      "total": 478.75,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 32.52,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Lyft",
+          "amount": 54.95,
+          "category": "Taxi & Ride Shares"
+        },
+        {
+          "merchant": "Hair Salon & Barbershops",
+          "amount": 313.26,
+          "category": "Personal"
+        },
+        {
+          "merchant": "Mamu Coffee",
+          "amount": 78.02,
+          "category": "Coffee beans"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-31",
+      "total": 169.28,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 37.38,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 50.0,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Reebok",
+          "amount": 81.9,
+          "category": "Clothing"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "total": 701.77,
+      "transactions": [
+        {
+          "merchant": "Life Time",
+          "amount": 488.58,
+          "category": "Fitness"
+        },
+        {
+          "merchant": "South Boulder Animal Hospital",
+          "amount": 129.86,
+          "category": "Pets"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 9.22,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "USAA",
+          "amount": 26.11,
+          "category": "Insurance"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 48.0,
+          "category": "Internet & Cable"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-02",
+      "total": 554.03,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 124.62,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "The Coffee Ride",
+          "amount": 12.42,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Abby Alexander",
+          "amount": 360.0,
+          "category": "Gifts"
+        },
+        {
+          "merchant": "Embrace Pet Insurance",
+          "amount": 56.99,
+          "category": "Pet Insurance"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-03",
+      "total": 213.58,
+      "transactions": [
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 104.44,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 21.82,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Hazel's Beverage World",
+          "amount": 60.04,
+          "category": "Beer & Liquor"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 27.28,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-04",
+      "total": 461.01,
+      "transactions": [
+        {
+          "merchant": "Discover",
+          "amount": 330.0,
+          "category": "Loan Repayment"
+        },
+        {
+          "merchant": "Etsy",
+          "amount": 48.84,
+          "category": "Gifts"
+        },
+        {
+          "merchant": "Prathers Market",
+          "amount": 42.62,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 26.19,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 13.36,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-05",
+      "total": 121.44,
+      "transactions": [
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 100.23,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 11.22,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-06",
+      "total": 5100.99,
+      "transactions": [
+        {
+          "merchant": "Obsidian",
+          "amount": 5.0,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "ServiceMac",
+          "amount": 2518.16,
+          "category": "Mortgage"
+        },
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2377.94,
+          "category": "Mortgage"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.89,
+          "category": "Auto Payment"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-07",
+      "total": 37.18,
+      "transactions": [
+        {
+          "merchant": "The New York Times",
+          "amount": 23.0,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 14.18,
+          "category": "Books"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-08",
+      "total": 69.57,
+      "transactions": [
+        {
+          "merchant": "Wonder Press",
+          "amount": 16.76,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "New Boulder Gas",
+          "amount": 20.08,
+          "category": "Gas"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 32.73,
+          "category": "Amazon"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-09",
+      "total": 26.68,
+      "transactions": [
+        {
+          "merchant": "Teos Tacos",
+          "amount": 26.68,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "total": 92.63,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 85.0,
+          "category": "Therapy"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-11",
+      "total": 134.31,
+      "transactions": [
+        {
+          "merchant": "The Flats Beer Garde",
+          "amount": 9.0,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 75.61,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 49.7,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-12",
+      "total": 298.25,
+      "transactions": [
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 107.81,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "SunLife Organics",
+          "amount": 19.87,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 30.57,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Laurie Jay",
+          "amount": 100.0,
+          "category": "Gifts"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-13",
+      "total": 188.23,
+      "transactions": [
+        {
+          "merchant": "Google One",
+          "amount": 2.12,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 3.11,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy"
+        },
+        {
+          "merchant": "Eli Jay",
+          "amount": 13.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-14",
+      "total": 136.95,
+      "transactions": [
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 30.48,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 2.56,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 6.08,
+          "category": "Insurance"
+        },
+        {
+          "merchant": "Spot & Tango",
+          "amount": 97.83,
+          "category": "Dog food"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-15",
+      "total": 81.54,
+      "transactions": [
+        {
+          "merchant": "Chewy",
+          "amount": 81.54,
+          "category": "Dog food"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-16",
+      "total": 340.59,
+      "transactions": [
+        {
+          "merchant": "Fandango",
+          "amount": 47.58,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 14.1,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "The Coffee Ride",
+          "amount": 8.91,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "East West Bank",
+          "amount": 225.0,
+          "category": "Medical"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 45.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-17",
+      "total": 1300.0,
+      "transactions": [
+        {
+          "merchant": "M A Handyman Home Services",
+          "amount": 1300.0,
+          "category": "Home Improvement"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-18",
+      "total": 179.81,
+      "transactions": [
+        {
+          "merchant": "Roku",
+          "amount": 20.19,
+          "category": "Streaming"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 3.26,
+          "category": "Subscriptions"
+        },
+        {
+          "merchant": "Alamo Drafthouse Cinema",
+          "amount": 35.02,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 13.0,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "coors field",
+          "amount": 63.13,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 45.21,
+          "category": "EV Charge"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-19",
+      "total": 265.91,
+      "transactions": [
+        {
+          "merchant": "Chase",
+          "amount": 14.0,
+          "category": "Cash & ATM"
+        },
+        {
+          "merchant": "Chase",
+          "amount": 3.0,
+          "category": "Financial Fees"
+        },
+        {
+          "merchant": "Beyond Yoga",
+          "amount": 67.97,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Life Time",
+          "amount": 1.95,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Uber",
+          "amount": 18.99,
+          "category": "Taxi & Ride Shares"
+        },
+        {
+          "merchant": "Kim Bilella",
+          "amount": 125.0,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 35.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-20",
+      "total": 178.84,
+      "transactions": [
+        {
+          "merchant": "Whole Foods Co-op",
+          "amount": 138.84,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "Allie Gordon",
+          "amount": 40.0,
+          "category": "Personal"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-21",
+      "total": 155.2,
+      "transactions": [
+        {
+          "merchant": "LendingClub - Personal & Business",
+          "amount": 114.91,
+          "category": "Loan Repayment"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 40.29,
+          "category": "Amazon"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-23",
+      "total": 191.64,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 6.11,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Rooted Craft Kitchen",
+          "amount": 29.28,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.83,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Teos Tacos",
+          "amount": 10.84,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Xcel Energy",
+          "amount": 140.58,
+          "category": "Gas & Electric"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-24",
+      "total": 62.06,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 1.06,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Whole Pets",
+          "amount": 38.4,
+          "category": "Pets"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 2.55,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Claw Den",
+          "amount": 10.3,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "Trident Business Partners",
+          "amount": 9.75,
+          "category": "Coffee Shops"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-25",
+      "total": 360.26,
+      "transactions": [
+        {
+          "merchant": "Bartaco",
+          "amount": 36.17,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Bartaco",
+          "amount": 26.42,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Gabee Coffee",
+          "amount": 13.08,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 23.95,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Rebecca's Herbal Apothecary",
+          "amount": 30.1,
+          "category": "Shopping"
+        },
+        {
+          "merchant": "The Post Brewing Company",
+          "amount": 180.62,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Chase",
+          "amount": 33.5,
+          "category": "Cash & ATM"
+        },
+        {
+          "merchant": "Chase",
+          "amount": 3.0,
+          "category": "Financial Fees"
+        },
+        {
+          "merchant": "Amazon Prime Video",
+          "amount": 3.43,
+          "category": "Entertainment & Recreation"
+        },
+        {
+          "merchant": "DoorDash",
+          "amount": 9.99,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-26",
+      "total": 30.63,
+      "transactions": [
+        {
+          "merchant": "Eagle Nail",
+          "amount": 30.63,
+          "category": "Personal"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-27",
+      "total": 199.52,
+      "transactions": [
+        {
+          "merchant": "DoorDash",
+          "amount": 64.68,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Depop",
+          "amount": 69.76,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Depop",
+          "amount": 27.54,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Depop",
+          "amount": 18.77,
+          "category": "Clothing"
+        },
+        {
+          "merchant": "Depop",
+          "amount": 18.77,
+          "category": "Clothing"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-28",
+      "total": 114.83,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 4.77,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 6.8,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "City of Boulder",
+          "amount": 103.26,
+          "category": "Water"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-29",
+      "total": 102.94,
+      "transactions": [
+        {
+          "merchant": "The Home Depot",
+          "amount": 27.94,
+          "category": "Home Improvement"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 75.0,
+          "category": "Entertainment & Recreation"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-30",
+      "total": 117.97,
+      "transactions": [
+        {
+          "merchant": "The Coffee Ride",
+          "amount": 6.45,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Hazel's Beverage World",
+          "amount": 21.83,
+          "category": "Beer & Liquor"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "Fullscript",
+          "amount": 65.74,
+          "category": "Medical"
+        },
+        {
+          "merchant": "Scott Nusz",
+          "amount": 20.0,
+          "category": "Restaurants & Bars"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-01",
+      "total": 826.64,
+      "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.09,
+          "category": "Books"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 16.37,
+          "category": "Amazon"
+        },
+        {
+          "merchant": "Life Time",
+          "amount": 488.58,
+          "category": "Fitness"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.28,
+          "category": "Coffee Shops"
+        },
+        {
+          "merchant": "East Co.",
+          "amount": 12.42,
+          "category": "Restaurants & Bars"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 151.99,
+          "category": "Groceries"
+        },
+        {
+          "merchant": "USAA",
+          "amount": 21.91,
+          "category": "Insurance"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 48.0,
+          "category": "Internet & Cable"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 70.0,
+          "category": "Entertainment & Recreation"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-02",
+      "total": 154.61,
+      "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 4.98,
+          "category": "Streaming"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 11.03,
+          "category": "EV Charge"
+        },
+        {
+          "merchant": "Embrace Pet Insurance",
+          "amount": 56.99,
+          "category": "Pet Insurance"
+        },
+        {
+          "merchant": "Mamu Coffee",
+          "amount": 55.12,
+          "category": "Coffee beans"
+        },
+        {
+          "merchant": "Rezdawg Rescue, Inc",
+          "amount": 26.49,
+          "category": "Charity"
+        }
+      ]
+    },
+    {
       "date": "2026-05-03",
-      "total": 52.46,
+      "total": 102.46,
       "transactions": [
         {
           "merchant": "ChargePoint",
@@ -19,6 +1554,11 @@
           "merchant": "Prime Video",
           "amount": 1.54,
           "category": "Streaming"
+        },
+        {
+          "merchant": "Rezdawg Rescue, Inc",
+          "amount": 50.0,
+          "category": "Charity"
         }
       ]
     },
@@ -161,6 +1701,11 @@
           "category": "Restaurants & Bars"
         },
         {
+          "merchant": "Scott Nusz",
+          "amount": 20.0,
+          "category": "Restaurants & Bars"
+        },
+        {
           "merchant": "Breanna Real",
           "amount": 10.0,
           "category": "Beer & Liquor"
@@ -201,7 +1746,7 @@
         {
           "merchant": "Harkins Theatres",
           "amount": 87.95,
-          "category": "Entertainment"
+          "category": "Entertainment & Recreation"
         },
         {
           "merchant": "Tesla",
@@ -263,7 +1808,7 @@
         {
           "merchant": "Summit Music Hall",
           "amount": 22.36,
-          "category": "Entertainment"
+          "category": "Entertainment & Recreation"
         },
         {
           "merchant": "Allstate",
@@ -590,7 +2135,7 @@
         {
           "merchant": "GoDaddy",
           "amount": 48.18,
-          "category": "Office Supplies"
+          "category": "Office Supplies & Expenses"
         },
         {
           "merchant": "Breanna Real",
@@ -663,17 +2208,12 @@
     },
     {
       "date": "2026-05-30",
-      "total": 85.96,
+      "total": 80.96,
       "transactions": [
         {
           "merchant": "Kindle",
           "amount": 5.45,
           "category": "Books"
-        },
-        {
-          "merchant": "Evgo",
-          "amount": 5.0,
-          "category": "EV Charge"
         },
         {
           "merchant": "Evgo",
@@ -689,17 +2229,33 @@
     },
     {
       "date": "2026-05-31",
-      "total": 369.0,
+      "total": 382.92,
       "transactions": [
+        {
+          "merchant": "Boxcar Coffee",
+          "amount": 13.92,
+          "category": "Coffee Shops"
+        },
         {
           "merchant": "Breanna Real",
           "amount": 93.0,
-          "category": "Shopping"
+          "category": "Groceries"
         },
         {
           "merchant": "Breanna Real",
           "amount": 276.0,
-          "category": "Mortgage"
+          "category": "HOA"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-01",
+      "total": 48.0,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 48.0,
+          "category": "Internet & Cable"
         }
       ]
     }
