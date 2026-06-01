@@ -17,8 +17,22 @@ Usage:
 import asyncio
 import getpass
 import sys
+import uuid
 
 from monarchmoney import MonarchMoney
+
+# Monarch's edge (WAF) rejects the library's default bot-flagged User-Agent and
+# missing device id with 403/405/429. Present as a browser with a stable device id.
+BROWSER_UA = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+)
+
+
+def harden_headers(mm: MonarchMoney) -> None:
+    mm._headers["User-Agent"] = BROWSER_UA
+    mm._headers["device-uuid"] = str(uuid.uuid4())
+    mm._headers["Origin"] = "https://app.monarchmoney.com"
 
 
 def normalize_seed(raw: str) -> str:
@@ -40,6 +54,7 @@ async def main() -> int:
     mfa = normalize_seed(mfa_raw) if mfa_raw else None
 
     mm = MonarchMoney()
+    harden_headers(mm)
     try:
         # Don't touch any saved session; do a real login this one time.
         await mm.login(
