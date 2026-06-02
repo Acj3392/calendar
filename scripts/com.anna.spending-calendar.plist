@@ -25,11 +25,11 @@
     <string>/Users/anna/Desktop/Home/AI-Projects/calendar/scripts/refresh_local.sh</string>
   </array>
 
-  <!-- Run daily at 7:00am -->
+  <!-- Run daily at 9:00am MST -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
-    <integer>7</integer>
+    <integer>9</integer>
     <key>Minute</key>
     <integer>0</integer>
   </dict>
