@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Launchd agent — runs refresh_local.sh daily at 7am.
+
+  One-time setup:
+    cp scripts/com.anna.spending-calendar.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.anna.spending-calendar.plist
+
+  To test it immediately (without waiting for 7am):
+    launchctl start com.anna.spending-calendar
+
+  To stop / unload:
+    launchctl unload ~/Library/LaunchAgents/com.anna.spending-calendar.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.anna.spending-calendar</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/anna/Desktop/Home/AI-Projects/calendar/scripts/refresh_local.sh</string>
+  </array>
+
+  <!-- Run daily at 7:00am -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>7</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <!-- If the Mac was asleep at 7am, run as soon as it wakes -->
+  <key>StartInterval</key>
+  <integer>86400</integer>
+
+  <key>StandardOutPath</key>
+  <string>/Users/anna/Desktop/Home/AI-Projects/calendar/logs/refresh.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/anna/Desktop/Home/AI-Projects/calendar/logs/refresh.log</string>
+
+  <!-- Don't run immediately on load — wait for the scheduled time -->
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

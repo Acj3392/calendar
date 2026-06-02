@@ -12,6 +12,10 @@ venv/
 # Env / secrets — never commit
 .env
 .env.*
+!.env.local.example
+
+# Logs (from launchd refresh job)
+logs/
 
 # OS
 .DS_Store
