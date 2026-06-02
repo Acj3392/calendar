@@ -1,23 +1,7 @@
 {
-  "today": "2026-06-01",
-  "generatedAt": "2026-06-01T19:08:51.954102+00:00",
+  "today": "2026-06-02",
+  "generatedAt": "2026-06-02T18:16:20.841080+00:00",
   "data": [
-    {
-      "date": "2026-03-03",
-      "total": 156.93,
-      "transactions": [
-        {
-          "merchant": "East West Integrated",
-          "amount": 137.93,
-          "category": "Medical"
-        },
-        {
-          "merchant": "Allie Gordon",
-          "amount": 19.0,
-          "category": "Entertainment & Recreation"
-        }
-      ]
-    },
     {
       "date": "2026-03-04",
       "total": 205.69,
@@ -2250,8 +2234,18 @@
     },
     {
       "date": "2026-06-01",
-      "total": 48.0,
+      "total": 1136.58,
       "transactions": [
+        {
+          "merchant": "Life Time",
+          "amount": 488.58,
+          "category": "Fitness"
+        },
+        {
+          "merchant": "Eclipse Veterinary Imaging",
+          "amount": 600.0,
+          "category": "Pets"
+        },
         {
           "merchant": "Breanna Real",
           "amount": 48.0,
