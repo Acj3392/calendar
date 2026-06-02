@@ -19,9 +19,12 @@
   <key>Label</key>
   <string>com.anna.spending-calendar</string>
 
+  <key>Program</key>
+  <string>/bin/bash</string>
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
+    <string>-l</string>
     <string>/Users/anna/Desktop/Home/AI-Projects/calendar/scripts/refresh_local.sh</string>
   </array>
 

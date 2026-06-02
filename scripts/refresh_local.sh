@@ -14,11 +14,12 @@ if [[ ! -f "$REPO/.env.local" ]]; then
 fi
 set -a; source "$REPO/.env.local"; set +a
 
-# ── Python: prefer project venv, fall back to system python3 ─────────────────
-if [[ -x "$REPO/.venv/bin/python" ]]; then
-  PYTHON="$REPO/.venv/bin/python"
-elif [[ -x "$REPO/venv/bin/python" ]]; then
-  PYTHON="$REPO/venv/bin/python"
+# ── Python: use PersonalOS venv (has monarchmoney 1.3.0) → system fallback ────
+# The calendar project's .venv has an old monarchmoney (0.1.x) that breaks with
+# token auth. The PersonalOS venv has the working 1.3.0 build.
+PERSONALOS_VENV="/Users/anna/Desktop/Home/PersonalOS/Ideas/Project/.venv/bin/python"
+if [[ -x "$PERSONALOS_VENV" ]]; then
+  PYTHON="$PERSONALOS_VENV"
 else
   PYTHON="python3"
 fi
