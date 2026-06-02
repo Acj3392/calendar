@@ -72,6 +72,54 @@ token in memory. Symptom: `get_transactions` returns **401 Unauthorized**.
 token from the keyring on startup. (Reconnecting the server is not enough if the
 app process kept the old one.)
 
+## What WORKS: local launchd daily refresh (2026-06-02 addition)
+
+A second working path was established: a **local Mac launchd job** that runs
+`scripts/refresh_local.sh` at 9am daily. It authenticates via a saved
+`MONARCH_TOKEN` (not email/password login), so it bypasses Monarch's login
+endpoint entirely.
+
+### How it works
+1. `.env.local` holds `MONARCH_TOKEN=<value>` — sourced at runtime, never committed.
+2. The token is extracted from the macOS keychain at startup:
+   ```bash
+   security find-generic-password -s "com.mcp.monarch-mcp-server" -a "monarch-token" -w
+   # OR file fallback:
+   cat ~/.monarch-mcp-server/token
+   ```
+3. `scripts/fetch_monarch.py` uses the `MONARCH_TOKEN` path (no login call).
+4. On success, commits `data/spending.json` and pushes → Vercel redeploys.
+
+### Critical: use the PersonalOS venv, not the calendar project venv
+The calendar project has a stale `.venv` (Python 3.9, `monarchmoney==0.1.15`).
+**0.1.15 breaks with token auth** (`execute_async()` missing argument error).
+The working version is **1.3.0**, installed in the PersonalOS project's venv:
+```
+/Users/anna/Desktop/Home/PersonalOS/Ideas/Project/.venv/bin/python
+```
+`refresh_local.sh` is wired to use this venv explicitly. **1.3.0 is NOT on PyPI** —
+it's a local/community build; `pip install 'monarchmoney>=1.3.0'` will fail.
+
+### launchd: use `-l` flag on bash or get "Operation not permitted"
+The plist must invoke bash with the login flag so it loads the user environment:
+```xml
+<key>ProgramArguments</key>
+<array>
+  <string>/bin/bash</string>
+  <string>-l</string>
+  <string>/full/path/to/refresh_local.sh</string>
+</array>
+```
+Without `-l`, launchd returns "Operation not permitted" on the script.
+
+### Token expiry
+The `MONARCH_TOKEN` session will eventually expire. When it does:
+- `logs/refresh.log` will show `Fetch failed: ...` (HTTP 401 or similar)
+- The app will show an amber stale-data banner after 26h without a refresh
+- Fix: open a Claude session → re-authenticate via Monarch MCP login tool →
+  re-extract the new token into `.env.local` (same `~/.monarch-mcp-server/token`
+  path) → restart the launchd agent.
+
 ## The refresh model: ON-DEMAND (not cron)
 
 Because auth lives in a Claude session, refresh is manual/on-demand:
