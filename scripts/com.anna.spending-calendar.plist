@@ -37,7 +37,7 @@
     <integer>0</integer>
   </dict>
 
-  <!-- If the Mac was asleep at 7am, run as soon as it wakes -->
+  <!-- If the Mac was asleep at 9am, run as soon as it wakes -->
   <key>StartInterval</key>
   <integer>86400</integer>
 
