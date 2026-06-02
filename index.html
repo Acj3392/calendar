@@ -145,6 +145,18 @@
         try { localStorage.setItem("scTheme", next); } catch {}
       };
 
+      // Auto-select best day when entering week view or changing week
+      useEffect(() => {
+        if (view !== "week") { return; }
+        const dates = getWeekDates(weekOffset);
+        if (dates.includes(TODAY)) {
+          setSelectedDay(TODAY);
+        } else {
+          const best = [...dates].reverse().find(ds => spendingMap[ds] || (ds >= MIN_DATE && ds <= TODAY));
+          setSelectedDay(best || dates[dates.length - 1]);
+        }
+      }, [view, weekOffset]);
+
       const spendingMap = useMemo(() => {
         const map = {};
         RAW_DATA.forEach(d => { map[d.date] = d; });
@@ -229,7 +241,7 @@
               <div key={i} style={{background:"rgba(255,255,255,0.5)",borderRadius:10,padding:"10px 12px",marginBottom:5,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div>
                   <div style={{fontWeight:500,fontSize:13,color:"#1a1a1f"}}>{tx.merchant}</div>
-                  <div style={{fontSize:11,color:"#8a8a96",marginTop:1}}>{tx.category}</div>
+                  {tx.category && <div style={{fontSize:12,color:s.text,opacity:0.7,marginTop:2,fontWeight:500}}>{tx.category}</div>}
                 </div>
                 <div style={{fontWeight:600,fontSize:13,color:"#1a1a1f",...numeral}}>${tx.amount.toFixed(2)}</div>
               </div>
@@ -395,23 +407,22 @@
               const mLvl = !has ? "none" : avgDaily<=lowThreshold ? "low" : avgDaily<=highThreshold ? "medium" : "high";
               const ms = t.tiers[mLvl];
               return (
-                <div key={mi} style={{background:mLvl==="none"?t.card:ms.bg,borderRadius:12,padding:"10px 8px",border:`1px solid ${mLvl==="none"?t.cardBorder:ms.badge}`}}>
+                <div key={mi} onClick={()=>{ setCurrentMonth(mi); setView("month"); }} style={{background:mLvl==="none"?t.card:ms.bg,borderRadius:12,padding:"10px 8px",border:`1px solid ${mLvl==="none"?t.cardBorder:ms.badge}`,cursor:"pointer",transition:"opacity 0.12s"}}
+                  onMouseEnter={e=>e.currentTarget.style.opacity="0.8"}
+                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
                   <div style={{fontWeight:600,fontSize:10,color:mLvl==="none"?t.textMuted:ms.text,marginBottom:6,letterSpacing:0.5}}>{mName.slice(0,3).toUpperCase()}</div>
                   <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
                     {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
                     {Array(dim).fill(null).map((_,i) => {
                       const d  = i+1;
                       const ds = formatDate(currentYear, mi, d);
-                      const dd = spendingMap[ds];
                       const lvl= getDateLevel(ds);
                       const s2 = t.tiers[lvl];
-                      const clickable = dd || lvl==="zero";
                       return (
-                        <div key={d} onClick={()=>clickable&&toggleDay(ds)} style={{
+                        <div key={d} style={{
                           width:6, height:6, borderRadius:"50%",
                           background: lvl==="none" ? t.cardBorder : s2.accent,
                           border: ds===TODAY ? `1.5px solid ${t.todayRing}` : "none",
-                          cursor: clickable ? "pointer" : "default",
                         }}/>
                       );
                     })}
@@ -420,7 +431,6 @@
                 </div>
               );
             })}
-            {selectedDay && <div style={{gridColumn:"1/-1"}}><DayDetail/></div>}
           </div>
         );
       }
