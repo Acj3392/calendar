@@ -177,6 +177,17 @@
         try { const s = localStorage.getItem("scTheme"); if (s) return s; } catch {}
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       });
+      // Verdict basis: "spend" (default — verdict reads gross spend) or "net"
+      // (verdict reads net outflow = spend − money in).
+      const [verdictBasis, setVerdictBasis] = useState(() => {
+        try { const s = localStorage.getItem("scVerdictBasis"); if (s === "net" || s === "spend") return s; } catch {}
+        return "spend";
+      });
+      const netMode = verdictBasis === "net";
+      const setBasis = (next) => {
+        setVerdictBasis(next);
+        try { localStorage.setItem("scVerdictBasis", next); } catch {}
+      };
 
       const t = THEMES[mode];
 
@@ -267,29 +278,37 @@
         return "high";
       };
 
-      // In-range days with no (matching) spend = "zero". Filtered total of 0 counts as zero.
+      // Tier a day. In spend mode the metric is gross spend; in net mode it's
+      // net outflow (spend − money in), with a "gain" tier for net-inflow days.
+      // In-range days with no activity = "zero".
       const getDateLevel = (ds) => {
         const dd = viewDay(spendingMap[ds]);
         const inRange = ds >= MIN_DATE && ds <= TODAY;
-        if (dd) {
-          if (dd.total === 0) return inRange ? "zero" : "none";
-          return getLevel(dd.total);
+        if (!dd) return inRange ? "zero" : "none";
+        if (netMode) {
+          // Empty day → zero (NOT a "gain"); pure-income day → gain (not "No spend").
+          if (dd.total === 0 && dd.received === 0) return inRange ? "zero" : "none";
+          const outflow = Math.round((dd.total - dd.received) * 100) / 100;
+          if (dd.received > 0 && outflow <= 0) return "gain";   // took in at least as much as spent
+          return getLevel(outflow);                             // net outflow tiered by the same thresholds
         }
-        return inRange ? "zero" : "none";
+        if (dd.total === 0) return inRange ? "zero" : "none";
+        return getLevel(dd.total);
       };
 
-      // Verdict: maps a spend tier to a clear good / on-pace / over signal.
+      // Verdict: maps a tier to a clear good / on-pace / over signal.
       const verdictOf = (lvl) =>
-        lvl === "high"   ? { tone: "over",    label: "Overspent"  } :
-        lvl === "zero"   ? { tone: "good",    label: "No spend ●" } :
-        lvl === "low"    ? { tone: "good",    label: "Met goal ✓" } :
-        lvl === "medium" ? { tone: "neutral", label: "On pace"    } : null;
+        lvl === "high"   ? { tone: "over",    label: "Overspent"      } :
+        lvl === "gain"   ? { tone: "good",    label: "Net positive ✦" } :
+        lvl === "zero"   ? { tone: "good",    label: "No spend ●"     } :
+        lvl === "low"    ? { tone: "good",    label: "Met goal ✓"     } :
+        lvl === "medium" ? { tone: "neutral", label: "On pace"        } : null;
 
       // Cell fill + text by verdict — the at-a-glance heatmap encoding.
       const cellTone = (lvl) =>
-        lvl === "high"                    ? { bg: t.over,     num: "#fff",      amt: "#fff"   } :
-        (lvl === "low" || lvl === "zero") ? { bg: t.goodTint, num: t.inkMuted,  amt: t.ink    } :
-                                            { bg: "transparent", num: t.inkMuted, amt: t.ink  };
+        lvl === "high"                                       ? { bg: t.over,     num: "#fff",      amt: "#fff"   } :
+        (lvl === "low" || lvl === "zero" || lvl === "gain")  ? { bg: t.goodTint, num: t.inkMuted,  amt: t.ink    } :
+                                                               { bg: "transparent", num: t.inkMuted, amt: t.ink  };
 
       const numeral    = { fontVariantNumeric: "tabular-nums" };
 
@@ -437,7 +456,8 @@
         const mAvg = mDays ? mTotal / mDays : 0;
         const received = dd ? dd.received : 0;
         const net      = dd ? dd.net : 0;
-        const note = isZero
+        const note = lvl==="gain" ? "Money in outpaced spending today."
+          : isZero
           ? (received > 0 ? "No spending today, only money in." : "A clean day. Nothing left the account.")
           : lvl==="low" ? "A light day, comfortably under goal."
           : lvl==="high" ? "Over goal today, a heavier day than most."
@@ -630,7 +650,7 @@
                         const ds = formatDate(currentYear, mi, d);
                         const lvl= getDateLevel(ds);
                         const dot = lvl==="high" ? t.over
-                          : (lvl==="low"||lvl==="zero") ? t.accent2
+                          : (lvl==="low"||lvl==="zero"||lvl==="gain") ? t.accent2
                           : lvl==="medium" ? t.inkMuted : t.ruleHair;
                         return (
                           <div key={d} style={{
@@ -767,6 +787,24 @@
                       ))}
                     </div>
 
+                    {/* Verdict basis */}
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase",marginBottom:8}}>Verdict basis</div>
+                    <div style={{display:"flex",background:segTrack,borderRadius:6,padding:3,gap:3,marginBottom:6}}>
+                      {[{b:"spend",label:"Spend"},{b:"net",label:"Net"}].map(({b,label}) => (
+                        <button key={b} onClick={()=>setBasis(b)} aria-pressed={verdictBasis===b} style={{
+                          flex:1, background: verdictBasis===b ? segActive : "transparent",
+                          color: verdictBasis===b ? t.ink : t.inkMuted,
+                          border:"none", borderRadius:4, padding:"7px 10px",
+                          fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:TOKENS.type.ui,
+                          boxShadow: verdictBasis===b ? "0 1px 3px rgba(0,0,0,0.16)" : "none",
+                          transition:"background 0.15s,color 0.15s",
+                        }}>{label}</button>
+                      ))}
+                    </div>
+                    <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginBottom:18,lineHeight:1.35}}>
+                      {netMode ? "Days are judged on net outflow (spend − money in)." : "Days are judged on gross spending."}
+                    </div>
+
                     {/* Thresholds */}
                     <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase",marginBottom:10}}>Spending thresholds</div>
                     <div style={{marginBottom:14}}>
@@ -794,6 +832,7 @@
                         {label:"Met goal ✓", bg:t.accent2,     fg:t.accent2Ink, bd:t.accent2},
                         {label:"On pace",    bg:"transparent", fg:t.inkMuted,   bd:t.ruleHair},
                         {label:"Overspent",  bg:t.over,        fg:"#fff",        bd:t.over},
+                        ...(netMode ? [{label:"Net positive ✦", bg:t.goodTint, fg:t.ink, bd:t.credit}] : []),
                         {label:"No data",    bg:"transparent", fg:t.textFaint,  bd:t.ruleHair},
                       ].map(({label,bg,fg,bd}) => (
                         <div key={label} style={{
@@ -810,6 +849,15 @@
 
           {/* Category filters */}
           <FilterBar/>
+
+          {/* Net-mode indicator — the heatmap/verdicts mean net, not spend, while this is on */}
+          {netMode && (
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,padding:"7px 11px",borderRadius:4,background:t.goodTint,border:`1px solid ${t.credit}`}}>
+              <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:t.credit,whiteSpace:"nowrap"}}>Net&nbsp;view</span>
+              <span style={{flex:1,fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.ink}}>Days are judged on net outflow (spend − money in).</span>
+              <button onClick={()=>setBasis("spend")} style={{background:"none",border:"none",cursor:"pointer",fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.06em",textTransform:"uppercase",color:t.inkMuted,padding:2}}>Spend</button>
+            </div>
+          )}
 
           {/* Errata strip — refreshStatus-aware: distinguishes token-expired from a missed run */}
           {(() => {

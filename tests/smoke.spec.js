@@ -73,3 +73,34 @@ test('credits render and filter against the sample fixture', async ({ page }) =>
   const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
+
+// Net-verdict toggle (PR2): flipping the basis re-reads the verdict as net.
+// Today in the fixture is a pure-income day (total 0, received 2000): spend
+// mode reads "No spend", net mode reads "Net positive".
+test('verdict-basis toggle flips Today between No spend and Net positive', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await page.getByRole('button', { name: 'Today', exact: true }).click();
+
+  // Default = spend mode: pure-income day's verdict stamp reads "No spend ●".
+  await expect(page.getByText('No spend ●')).toBeVisible();
+
+  // Flip to Net in Settings.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Net', exact: true }).click();
+  await page.keyboard.press('Escape');
+
+  // Now the same day reads net-positive.
+  await expect(page.getByText('Net positive', { exact: false })).toBeVisible();
+  await page.screenshot({ path: 'screenshots/net-mode.png' });
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
