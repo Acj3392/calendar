@@ -61,6 +61,7 @@
         accent: "#6c5cf6", accentTint: "#e7e3ff",
         accent2: "#cdee2a", accent2Ink: "#3a4500",   // acid-lime fill + dark ink (good / met goal)
         over: "#bf3b2e", overTint: "#f4ddd5",         // rust-red (overspent)
+        credit: "#0a7268", creditTint: "#dbeeea",     // teal "money in" (income, refunds) — contrast 4.79 on paper
         goodTint: "#ebf3c4",                          // pale lime wash (good days)
         ruleHair: "#cfc7b4", ruleBold: "#16131c",
         grain: "radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px)",
@@ -93,6 +94,7 @@
         accent: "#7b6cff", accentTint: "#221d3a",
         accent2: "#c2e000", accent2Ink: "#1a2000",   // acid-lime fill + dark ink (good / met goal)
         over: "#e0654f", overTint: "#3a1a12",         // rust-red (overspent)
+        credit: "#3fd9c4", creditTint: "#0f2a26",     // teal "money in" (income, refunds) — contrast 10.5 on paper
         goodTint: "#222a09",                          // deep lime wash (good days)
         ruleHair: "#2e2a3a", ruleBold: "#5a5470",
         grain: "radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px)",
@@ -214,23 +216,46 @@
 
       const MIN_DATE = RAW_DATA.length ? RAW_DATA[0].date : TODAY;
 
-      // Categories present in the data, ordered by total spend (biggest first).
-      const categories = useMemo(() => {
-        const sums = {};
-        RAW_DATA.forEach(d => d.transactions.forEach(tx => {
-          if (tx.category) sums[tx.category] = (sums[tx.category] || 0) + tx.amount;
-        }));
-        return Object.entries(sums).sort((a,b) => b[1]-a[1]).map(([c]) => c);
-      }, []);
+      // Direction of a transaction (Option A: positive amount + explicit type).
+      // Old data without `type` is treated as debit (spend) — backward compatible.
+      const isCredit = (tx) => tx.type === "credit";
 
-      // Apply the active category filter to a day record. Empty filter = passthrough.
-      // Returns null for a missing day, or a {date,total,transactions} view of it.
+      // Categories present in the data, split by direction and ordered by size
+      // (biggest first). Splitting keeps credit categories (Income, refunds) from
+      // distorting the spend ordering. FilterBar renders debit chips today; credit
+      // chips arrive in a later slice.
+      const { debitCategories, creditCategories } = useMemo(() => {
+        const dSums = {}, cSums = {};
+        RAW_DATA.forEach(d => d.transactions.forEach(tx => {
+          if (!tx.category) return;
+          const bucket = isCredit(tx) ? cSums : dSums;
+          bucket[tx.category] = (bucket[tx.category] || 0) + tx.amount;
+        }));
+        const sortDesc = (o) => Object.entries(o).sort((a,b) => b[1]-a[1]).map(([c]) => c);
+        return { debitCategories: sortDesc(dSums), creditCategories: sortDesc(cSums) };
+      }, []);
+      const categories = debitCategories;
+
+      // Sum a transaction list into spend / received / net. `total` is gross spend
+      // (debits only) so the verdict + heatmap keep their meaning; credits are
+      // tracked separately as `received`, with `net = received - total`.
+      const sumTxns = (txns) => {
+        let total = 0, received = 0;
+        txns.forEach(tx => { if (isCredit(tx)) received += tx.amount; else total += tx.amount; });
+        total    = Math.round(total    * 100) / 100;
+        received = Math.round(received * 100) / 100;
+        return { total, received, net: Math.round((received - total) * 100) / 100 };
+      };
+
+      // Apply the active category filter to a day record, recomputing the figures.
+      // Empty filter = all transactions. Returns null for a missing day, else a
+      // {date, total, received, net, transactions} view of it.
       const viewDay = (dd) => {
         if (!dd) return null;
-        if (!activeCats.length) return dd;
-        const txns = dd.transactions.filter(tx => activeCats.includes(tx.category));
-        const total = Math.round(txns.reduce((s,tx) => s + tx.amount, 0) * 100) / 100;
-        return { ...dd, transactions: txns, total };
+        const txns = activeCats.length
+          ? dd.transactions.filter(tx => activeCats.includes(tx.category))
+          : dd.transactions;
+        return { ...dd, transactions: txns, ...sumTxns(txns) };
       };
 
       const getLevel = (total) => {
@@ -267,6 +292,16 @@
                                             { bg: "transparent", num: t.inkMuted, amt: t.ink  };
 
       const numeral    = { fontVariantNumeric: "tabular-nums" };
+
+      // Credit/net presentation: money-in always reads +$ in teal; net flips
+      // sign — inflow +$ teal, outflow −$ in muted ink (never rust, which means
+      // "overspent", a different axis). Uses the proper minus glyph.
+      const fmtMoney   = (n) => `$${Math.abs(n).toFixed(0)}`;
+      const creditAmt  = (n) => `+$${Math.abs(n).toFixed(2)}`;
+      const netParts   = (net) => net >= 0
+        ? { text: `+${fmtMoney(net)}`, color: t.credit }
+        : { text: `−${fmtMoney(net)}`, color: t.inkMuted };
+
       const formatDate = (y,m,d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
       const getDIM     = (y,m) => new Date(y,m+1,0).getDate();
       const getFDOM    = (y,m) => new Date(y,m,1).getDay();
@@ -293,6 +328,52 @@
       const segTrack  = mode === "light" ? "#e6e6e2" : "#11141a";
       const segActive = mode === "light" ? "#ffffff" : "#2f343f";
 
+      // ── Receipt = a ledger that separates spending from money-in ────────────────
+      // On a debit-only day it's a clean flat list (unchanged). When a day has
+      // credits too, it splits into a "Spending" section + subtotal and a
+      // "Money in" section + subtotal, closed by a Net line — like a receipt.
+      function Receipt({ dd, merchantSize = 13, amountSize = 15, showNet = true }) {
+        const debits  = dd.transactions.filter(tx => !isCredit(tx));
+        const credits = dd.transactions.filter(isCredit);
+        const row = (tx, i, credit) => (
+          <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${t.ruleHair}`}}>
+            <div>
+              <div style={{fontWeight:credit?400:500,fontSize:merchantSize,color:t.ink}}>{tx.merchant}</div>
+              {tx.category && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginTop:1}}>{tx.category}</div>}
+            </div>
+            <div style={{fontFamily:TOKENS.type.serif,fontSize:amountSize,fontWeight:credit?400:undefined,color:credit?t.credit:t.ink,...numeral}}>{credit?creditAmt(tx.amount):`$${tx.amount.toFixed(2)}`}</div>
+          </div>
+        );
+        // No credits → the familiar flat spending list.
+        if (dd.received === 0) return <React.Fragment>{debits.map((tx,i) => row(tx,i,false))}</React.Fragment>;
+        const kicker = (label, color) => (
+          <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color,margin:"15px 0 1px"}}>{label}</div>
+        );
+        const subtotal = (label, value, color) => (
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"8px 0 2px",borderTop:`2px solid ${t.ruleBold}`,marginTop:1}}>
+            <span style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",color:t.inkMuted}}>{label}</span>
+            <span style={{fontFamily:TOKENS.type.serif,fontSize:16,color,...numeral}}>{value}</span>
+          </div>
+        );
+        return (
+          <React.Fragment>
+            {kicker("Spending", t.inkMuted)}
+            {debits.length ? debits.map((tx,i) => row(tx,i,false))
+              : <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"10px 0"}}>Nothing spent. ●</div>}
+            {subtotal("Total spent", `$${dd.total.toFixed(2)}`, t.ink)}
+            {kicker("Money in", t.credit)}
+            {credits.map((tx,i) => row(tx,i,true))}
+            {subtotal("Total received", creditAmt(dd.received), t.credit)}
+            {showNet && (
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"10px 0 2px",borderTop:`3px double ${t.ruleBold}`,marginTop:6}}>
+                <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.08em",textTransform:"uppercase",color:t.ink}}>Net</span>
+                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netParts(dd.net).color,...numeral}}>{netParts(dd.net).text}</span>
+              </div>
+            )}
+          </React.Fragment>
+        );
+      }
+
       // ── DayDetail = a ruled ledger clipping ─────────────────────────────────────
       function DayDetail() {
         if (!selectedDay) return null;
@@ -303,6 +384,7 @@
         const label = `${MONTH_NAMES[parseInt(mo)-1]} ${parseInt(dy)}, ${yr}`;
         const v = verdictOf(lvl);
         const totColor = lvl === "high" ? t.over : t.ink;
+        const received = dd ? dd.received : 0;
         return (
           <div style={{background:t.card,borderRadius:6,padding:16,marginTop:14,border:`1px solid ${t.ruleBold}`,boxShadow:"0 6px 22px rgba(0,0,0,0.10)"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",borderBottom:`1px solid ${t.ruleBold}`,paddingBottom:8,marginBottom:4}}>
@@ -320,16 +402,8 @@
                 <button onClick={()=>setSelectedDay(null)} style={{...iconBtn,width:28,height:28,background:t.btnBg,color:t.btnIcon}}><XIcon/></button>
               </div>
             </div>
-            {dd?.transactions.map((tx,i) => (
-              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${t.ruleHair}`}}>
-                <div>
-                  <div style={{fontWeight:500,fontSize:13,color:t.ink}}>{tx.merchant}</div>
-                  {tx.category && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginTop:1}}>{tx.category}</div>}
-                </div>
-                <div style={{fontFamily:TOKENS.type.serif,fontSize:15,color:t.ink,...numeral}}>${tx.amount.toFixed(2)}</div>
-              </div>
-            ))}
-            {isZero && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"10px 0 2px"}}>Nothing spent this day. ●</div>}
+            {dd && <Receipt dd={dd} merchantSize={13} amountSize={15}/>}
+            {isZero && received === 0 && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"10px 0 2px"}}>Nothing spent this day. ●</div>}
           </div>
         );
       }
@@ -361,8 +435,10 @@
         let mTotal = 0, mDays = 0;
         RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += v.total; mDays++; } });
         const mAvg = mDays ? mTotal / mDays : 0;
+        const received = dd ? dd.received : 0;
+        const net      = dd ? dd.net : 0;
         const note = isZero
-          ? "A clean day. Nothing left the account."
+          ? (received > 0 ? "No spending today, only money in." : "A clean day. Nothing left the account.")
           : lvl==="low" ? "A light day, comfortably under goal."
           : lvl==="high" ? "Over goal today, a heavier day than most."
           : "A steady, ordinary spending day.";
@@ -384,20 +460,22 @@
               </div>
             </div>
 
+            {/* Money-in deck — only on days with credits, so spend-only days are unchanged */}
+            {received > 0 && (
+              <div style={{display:"flex",justifyContent:"flex-end",alignItems:"baseline",gap:10,padding:"11px 2px 0"}}>
+                <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:t.inkMuted}}>Received</span>
+                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:t.credit,...numeral}}>+{fmtMoney(received)}</span>
+                <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:t.inkMuted,marginLeft:8}}>Net</span>
+                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netParts(net).color,...numeral}}>{netParts(net).text}</span>
+              </div>
+            )}
+
             {/* Today's ledger */}
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"16px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
               <span>Today's Ledger</span><span style={{color:t.accent}}>{DAY_NAMES_FULL[todayObj.getDay()]}</span>
             </div>
-            {dd?.transactions.map((tx,i) => (
-              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 2px",borderBottom:`1px solid ${t.ruleHair}`}}>
-                <div>
-                  <div style={{fontWeight:500,fontSize:14,color:t.ink}}>{tx.merchant}</div>
-                  {tx.category && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginTop:1}}>{tx.category}</div>}
-                </div>
-                <div style={{fontFamily:TOKENS.type.serif,fontSize:16,color:t.ink,...numeral}}>${tx.amount.toFixed(2)}</div>
-              </div>
-            ))}
-            {isZero && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"12px 2px"}}>No spending recorded today. ●</div>}
+            {dd && <Receipt dd={dd} merchantSize={14} amountSize={16} showNet={false}/>}
+            {isZero && received === 0 && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"12px 2px"}}>No spending recorded today. ●</div>}
             {!dd && !isZero && <div style={{textAlign:"center",color:t.textFaint,padding:36,fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:14}}>No transaction data for today.</div>}
           </div>
         );
@@ -444,6 +522,7 @@
                         ? <div style={{fontSize:12,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
                         : <div style={{fontSize:12,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
                     }
+                    {dd && dd.received > 0 && <div title="money in" style={{fontFamily:TOKENS.type.chic,fontSize:12,fontWeight:700,lineHeight:1,marginTop:2,color:over?"rgba(255,255,255,.9)":t.credit}}>+</div>}
                   </div>
                 );
               })}
@@ -477,7 +556,10 @@
               boxShadow: isToday ? `inset 0 0 0 2px ${t.accent}` : isSel ? `inset 0 0 0 1.5px ${t.accent}` : "none",
               padding:"5px 6px", cursor:"pointer", minHeight:54, display:"flex", flexDirection:"column",
             }}>
-              <div style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?(over?"#fff":t.accent):(lvl==="none"?t.textFaint:ct.num),...numeral}}>{d}</div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                <span style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?(over?"#fff":t.accent):(lvl==="none"?t.textFaint:ct.num),...numeral}}>{d}</span>
+                {dd && dd.received > 0 && <span title="money in" style={{fontFamily:TOKENS.type.chic,fontSize:11,fontWeight:700,lineHeight:1,color:over?"rgba(255,255,255,.9)":t.credit}}>+</span>}
+              </div>
               {dd
                 ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:ct.amt,marginTop:"auto",lineHeight:1,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>
                 : isZero
@@ -519,10 +601,12 @@
               {MONTH_NAMES.map((mName,mi) => {
                 const dim = getDIM(currentYear, mi);
                 const fd  = getFDOM(currentYear, mi);
-                let tot=0, has=false;
+                let tot=0, recv=0, has=false;
                 for(let d=1; d<=dim; d++) {
                   const ds = formatDate(currentYear, mi, d);
-                  const v = viewDay(spendingMap[ds]); if (v && v.total > 0) { tot += v.total; has = true; }
+                  const v = viewDay(spendingMap[ds]);
+                  if (v && v.total > 0) { tot += v.total; has = true; }
+                  if (v) recv += v.received;
                 }
                 const avgDaily = has ? tot/dim : 0;
                 const hi = Math.max(highThreshold, lowThreshold);
@@ -533,7 +617,10 @@
                     onMouseEnter={e=>e.currentTarget.style.background=t.accentTint}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
-                      <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.04em",color:has?t.ink:t.textFaint}}>{mName.slice(0,3).toUpperCase()}</span>
+                      <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.04em",color:has?t.ink:t.textFaint}}>
+                        {mName.slice(0,3).toUpperCase()}
+                        {recv > 0 && <span title="money in" style={{color:t.credit,fontWeight:700,marginLeft:3}}>+</span>}
+                      </span>
                       {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.over:t.inkMuted,...numeral}}>${tot>=1000?(tot/1000).toFixed(1)+"k":tot.toFixed(0)}</span>}
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
@@ -564,25 +651,41 @@
 
       // ── Category filter bar (Specimen chips) ────────────────────────────────────
       function FilterBar() {
-        if (!categories.length) return null;
+        if (!debitCategories.length && !creditCategories.length) return null;
         const toggle = (c) => setActiveCats(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
-        const chip = (on) => ({
+        const chipBase = {
           flexShrink: 0, whiteSpace: "nowrap", cursor: "pointer",
           fontFamily: TOKENS.type.chic, fontSize: 11, fontWeight: 600, letterSpacing: "0.02em",
           padding: "5px 12px", borderRadius: 100,
+          transition: "background 0.14s, color 0.14s, border-color 0.14s",
+        };
+        // Debit chips use the lime "active" fill; credit chips use the teal
+        // "money-in" family (teal outline when off, teal fill when on).
+        const chip = (on) => ({ ...chipBase,
           background: on ? t.accent2 : "transparent",
           color: on ? t.accent2Ink : t.inkMuted,
           border: `1px solid ${on ? t.accent2 : t.ruleHair}`,
-          transition: "background 0.14s, color 0.14s, border-color 0.14s",
+        });
+        const creditActiveText = mode === "light" ? t.paper : t.canvas;
+        const creditChip = (on) => ({ ...chipBase,
+          background: on ? t.credit : "transparent",
+          color: on ? creditActiveText : t.credit,
+          border: `1px solid ${t.credit}`,
         });
         const allOn = activeCats.length === 0;
         return (
           <div style={{marginBottom:14}}>
             <div className="no-scrollbar" style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:5,scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
               <button onClick={()=>setActiveCats([])} aria-pressed={allOn} style={chip(allOn)}>All</button>
-              {categories.map(c => {
+              {debitCategories.map(c => {
                 const on = activeCats.includes(c);
                 return <button key={c} onClick={()=>toggle(c)} aria-pressed={on} style={chip(on)}>{c}</button>;
+              })}
+              {creditCategories.length > 0 && debitCategories.length > 0 &&
+                <span aria-hidden="true" style={{width:1,alignSelf:"stretch",background:t.ruleHair,flexShrink:0,margin:"3px 1px"}}/>}
+              {creditCategories.map(c => {
+                const on = activeCats.includes(c);
+                return <button key={c} onClick={()=>toggle(c)} aria-pressed={on} style={creditChip(on)}>{`+ ${c}`}</button>;
               })}
             </div>
             {!allOn && (
@@ -783,7 +886,15 @@
         if (!d || typeof d !== "object")        throw new Error(`day ${i} is not an object`);
         if (!dateRe.test(d.date))               throw new Error(`day ${i} has a bad date: ${d.date}`);
         if (typeof d.total !== "number")        throw new Error(`day ${i} (${d.date}) has a non-numeric total`);
+        if (d.received !== undefined && typeof d.received !== "number")
+          throw new Error(`day ${i} (${d.date}) has a non-numeric received`);
+        if (d.net !== undefined && typeof d.net !== "number")
+          throw new Error(`day ${i} (${d.date}) has a non-numeric net`);
         if (!Array.isArray(d.transactions))     throw new Error(`day ${i} (${d.date}) transactions is not an array`);
+        d.transactions.forEach((tx, k) => {
+          if (tx.type !== undefined && tx.type !== "debit" && tx.type !== "credit")
+            throw new Error(`day ${i} (${d.date}) tx ${k} has a bad type: ${tx.type}`);
+        });
       });
       return j;
     }

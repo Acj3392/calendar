@@ -1,0 +1,36 @@
+{
+  "today": "2026-06-03",
+  "generatedAt": "2026-06-03T15:00:00+00:00",
+  "refreshStatus": "ok",
+  "data": [
+    {
+      "date": "2026-06-01",
+      "total": 65.0,
+      "received": 0.0,
+      "net": -65.0,
+      "transactions": [
+        { "merchant": "Whole Foods", "amount": 60.0, "category": "Groceries", "type": "debit" },
+        { "merchant": "Ozo Coffee Roasters", "amount": 5.0, "category": "Coffee Shops", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-02",
+      "total": 40.0,
+      "received": 30.0,
+      "net": -10.0,
+      "transactions": [
+        { "merchant": "Teos Tacos", "amount": 40.0, "category": "Restaurants & Bars", "type": "debit" },
+        { "merchant": "Amazon Refund", "amount": 30.0, "category": "Shopping", "type": "credit" }
+      ]
+    },
+    {
+      "date": "2026-06-03",
+      "total": 0.0,
+      "received": 2000.0,
+      "net": 2000.0,
+      "transactions": [
+        { "merchant": "Payroll", "amount": 2000.0, "category": "Income", "type": "credit" }
+      ]
+    }
+  ]
+}

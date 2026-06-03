@@ -17,24 +17,26 @@ Auth (set as GitHub Actions secrets). Two modes — token is strongly preferred:
 Optional:
   LOOKBACK_DAYS        how many days of history to include (default 90)
 
-The output shape matches what index.html expects:
+The output shape matches what index.html expects (see scripts/aggregate.py):
   { "today": "YYYY-MM-DD", "generatedAt": "<iso>", "data": [
-      { "date": "YYYY-MM-DD", "total": <float>,
-        "transactions": [ { "merchant": str, "amount": float, "category": str } ] }
+      { "date": "YYYY-MM-DD", "total": <spend>, "received": <credits>, "net": <recv-total>,
+        "transactions": [ { "merchant": str, "amount": float, "category": str,
+                            "type": "debit"|"credit" } ] }
   ] }
-Days are sorted ascending. Only spending is counted: positive outflows,
-excluding transfers and credit-card payments (which net to zero, not spend).
+Days are sorted ascending. Both debits (spend) and credits (income, refunds) are
+kept; transfers and credit-card payments are excluded (they net to zero).
 """
 
 import asyncio
 import json
 import os
 import sys
-from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from monarchmoney import MonarchMoney
+
+from aggregate import aggregate_by_day
 
 # Categories that move money around rather than represent real spending.
 EXCLUDED_CATEGORIES = {"Credit Card Payment", "Transfer", "Transfers", "Balance Adjustments"}
@@ -84,31 +86,20 @@ async def fetch() -> dict:
         if not batch or offset >= total_count:
             break
 
-    by_day = defaultdict(list)
+    normalized = []
     for t in results:
         category = (t.get("category") or {}).get("name", "Uncategorized")
         if category in EXCLUDED_CATEGORIES:
             continue
+        # Preserve Monarch's sign (outflow negative, inflow positive);
+        # aggregate_by_day() tags debit/credit and stores positive magnitudes.
         amount = t.get("amount", 0.0)
-        # Monarch: expenses are negative, income positive. We want spend only.
-        if amount >= 0:
-            continue
-        spend = round(-amount, 2)
         merchant = (t.get("merchant") or {}).get("name") or t.get("plaidName") or "Unknown"
-        by_day[t["date"]].append(
-            {"merchant": merchant, "amount": spend, "category": category}
+        normalized.append(
+            {"date": t["date"], "merchant": merchant, "amount": amount, "category": category}
         )
 
-    data = []
-    for date in sorted(by_day):
-        txns = by_day[date]
-        data.append(
-            {
-                "date": date,
-                "total": round(sum(x["amount"] for x in txns), 2),
-                "transactions": txns,
-            }
-        )
+    data = aggregate_by_day(normalized)
 
     return {
         "today": end.isoformat(),

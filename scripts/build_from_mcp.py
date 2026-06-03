@@ -5,9 +5,9 @@ The Monarch Money MCP connector returns transactions as
   {"result": "<json-string>"}  where the inner JSON is
   {"tool":..., "total_count":N, "data":[ {date, amount, category, merchant, ...} ]}
 
-We keep only real outflow spending: negative amounts, excluding transfers and
-credit-card payments (which just move money between accounts). Output shape
-matches what index.html expects.
+We keep both debits (spend) and credits (income, refunds), excluding transfers
+and credit-card payments (which just move money between accounts). Output shape
+matches what index.html expects (see scripts/aggregate.py).
 
 Usage:
     python scripts/build_from_mcp.py <raw_mcp_dump.txt> [--today YYYY-MM-DD]
@@ -16,9 +16,10 @@ Usage:
 import argparse
 import json
 import sys
-from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+
+from aggregate import aggregate_by_day
 
 OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "spending.json"
 
@@ -40,33 +41,24 @@ def load_transactions(path: Path) -> list:
 
 
 def build(transactions: list, today: str) -> dict:
-    by_day = defaultdict(list)
+    normalized = []
     for t in transactions:
         category = t.get("category") or "Uncategorized"
         if category in EXCLUDED_CATEGORIES:
             continue
         if t.get("hide_from_reports"):
             continue
-        amount = t.get("amount", 0.0)
-        # Monarch: outflows are negative. We want spend only.
-        if amount is None or amount >= 0:
+        amount = t.get("amount")
+        if amount is None:
             continue
-        spend = round(-amount, 2)
+        # Preserve Monarch's sign (outflow negative, inflow positive);
+        # aggregate_by_day() tags debit/credit and stores positive magnitudes.
         merchant = t.get("merchant") or t.get("plaid_description") or "Unknown"
-        by_day[t["date"]].append(
-            {"merchant": merchant, "amount": spend, "category": category}
+        normalized.append(
+            {"date": t["date"], "merchant": merchant, "amount": amount, "category": category}
         )
 
-    data = []
-    for date in sorted(by_day):
-        txns = by_day[date]
-        data.append(
-            {
-                "date": date,
-                "total": round(sum(x["amount"] for x in txns), 2),
-                "transactions": txns,
-            }
-        )
+    data = aggregate_by_day(normalized)
 
     return {
         "today": today,
