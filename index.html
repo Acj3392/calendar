@@ -327,14 +327,32 @@
 
       const numeral    = { fontVariantNumeric: "tabular-nums" };
 
-      // Credit/net presentation: money-in always reads +$ in teal; net flips
-      // sign — inflow +$ teal, outflow −$ in muted ink (never rust, which means
-      // "overspent", a different axis). Uses the proper minus glyph.
+      // Money-in always reads +$ in teal.
       const fmtMoney   = (n) => `$${Math.abs(n).toFixed(0)}`;
       const creditAmt  = (n) => `+$${Math.abs(n).toFixed(2)}`;
-      const netParts   = (net) => net >= 0
-        ? { text: `+${fmtMoney(net)}`, color: t.credit }
-        : { text: `−${fmtMoney(net)}`, color: t.inkMuted };
+
+      // Net presented as "net spent" (spend − money in): a net outflow reads as a
+      // plain positive $ (it's still spending), a net inflow reads +$ teal (the
+      // day came out ahead). `decimals`: 0 compact, 2 for the receipt.
+      const netSpentParts = (dd, decimals = 0) => {
+        const ns = Math.round((dd.total - dd.received) * 100) / 100;
+        return ns < 0
+          ? { text: `+$${Math.abs(ns).toFixed(decimals)}`, color: t.credit }
+          : { text: `$${ns.toFixed(decimals)}`,            color: t.ink    };
+      };
+
+      // The day's headline figure under the current basis: gross spend (Spend
+      // mode) or net cost = spend − money in (Net mode; negative = netted money in).
+      const basisAmount = (dd) => netMode ? Math.round((dd.total - dd.received) * 100) / 100 : dd.total;
+
+      // Format a basis amount. A net gain (negative — only possible in Net mode)
+      // reads +$ teal; otherwise a plain $. `abbrev` shortens ≥1000 to "1.1k".
+      const fmtAmt = (v, decimals = 0, abbrev = false) => {
+        const gain = v < 0;
+        const a = Math.abs(v);
+        const body = (abbrev && a >= 1000) ? (a / 1000).toFixed(1) + "k" : a.toFixed(decimals);
+        return { text: (gain ? "+$" : "$") + body, gain };
+      };
 
       const formatDate = (y,m,d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
       const getDIM     = (y,m) => new Date(y,m+1,0).getDate();
@@ -401,7 +419,7 @@
             {showNet && (
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"10px 0 2px",borderTop:`3px double ${t.ruleBold}`,marginTop:6}}>
                 <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.08em",textTransform:"uppercase",color:t.ink}}>Net</span>
-                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netParts(dd.net).color,...numeral}}>{netParts(dd.net).text}</span>
+                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netSpentParts(dd,2).color,...numeral}}>{netSpentParts(dd,2).text}</span>
               </div>
             )}
           </React.Fragment>
@@ -417,7 +435,8 @@
         const [yr,mo,dy] = selectedDay.split("-");
         const label = `${MONTH_NAMES[parseInt(mo)-1]} ${parseInt(dy)}, ${yr}`;
         const v = verdictOf(lvl);
-        const totColor = lvl === "high" ? t.over : t.ink;
+        const headParts = dd ? fmtAmt(basisAmount(dd), 2) : null;
+        const totColor = lvl === "high" ? t.over : (headParts && headParts.gain ? t.credit : t.ink);
         const received = dd ? dd.received : 0;
         return (
           <div style={{background:t.card,borderRadius:6,padding:16,marginTop:14,border:`1px solid ${t.ruleBold}`,boxShadow:"0 6px 22px rgba(0,0,0,0.10)"}}>
@@ -425,7 +444,7 @@
               <div>
                 <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent}}>{label}</div>
                 {dd
-                  ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:32,color:totColor,marginTop:2,...numeral}}>${dd.total.toFixed(2)}</div>
+                  ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:32,color:totColor,marginTop:2,...numeral}}>{headParts.text}</div>
                   : isZero
                     ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:28,color:t.ink,marginTop:2,...numeral}}>$0.00</div>
                     : <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,marginTop:4}}>No data for this day</div>
@@ -461,16 +480,16 @@
         const dd    = viewDay(spendingMap[TODAY]);
         const lvl   = getDateLevel(TODAY);
         const isZero = lvl === "zero";
-        const total = dd ? dd.total : (isZero ? 0 : null);
+        const headline = dd ? basisAmount(dd) : (isZero ? 0 : null);
+        const heroParts = headline !== null ? fmtAmt(headline, 0) : null;
         const verdict = verdictOf(lvl);
 
-        // Month-to-date editorial figures
+        // Month-to-date editorial figures (net cost in Net mode, gross in Spend)
         const mPrefix = TODAY.slice(0,7);
         let mTotal = 0, mDays = 0;
-        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += v.total; mDays++; } });
+        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += basisAmount(v); mDays++; } });
         const mAvg = mDays ? mTotal / mDays : 0;
         const received = dd ? dd.received : 0;
-        const net      = dd ? dd.net : 0;
         const note = lvl==="gain" ? "Money in outpaced spending today."
           : isZero
           ? (received > 0 ? "No spending today, only money in." : "A clean day. Nothing left the account.")
@@ -478,18 +497,18 @@
           : lvl==="high" ? "Over goal today, a heavier day than most."
           : "A steady, ordinary spending day.";
 
-        const numColor = lvl==="high" ? t.over : t.ink;
+        const numColor = lvl==="high" ? t.over : (heroParts && heroParts.gain ? t.credit : t.ink);
         return (
           <div>
             {/* Lead */}
             <div style={{display:"grid",gridTemplateColumns:"1.35fr 1fr",gap:14,borderBottom:`1px solid ${t.ruleBold}`,paddingBottom:16,alignItems:"center"}}>
               <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:96,lineHeight:0.8,letterSpacing:"-0.02em",color:numColor,...numeral}}>
-                {total !== null ? <span>${total.toFixed(0)}<span style={{color:t.accent}}>.</span></span> : <span style={{fontSize:40,color:t.inkMuted}}>No data</span>}
+                {heroParts ? <span>{heroParts.text}<span style={{color:t.accent}}>.</span></span> : <span style={{fontSize:40,color:t.inkMuted}}>No data</span>}
               </div>
               <div>
-                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent}}>Spent today</div>
+                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent}}>{netMode ? "Net today" : "Spent today"}</div>
                 <p style={{fontFamily:TOKENS.type.serif,fontSize:13,lineHeight:1.4,color:t.ink,marginTop:5}}>
-                  ${mTotal.toFixed(0)} so far this month, ${mAvg.toFixed(0)}/day on average. {note}
+                  {fmtAmt(mTotal,0).text} so far this month, {fmtAmt(mAvg,0).text}/day on average. {note}
                 </p>
                 {verdict && <div style={{marginTop:12}}><Stamp label={verdict.label} tone={verdict.tone}/></div>}
               </div>
@@ -501,7 +520,7 @@
                 <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:t.inkMuted}}>Received</span>
                 <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:t.credit,...numeral}}>+{fmtMoney(received)}</span>
                 <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:t.inkMuted,marginLeft:8}}>Net</span>
-                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netParts(net).color,...numeral}}>{netParts(net).text}</span>
+                <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netSpentParts(dd).color,...numeral}}>{netSpentParts(dd).text}</span>
               </div>
             )}
 
@@ -520,14 +539,14 @@
       function WeekView() {
         const dates = getWeekDates(weekOffset);
         let wTotal = 0;
-        dates.forEach(ds => { const v = viewDay(spendingMap[ds]); if (v) wTotal += v.total; });
+        dates.forEach(ds => { const v = viewDay(spendingMap[ds]); if (v) wTotal += basisAmount(v); });
         const weekLabel = weekOffset===0 ? "This Week" : weekOffset===-1 ? "Last Week" : `${weekOffset>0?"+":""}${weekOffset} Weeks`;
         return (
           <div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`}}>
               <button onClick={()=>setWeekOffset(w=>w-1)} style={chevronBtn}><ChevLeft size={18}/></button>
               <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",color:t.ink}}>
-                {weekLabel} <span style={{color:t.accent}}>· ${wTotal.toFixed(0)}</span>
+                {weekLabel} <span style={{color:t.accent}}>· {fmtAmt(wTotal,0).text}</span>
               </span>
               <button onClick={()=>setWeekOffset(w=>w+1)} style={chevronBtn}><ChevRight size={18}/></button>
             </div>
@@ -541,6 +560,7 @@
                 const dayNum  = parseInt(ds.split("-")[2]);
                 const ct = cellTone(lvl);
                 const over = lvl === "high";
+                const amt = dd ? fmtAmt(basisAmount(dd),0) : null;
                 return (
                   <div key={ds} onClick={()=>toggleDay(ds)} style={{
                     background: ct.bg,
@@ -554,7 +574,7 @@
                     {dd
                       ? <div style={{marginTop:"auto",display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
                           <span title={verdictOf(lvl)?.label} style={{fontSize:11,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
-                          <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:ct.amt,...numeral}}>${dd.total.toFixed(0)}</span>
+                          <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,...numeral}}>{amt.text}</span>
                         </div>
                       : isZero
                         ? <div style={{fontSize:12,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
@@ -585,8 +605,9 @@
           const isSel   = selectedDay === ds;
           const isZero  = lvl === "zero";
           const over    = lvl === "high";
-          if (dd) mTotal += dd.total;
+          if (dd) mTotal += basisAmount(dd);
           const ct = cellTone(lvl);
+          const amt = dd ? fmtAmt(basisAmount(dd),0,true) : null;
           cells.push(
             <div key={d} onClick={()=>toggleDay(ds)} style={{
               background: ct.bg,
@@ -601,7 +622,7 @@
               {dd
                 ? <div style={{display:"flex",alignItems:"baseline",gap:3,marginTop:"auto"}}>
                     <span title={verdictOf(lvl)?.label} style={{fontSize:9,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
-                    <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:ct.amt,lineHeight:1,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</span>
+                    <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,lineHeight:1,...numeral}}>{amt.text}</span>
                   </div>
                 : isZero
                   ? <div style={{fontSize:11,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
@@ -613,7 +634,7 @@
         return (
           <div>
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
-              <span>The Month in Full</span><span style={{color:t.accent,...numeral}}>${mTotal.toFixed(0)}</span>
+              <span>The Month in Full</span><span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (
@@ -631,12 +652,12 @@
         let yTotal = 0;
         MONTH_NAMES.forEach((_,mi) => {
           const dim = getDIM(currentYear, mi);
-          for(let d=1; d<=dim; d++){ const v=viewDay(spendingMap[formatDate(currentYear,mi,d)]); if(v) yTotal += v.total; }
+          for(let d=1; d<=dim; d++){ const v=viewDay(spendingMap[formatDate(currentYear,mi,d)]); if(v) yTotal += basisAmount(v); }
         });
         return (
           <div>
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
-              <span>The Annual Report · {currentYear}</span><span style={{color:t.accent,...numeral}}>${yTotal.toFixed(0)}</span>
+              <span>The Annual Report · {currentYear}</span><span style={{color:t.accent,...numeral}}>{fmtAmt(yTotal,0).text}</span>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
               {MONTH_NAMES.map((mName,mi) => {
@@ -646,8 +667,7 @@
                 for(let d=1; d<=dim; d++) {
                   const ds = formatDate(currentYear, mi, d);
                   const v = viewDay(spendingMap[ds]);
-                  if (v && v.total > 0) { tot += v.total; has = true; }
-                  if (v) recv += v.received;
+                  if (v) { tot += basisAmount(v); recv += v.received; if (v.total > 0) has = true; }
                 }
                 const avgDaily = has ? tot/dim : 0;
                 const hi = Math.max(highThreshold, lowThreshold);
@@ -662,7 +682,7 @@
                         {mName.slice(0,3).toUpperCase()}
                         {recv > 0 && <span title="money in" style={{color:t.credit,fontWeight:700,marginLeft:3}}>+</span>}
                       </span>
-                      {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.over:t.inkMuted,...numeral}}>${tot>=1000?(tot/1000).toFixed(1)+"k":tot.toFixed(0)}</span>}
+                      {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.over:t.inkMuted,...numeral}}>{fmtAmt(tot,0,true).text}</span>}
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
                       {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
