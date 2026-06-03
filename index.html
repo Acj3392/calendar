@@ -221,6 +221,10 @@
         }
       }, [view, weekOffset]);
 
+      // Close an open day's detail when navigating to a different month/year —
+      // otherwise the DayDetail card describes a day no longer in the grid.
+      useEffect(() => { setSelectedDay(null); }, [currentMonth, currentYear]);
+
       const spendingMap = useMemo(() => {
         const map = {};
         RAW_DATA.forEach(d => { map[d.date] = d; });
@@ -711,7 +715,7 @@
         });
         const allOn = activeCats.length === 0;
         return (
-          <div style={{marginBottom:14}}>
+          <div style={{marginBottom:14,position:"relative"}}>
             <div className="no-scrollbar" style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:5,scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
               <button onClick={()=>setActiveCats([])} aria-pressed={allOn} style={chip(allOn)}>All</button>
               {debitCategories.map(c => {
@@ -725,6 +729,8 @@
                 return <button key={c} onClick={()=>toggle(c)} aria-pressed={on} style={creditChip(on)}>{`+ ${c}`}</button>;
               })}
             </div>
+            {/* Right-edge fade hinting the chip row scrolls past the viewport */}
+            <div aria-hidden="true" style={{position:"absolute",top:0,right:0,bottom:5,width:24,pointerEvents:"none",background:`linear-gradient(to right, transparent, ${t.canvas})`}}/>
             {!allOn && (
               <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent,marginTop:2}}>
                 Filtered · {activeCats.length} {activeCats.length===1?"category":"categories"} · tap All to clear
@@ -772,6 +778,8 @@
                 ...iconBtn,
                 background: showSettings ? t.navActive : t.btnBg,
                 color:      showSettings ? "#ffffff"   : t.btnIcon,
+                // Sit above the click-outside backdrop (z 40) so the gear itself toggles closed.
+                position:"relative", zIndex:60,
                 transition:"background 0.15s,color 0.15s",
               }}>
                 <GearIcon/>
