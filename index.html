@@ -3,13 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spending Calendar</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <title>The Daily Spend</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%236c5cf6'/%3E%3Ctext x='50' y='74' font-family='Georgia,serif' font-size='62' font-weight='700' text-anchor='middle' fill='white'%3E$%3C/text%3E%3C/svg%3E" />
+  <!-- Pinned production builds + Subresource Integrity. No build step; resilient to CDN drift. -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"
+          integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z"
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"
+          integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1"
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"
+          integrity="sha384-x/ilTFv/u/eu6YSmkFDZl5V5Mm/pkxxcVv2cVJOrr1J0rvILhMvRBCy6yA75wYBj"
+          crossorigin="anonymous"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; transition: background 0.25s; }
@@ -25,60 +33,85 @@
     let RAW_DATA = [];
     let TODAY = "";
     let GENERATED_AT = "";
+    let REFRESH_STATUS = "";
 
     const MONTH_NAMES     = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const DAY_NAMES_SHORT = ["S","M","T","W","T","F","S"];
     const DAY_NAMES       = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
     const DAY_NAMES_FULL  = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-    // ─── Design tokens ───────────────────────────────────────────────────────────
+    // ─── Design tokens · "The Daily Spend" ───────────────────────────────────────
+    // Theme-agnostic tokens (typefaces). Periwinkle is the single accent; spend is
+    // the only loud color; everything sits on warm newsprint (light) or charcoal
+    // newsprint (Night Edition).
+    const TOKENS = {
+      type: {
+        display: "'Anton', sans-serif",      // masthead nameplate only
+        serif:   "'Fraunces', serif",         // all numerals (italic when large)
+        chic:    "'Syne', sans-serif",         // labels, kickers, section heads
+        ui:      "'Inter', system-ui, sans-serif",
+      },
+    };
+
     const THEMES = {
       light: {
-        canvas:          "#f7f7f5",
-        card:            "#ffffff",
-        cardBorder:      "#ebebeb",
-        text:            "#1a1a1f",
-        textMuted:       "#6b6a72",
-        textFaint:       "#b0afb8",
-        navBg:           "#eeeeec",
-        navActive:       "#F4623A",
+        // print tokens
+        paper:  "#efe9da", ink: "#16131c", inkMuted: "#6a6676",
+        accent: "#6c5cf6", accentTint: "#e7e3ff",
+        accent2: "#cdee2a", accent2Ink: "#3a4500",   // acid-lime fill + dark ink
+        ruleHair: "#cfc7b4", ruleBold: "#16131c",
+        grain: "radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px)",
+        // legacy keys (still referenced by views until each is reskinned)
+        canvas:          "#efe9da",
+        card:            "#f6f1e6",
+        cardBorder:      "#cfc7b4",
+        text:            "#16131c",
+        textMuted:       "#6a6676",
+        textFaint:       "#b8b09a",
+        navBg:           "#e3ddcd",
+        navActive:       "#6c5cf6",
         navActiveText:   "#ffffff",
-        navInactiveText: "#6b6a72",
-        todayRing:       "#F4623A",
-        btnBg:           "#e8e8e4",
-        btnIcon:         "#5a5960",
-        chevron:         "#8a8a96",
-        monthPrevNext:   "#c8c7d0",
+        navInactiveText: "#6a6676",
+        todayRing:       "#6c5cf6",
+        btnBg:           "#e3ddcd",
+        btnIcon:         "#4a4654",
+        chevron:         "#8a8676",
+        monthPrevNext:   "#b8b09a",
         tiers: {
-          none:   { bg: "transparent", text: "#b8b7c0", accent: "#dedde8", badge: "#ebebeb" },
-          zero:   { bg: "#d6f0e2",     text: "#1a6844", accent: "#4dab78", badge: "#aee4c2" },
-          low:    { bg: "#e2ede8",     text: "#2a5844", accent: "#6aaa88", badge: "#c0d8c8" },
-          medium: { bg: "#fef4d8",     text: "#7a5010", accent: "#c48828", badge: "#f0dc8a" },
-          high:   { bg: "#fcdcd4",     text: "#8a2c1e", accent: "#d4533f", badge: "#f2a89c" },
+          none:   { bg: "transparent", text: "#b8b09a", accent: "#d8cdb8", badge: "#e2d8c4" },
+          zero:   { bg: "#e7e9dd",     text: "#5f7250", accent: "#8aa07a", badge: "#d2dcc4" },
+          low:    { bg: "#efe7d6",     text: "#7a6a48", accent: "#b9a06a", badge: "#ddd0b0" },
+          medium: { bg: "#efe3d0",     text: "#9a6a30", accent: "#c89a55", badge: "#e6d4b8" },
+          high:   { bg: "#e7e3ff",     text: "#6c5cf6", accent: "#6c5cf6", badge: "#cfc7f8" },
         },
       },
       dark: {
-        canvas:          "#0f1115",
-        card:            "#1c1f26",
-        cardBorder:      "#2a2e37",
-        text:            "#e8e8ec",
-        textMuted:       "#8a8a96",
-        textFaint:       "#3e404e",
-        navBg:           "#1c1f26",
-        navActive:       "#F4623A",
+        paper:  "#14121a", ink: "#ece8f4", inkMuted: "#9a93a8",
+        accent: "#7b6cff", accentTint: "#221d3a",
+        accent2: "#c2e000", accent2Ink: "#1a2000",   // acid-lime fill + dark ink
+        ruleHair: "#2e2a3a", ruleBold: "#5a5470",
+        grain: "radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px)",
+        canvas:          "#14121a",
+        card:            "#1c1925",
+        cardBorder:      "#2e2a3a",
+        text:            "#ece8f4",
+        textMuted:       "#9a93a8",
+        textFaint:       "#4a4458",
+        navBg:           "#1c1925",
+        navActive:       "#7b6cff",
         navActiveText:   "#ffffff",
-        navInactiveText: "#8a8a96",
-        todayRing:       "#F4623A",
-        btnBg:           "#252932",
-        btnIcon:         "#8a8a96",
-        chevron:         "#5a5a6a",
-        monthPrevNext:   "#44444e",
+        navInactiveText: "#9a93a8",
+        todayRing:       "#7b6cff",
+        btnBg:           "#26222f",
+        btnIcon:         "#9a93a8",
+        chevron:         "#6a6478",
+        monthPrevNext:   "#4a4458",
         tiers: {
-          none:   { bg: "transparent", text: "#42424e", accent: "#2a2e37", badge: "#1c1f26" },
-          zero:   { bg: "#0a2818",     text: "#5ec880", accent: "#4dab78", badge: "#143020" },
-          low:    { bg: "#0d2420",     text: "#50a870", accent: "#3d8060", badge: "#122a20" },
-          medium: { bg: "#281e08",     text: "#c49840", accent: "#9a7028", badge: "#341f08" },
-          high:   { bg: "#371208",     text: "#e0735f", accent: "#c0432c", badge: "#451609" },
+          none:   { bg: "transparent", text: "#4a4458", accent: "#2e2a3a", badge: "#1c1925" },
+          zero:   { bg: "#1a2018",     text: "#7a9a68", accent: "#4a6040", badge: "#243018" },
+          low:    { bg: "#201d16",     text: "#b0a070", accent: "#6a5d3a", badge: "#2a2510" },
+          medium: { bg: "#241d12",     text: "#c89a55", accent: "#8a6a30", badge: "#2e2208" },
+          high:   { bg: "#221d3a",     text: "#9a8cff", accent: "#7b6cff", badge: "#332a55" },
         },
       },
     };
@@ -142,6 +175,14 @@
       // Keep body bg in sync so overscroll areas match
       useEffect(() => { document.body.style.background = t.canvas; }, [mode]);
 
+      // Esc closes the settings popover
+      useEffect(() => {
+        if (!showSettings) return;
+        const onKey = (e) => { if (e.key === "Escape") setShowSettings(false); };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, [showSettings]);
+
       const setThemeMode = (next) => {
         setMode(next);
         try { localStorage.setItem("scTheme", next); } catch {}
@@ -169,8 +210,10 @@
 
       const getLevel = (total) => {
         if (total === undefined || total === null) return "none";
+        // Clamp so an inverted config (low > high) can't mis-classify.
+        const hi = Math.max(highThreshold, lowThreshold);
         if (total <= lowThreshold)  return "low";
-        if (total <= highThreshold) return "medium";
+        if (total <= hi)            return "medium";
         return "high";
       };
 
@@ -209,135 +252,152 @@
       const segTrack  = mode === "light" ? "#e6e6e2" : "#11141a";
       const segActive = mode === "light" ? "#ffffff" : "#2f343f";
 
-      // ── DayDetail ──────────────────────────────────────────────────────────────
+      // ── DayDetail = a ruled ledger clipping ─────────────────────────────────────
       function DayDetail() {
         if (!selectedDay) return null;
         const dd  = spendingMap[selectedDay];
         const lvl = getDateLevel(selectedDay);
-        const s   = t.tiers[lvl];
         const isLow  = lvl === "low";
         const isZero = lvl === "zero";
         const [yr,mo,dy] = selectedDay.split("-");
         const label = `${MONTH_NAMES[parseInt(mo)-1]} ${parseInt(dy)}, ${yr}`;
-        const panelBg  = lvl === "none" ? t.card : s.bg;
-        const panelBdr = lvl === "none" ? t.cardBorder : s.badge;
+        const stampLabel = isZero ? "No spend ●" : isLow ? "Low spend ✓" : null;
         return (
-          <div style={{background:panelBg,borderRadius:16,padding:18,marginTop:12,border:`1px solid ${panelBdr}`,boxShadow:"0 4px 18px rgba(0,0,0,0.08)"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+          <div style={{background:t.card,borderRadius:6,padding:16,marginTop:14,border:`1px solid ${t.ruleBold}`,boxShadow:"0 6px 22px rgba(0,0,0,0.10)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",borderBottom:`1px solid ${t.ruleBold}`,paddingBottom:8,marginBottom:4}}>
               <div>
-                <div style={{fontWeight:500,fontSize:11,color:s.text,opacity:0.7,textTransform:"uppercase",letterSpacing:0.9,marginBottom:4}}>
-                  {label}{isLow ? " · Low spend" : isZero ? " · No spend" : ""}
-                </div>
+                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent}}>{label}</div>
                 {dd
-                  ? <div style={{fontWeight:800,fontSize:27,color:s.text,...numeral}}>${dd.total.toFixed(2)}</div>
+                  ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:32,color:t.ink,marginTop:2,...numeral}}>${dd.total.toFixed(2)}</div>
                   : isZero
-                    ? <div style={{fontWeight:700,fontSize:22,color:s.text,...numeral}}>$0 <span style={{fontSize:13,fontWeight:500,opacity:0.75}}>— nothing spent</span></div>
-                    : <div style={{color:t.textMuted,fontSize:13,marginTop:4}}>No data for this day</div>
+                    ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:28,color:t.ink,marginTop:2,...numeral}}>$0.00</div>
+                    : <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,marginTop:4}}>No data for this day</div>
                 }
               </div>
-              <button onClick={()=>setSelectedDay(null)} style={{...iconBtn,width:28,height:28,background:"rgba(0,0,0,0.07)",color:s.text}}>
-                <XIcon/>
-              </button>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                {stampLabel && <Stamp label={stampLabel}/>}
+                <button onClick={()=>setSelectedDay(null)} style={{...iconBtn,width:28,height:28,background:t.btnBg,color:t.btnIcon}}><XIcon/></button>
+              </div>
             </div>
             {dd?.transactions.map((tx,i) => (
-              <div key={i} style={{background:"rgba(255,255,255,0.5)",borderRadius:10,padding:"10px 12px",marginBottom:5,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${t.ruleHair}`}}>
                 <div>
-                  <div style={{fontWeight:500,fontSize:13,color:"#1a1a1f"}}>{tx.merchant}</div>
-                  {tx.category && <div style={{fontSize:12,color:s.text,opacity:0.7,marginTop:2,fontWeight:500}}>{tx.category}</div>}
+                  <div style={{fontWeight:500,fontSize:13,color:t.ink}}>{tx.merchant}</div>
+                  {tx.category && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginTop:1}}>{tx.category}</div>}
                 </div>
-                <div style={{fontWeight:600,fontSize:13,color:"#1a1a1f",...numeral}}>${tx.amount.toFixed(2)}</div>
+                <div style={{fontFamily:TOKENS.type.serif,fontSize:15,color:t.ink,...numeral}}>${tx.amount.toFixed(2)}</div>
               </div>
             ))}
-            {isZero && <div style={{fontSize:13,color:s.text,fontWeight:500,padding:"6px 2px",opacity:0.85}}>No spending this day. 🌱</div>}
+            {isZero && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"10px 0 2px"}}>Nothing spent this day. ●</div>}
           </div>
         );
       }
 
-      // ── Today view ────────────────────────────────────────────────────────────
+      // ── Stamp (rotated overprint status mark) ───────────────────────────────────
+      function Stamp({label}) {
+        return (
+          <span style={{display:"inline-block",transform:"rotate(-6deg)",border:`2px solid ${t.accent}`,color:t.accent,
+            fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",padding:"3px 9px",borderRadius:4}}>{label}</span>
+        );
+      }
+
+      // ── Today view = the "lead story" ───────────────────────────────────────────
       function TodayView() {
         const dd    = spendingMap[TODAY];
         const lvl   = getDateLevel(TODAY);
-        const s     = t.tiers[lvl];
         const isLow  = lvl === "low";
         const isZero = lvl === "zero";
-        const dnum  = String(todayObj.getDate()).padStart(2,"0");
-        const mnum  = String(todayObj.getMonth()+1).padStart(2,"0");
         const total = dd ? dd.total : (isZero ? 0 : null);
-        const statusLabel = isZero ? "No spend 💚" : isLow ? "Low spend 🏆" : lvl==="medium" ? "Moderate" : lvl==="high" ? "High spend" : "—";
-        const heroBg  = lvl==="none" ? t.card : s.bg;
-        const heroBdr = lvl==="none" ? t.cardBorder : s.badge;
+        const stampLabel = isZero ? "No spend ●" : isLow ? "Low spend ✓" : lvl==="medium" ? "Moderate spend" : lvl==="high" ? "High spend" : null;
+
+        // Month-to-date editorial figures
+        const mPrefix = TODAY.slice(0,7);
+        let mTotal = 0, mDays = 0;
+        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { mTotal += d.total; mDays++; } });
+        const mAvg = mDays ? mTotal / mDays : 0;
+        const note = isZero
+          ? "A clean day — nothing left the account."
+          : isLow ? "A light day. The month stays calm."
+          : lvl==="high" ? "A heavier day than most this month."
+          : "A steady, ordinary spending day.";
+
+        const numColor = lvl==="high" ? t.accent : t.ink;
         return (
           <div>
-            <div style={{background:heroBg,borderRadius:24,padding:"24px 22px",marginBottom:12,border:`1px solid ${heroBdr}`}}>
-              <div style={{color:s.text,fontWeight:500,fontSize:13,opacity:0.75,marginBottom:10,letterSpacing:0.1}}>{DAY_NAMES_FULL[todayObj.getDay()]}</div>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16}}>
-                <div>
-                  <div style={{color:s.text,fontSize:58,lineHeight:0.92,fontWeight:800,letterSpacing:"-0.04em",...numeral}}>{mnum}.{dnum}</div>
-                  <div style={{color:s.text,fontSize:58,lineHeight:0.95,fontWeight:800,letterSpacing:"-0.04em"}}>{MONTH_NAMES[todayObj.getMonth()].slice(0,3).toUpperCase()}</div>
-                </div>
-                <div style={{borderLeft:`1.5px solid ${s.text}`,opacity:0.85,paddingLeft:18,minWidth:110,paddingTop:4}}>
-                  {total !== null && <div style={{color:s.text,fontWeight:800,fontSize:28,...numeral}}>${total.toFixed(0)}</div>}
-                  {total !== null && <div style={{color:s.text,fontSize:12,opacity:0.65,marginTop:2}}>spent today</div>}
-                  <div style={{display:"inline-block",background:s.badge,borderRadius:100,padding:"5px 12px",marginTop:12,fontWeight:600,fontSize:12,color:s.text}}>{statusLabel}</div>
-                </div>
+            {/* Lead */}
+            <div style={{display:"grid",gridTemplateColumns:"1.35fr 1fr",gap:14,borderBottom:`1px solid ${t.ruleBold}`,paddingBottom:16,alignItems:"center"}}>
+              <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:96,lineHeight:0.8,letterSpacing:"-0.02em",color:numColor,...numeral}}>
+                {total !== null ? <span>${total.toFixed(0)}<span style={{color:t.accent}}>.</span></span> : <span style={{fontSize:40,color:t.inkMuted}}>No data</span>}
+              </div>
+              <div>
+                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent}}>Spent today</div>
+                <p style={{fontFamily:TOKENS.type.serif,fontSize:13,lineHeight:1.4,color:t.ink,marginTop:5}}>
+                  ${mTotal.toFixed(0)} so far this month, ${mAvg.toFixed(0)}/day on average. {note}
+                </p>
+                {stampLabel && <div style={{marginTop:12}}><Stamp label={stampLabel}/></div>}
               </div>
             </div>
+
+            {/* Today's ledger */}
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"16px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
+              <span>Today's Ledger</span><span style={{color:t.accent}}>{DAY_NAMES_FULL[todayObj.getDay()]}</span>
+            </div>
             {dd?.transactions.map((tx,i) => (
-              <div key={i} style={{background:t.card,borderRadius:12,padding:"12px 15px",marginBottom:7,display:"flex",justifyContent:"space-between",alignItems:"center",border:`1px solid ${t.cardBorder}`}}>
+              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 2px",borderBottom:`1px solid ${t.ruleHair}`}}>
                 <div>
-                  <div style={{fontWeight:500,fontSize:14,color:t.text}}>{tx.merchant}</div>
-                  <div style={{fontSize:12,color:t.textMuted,marginTop:2}}>{tx.category}</div>
+                  <div style={{fontWeight:500,fontSize:14,color:t.ink}}>{tx.merchant}</div>
+                  {tx.category && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginTop:1}}>{tx.category}</div>}
                 </div>
-                <div style={{fontWeight:600,fontSize:14,color:t.text,...numeral}}>${tx.amount.toFixed(2)}</div>
+                <div style={{fontFamily:TOKENS.type.serif,fontSize:16,color:t.ink,...numeral}}>${tx.amount.toFixed(2)}</div>
               </div>
             ))}
-            {!dd && !isZero && <div style={{textAlign:"center",color:t.textFaint,padding:36,fontSize:14}}>No transaction data for today</div>}
+            {isZero && <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,padding:"12px 2px"}}>No spending recorded today. ●</div>}
+            {!dd && !isZero && <div style={{textAlign:"center",color:t.textFaint,padding:36,fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:14}}>No transaction data for today.</div>}
           </div>
         );
       }
 
-      // ── Week view ─────────────────────────────────────────────────────────────
+      // ── Week view = the ruled weekly strip ──────────────────────────────────────
       function WeekView() {
         const dates = getWeekDates(weekOffset);
+        let wTotal = 0;
+        dates.forEach(ds => { if (spendingMap[ds]) wTotal += spendingMap[ds].total; });
+        const weekLabel = weekOffset===0 ? "This Week" : weekOffset===-1 ? "Last Week" : `${weekOffset>0?"+":""}${weekOffset} Weeks`;
         return (
           <div>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`}}>
               <button onClick={()=>setWeekOffset(w=>w-1)} style={chevronBtn}><ChevLeft size={18}/></button>
-              <span style={{fontWeight:500,fontSize:13,color:t.textMuted}}>
-                {weekOffset===0 ? "This week" : weekOffset===-1 ? "Last week" : `${weekOffset>0?"+":""}${weekOffset} weeks`}
+              <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",color:t.ink}}>
+                {weekLabel} <span style={{color:t.accent}}>· ${wTotal.toFixed(0)}</span>
               </span>
               <button onClick={()=>setWeekOffset(w=>w+1)} style={chevronBtn}><ChevRight size={18}/></button>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:5}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
               {dates.map((ds,i) => {
                 const dd  = spendingMap[ds];
                 const lvl = getDateLevel(ds);
-                const s   = t.tiers[lvl];
                 const isToday = ds === TODAY;
                 const isSel   = selectedDay === ds;
-                const isLow   = lvl === "low";
                 const isZero  = lvl === "zero";
+                const isHigh  = lvl === "high";
                 const dayNum  = parseInt(ds.split("-")[2]);
+                const amtColor = isToday ? "#fff" : isHigh ? t.accent : t.ink;
                 return (
                   <div key={ds} onClick={()=>toggleDay(ds)} style={{
-                    background: lvl==="none" ? t.card : s.bg,
-                    borderRadius:14,
-                    padding:"10px 4px",
-                    border: isSel || isToday ? `2px solid ${t.todayRing}` : `1px solid ${lvl==="none" ? t.cardBorder : s.badge}`,
-                    cursor:"pointer",
-                    textAlign:"center",
-                    minHeight:86,
+                    background: isToday ? t.accent : isSel ? t.accentTint : "transparent",
+                    borderRight:`1px solid ${t.ruleHair}`, borderBottom:`1px solid ${t.ruleHair}`,
+                    boxShadow: isSel && !isToday ? `inset 0 0 0 1.5px ${t.accent}` : "none",
+                    cursor:"pointer", textAlign:"center", padding:"9px 3px", minHeight:90,
+                    display:"flex", flexDirection:"column", alignItems:"center",
                   }}>
-                    <div style={{fontSize:10,fontWeight:500,color:s.text,opacity:0.5,marginBottom:4,textTransform:"uppercase",letterSpacing:0.5}}>{DAY_NAMES[i]}</div>
-                    <div style={{fontSize:19,fontWeight:isToday?700:500,color:isToday?t.todayRing:s.text,lineHeight:1,...numeral}}>{dayNum}</div>
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:isToday?"rgba(255,255,255,.75)":t.inkMuted}}>{DAY_NAMES[i].toUpperCase()}</div>
+                    <div style={{fontFamily:TOKENS.type.serif,fontSize:20,color:isToday?"#fff":t.ink,lineHeight:1.1,marginTop:2,...numeral}}>{dayNum}</div>
                     {dd
-                      ? <div style={{fontSize:10,fontWeight:600,color:s.text,marginTop:5,...numeral}}>${dd.total.toFixed(0)}</div>
+                      ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amtColor,marginTop:"auto",...numeral}}>${dd.total.toFixed(0)}</div>
                       : isZero
-                        ? <div style={{fontSize:10,fontWeight:600,color:s.text,marginTop:5,...numeral}}>$0</div>
-                        : <div style={{fontSize:10,color:s.text,opacity:0.25,marginTop:5}}>—</div>
+                        ? <div style={{fontSize:12,color:isToday?"rgba(255,255,255,.7)":t.textFaint,marginTop:"auto"}}>●</div>
+                        : <div style={{fontSize:12,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
                     }
-                    {isLow  && <div style={{fontSize:11,marginTop:3}}>🏆</div>}
-                    {isZero && <div style={{fontSize:11,marginTop:3}}>💚</div>}
                   </div>
                 );
               })}
@@ -347,99 +407,126 @@
         );
       }
 
-      // ── Month view ────────────────────────────────────────────────────────────
+      // ── Month view = the ledger table ───────────────────────────────────────────
       function MonthView() {
         const dim = getDIM(currentYear, currentMonth);
         const fd  = getFDOM(currentYear, currentMonth);
+        let mTotal = 0;
         const cells = [];
-        for(let i=0; i<fd; i++) cells.push(<div key={`e${i}`}/>);
+        for(let i=0; i<fd; i++) cells.push(<div key={`e${i}`} style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`}}/>);
         for(let d=1; d<=dim; d++) {
           const ds  = formatDate(currentYear, currentMonth, d);
           const dd  = spendingMap[ds];
           const lvl = getDateLevel(ds);
-          const s   = t.tiers[lvl];
           const isToday = ds === TODAY;
           const isSel   = selectedDay === ds;
           const isLow   = lvl === "low";
           const isZero  = lvl === "zero";
+          const isHigh  = lvl === "high";
+          if (dd) mTotal += dd.total;
+          const amtColor = isToday ? "#fff" : isHigh ? t.accent : t.ink;
           cells.push(
             <div key={d} onClick={()=>toggleDay(ds)} style={{
-              background: lvl==="none" ? "transparent" : s.bg,
-              borderRadius:10,
-              padding:"6px 5px",
-              border: isSel || isToday ? `2px solid ${t.todayRing}` : lvl==="none" ? `1px solid ${t.cardBorder}` : `1px solid ${s.badge}`,
-              cursor:"pointer",
-              minHeight:52,
-              position:"relative",
+              background: isToday ? t.accent : isSel ? t.accentTint : "transparent",
+              borderRight:`1px solid ${t.ruleHair}`, borderBottom:`1px solid ${t.ruleHair}`,
+              boxShadow: isSel && !isToday ? `inset 0 0 0 1.5px ${t.accent}` : "none",
+              padding:"5px 6px", cursor:"pointer", minHeight:54, display:"flex", flexDirection:"column",
             }}>
-              <div style={{fontSize:12,fontWeight:isToday?700:400,color:isToday?t.todayRing:(lvl==="none"?t.textFaint:s.text),...numeral}}>{d}</div>
-              {dd    && <div style={{fontSize:9,fontWeight:600,color:s.text,marginTop:2,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>}
-              {isZero && <div style={{fontSize:9,fontWeight:600,color:s.text,marginTop:2,...numeral}}>$0</div>}
-              {isLow  && <div style={{fontSize:10,position:"absolute",bottom:2,right:3}}>🏆</div>}
-              {isZero && <div style={{fontSize:10,position:"absolute",bottom:2,right:3}}>💚</div>}
+              <div style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?"#fff":(lvl==="none"?t.textFaint:t.inkMuted),...numeral}}>{d}</div>
+              {dd
+                ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amtColor,marginTop:"auto",lineHeight:1,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>
+                : isZero
+                  ? <div style={{fontSize:11,color:isToday?"rgba(255,255,255,.7)":t.textFaint,marginTop:"auto"}}>●</div>
+                  : <div style={{fontSize:11,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
+              }
             </div>
           );
         }
         return (
-          <div style={{background:t.card,borderRadius:18,padding:14,border:`1px solid ${t.cardBorder}`}}>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:6}}>
+          <div>
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
+              <span>The Month in Full</span><span style={{color:t.accent,...numeral}}>${mTotal.toFixed(0)}</span>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (
-                <div key={i} style={{textAlign:"center",fontSize:10,fontWeight:500,color:t.textFaint,padding:"2px 0"}}>{d}</div>
+                <div key={i} style={{textAlign:"center",fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:t.inkMuted,padding:"6px 0"}}>{d}</div>
               ))}
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>{cells}</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>{cells}</div>
             {selectedDay && <DayDetail/>}
           </div>
         );
       }
 
-      // ── Year view ─────────────────────────────────────────────────────────────
+      // ── Year view = the annual report ───────────────────────────────────────────
       function YearView() {
+        let yTotal = 0;
+        MONTH_NAMES.forEach((_,mi) => {
+          const dim = getDIM(currentYear, mi);
+          for(let d=1; d<=dim; d++){ const ds=formatDate(currentYear,mi,d); if(spendingMap[ds]) yTotal += spendingMap[ds].total; }
+        });
         return (
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-            {MONTH_NAMES.map((mName,mi) => {
-              const dim = getDIM(currentYear, mi);
-              const fd  = getFDOM(currentYear, mi);
-              let tot=0, has=false;
-              for(let d=1; d<=dim; d++) {
-                const ds = formatDate(currentYear, mi, d);
-                if (spendingMap[ds]) { tot += spendingMap[ds].total; has = true; }
-              }
-              const avgDaily = has ? tot/dim : 0;
-              const mLvl = !has ? "none" : avgDaily<=lowThreshold ? "low" : avgDaily<=highThreshold ? "medium" : "high";
-              const ms = t.tiers[mLvl];
-              return (
-                <div key={mi} onClick={()=>{ setCurrentMonth(mi); setView("month"); }} style={{background:mLvl==="none"?t.card:ms.bg,borderRadius:12,padding:"10px 8px",border:`1px solid ${mLvl==="none"?t.cardBorder:ms.badge}`,cursor:"pointer",transition:"opacity 0.12s"}}
-                  onMouseEnter={e=>e.currentTarget.style.opacity="0.8"}
-                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-                  <div style={{fontWeight:600,fontSize:10,color:mLvl==="none"?t.textMuted:ms.text,marginBottom:6,letterSpacing:0.5}}>{mName.slice(0,3).toUpperCase()}</div>
-                  <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
-                    {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
-                    {Array(dim).fill(null).map((_,i) => {
-                      const d  = i+1;
-                      const ds = formatDate(currentYear, mi, d);
-                      const lvl= getDateLevel(ds);
-                      const s2 = t.tiers[lvl];
-                      return (
-                        <div key={d} style={{
-                          width:6, height:6, borderRadius:"50%",
-                          background: lvl==="none" ? t.cardBorder : s2.accent,
-                          border: ds===TODAY ? `1.5px solid ${t.todayRing}` : "none",
-                        }}/>
-                      );
-                    })}
+          <div>
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
+              <span>The Annual Report · {currentYear}</span><span style={{color:t.accent,...numeral}}>${yTotal.toFixed(0)}</span>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
+              {MONTH_NAMES.map((mName,mi) => {
+                const dim = getDIM(currentYear, mi);
+                const fd  = getFDOM(currentYear, mi);
+                let tot=0, has=false;
+                for(let d=1; d<=dim; d++) {
+                  const ds = formatDate(currentYear, mi, d);
+                  if (spendingMap[ds]) { tot += spendingMap[ds].total; has = true; }
+                }
+                const avgDaily = has ? tot/dim : 0;
+                const hi = Math.max(highThreshold, lowThreshold);
+                const mLvl = !has ? "none" : avgDaily<=lowThreshold ? "low" : avgDaily<=hi ? "medium" : "high";
+                return (
+                  <div key={mi} onClick={()=>{ setCurrentMonth(mi); setView("month"); }}
+                    style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`,padding:"9px 9px 11px",cursor:"pointer",transition:"background 0.12s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background=t.accentTint}
+                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
+                      <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.04em",color:has?t.ink:t.textFaint}}>{mName.slice(0,3).toUpperCase()}</span>
+                      {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.accent:t.inkMuted,...numeral}}>${tot>=1000?(tot/1000).toFixed(1)+"k":tot.toFixed(0)}</span>}
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
+                      {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
+                      {Array(dim).fill(null).map((_,i) => {
+                        const d  = i+1;
+                        const ds = formatDate(currentYear, mi, d);
+                        const lvl= getDateLevel(ds);
+                        const s2 = t.tiers[lvl];
+                        return (
+                          <div key={d} style={{
+                            width:5, height:5, borderRadius:"50%",
+                            background: lvl==="none" ? t.ruleHair : lvl==="high" ? t.accent : s2.accent,
+                            outline: ds===TODAY ? `1.5px solid ${t.accent}` : "none", outlineOffset:1,
+                          }}/>
+                        );
+                      })}
+                    </div>
                   </div>
-                  {has && <div style={{fontSize:10,fontWeight:600,color:ms.text,marginTop:6,...numeral}}>${tot.toFixed(0)}</div>}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         );
       }
 
+      // ── Masthead ────────────────────────────────────────────────────────────────
+      const dateline = `${DAY_NAMES_FULL[todayObj.getDay()]}, ${MONTH_NAMES[todayObj.getMonth()]} ${todayObj.getDate()}, ${todayObj.getFullYear()}`;
+
       // ── Shell ─────────────────────────────────────────────────────────────────
       return (
-        <div style={{maxWidth:520,margin:"0 auto",fontFamily:"'Inter',system-ui,sans-serif",background:t.canvas,minHeight:"100vh",padding:"20px 14px 48px",transition:"background 0.25s"}}>
+        <div style={{maxWidth:520,margin:"0 auto",fontFamily:TOKENS.type.ui,background:t.canvas,backgroundImage:t.grain,backgroundSize:"3px 3px",minHeight:"100vh",padding:"22px 16px 48px",transition:"background 0.25s"}}>
+
+          {/* Masthead */}
+          <div style={{textAlign:"center",borderBottom:`3px double ${t.ruleBold}`,paddingBottom:10,marginBottom:14}}>
+            <div style={{fontFamily:TOKENS.type.display,fontSize:38,lineHeight:0.9,letterSpacing:"-0.01em",textTransform:"uppercase",color:t.ink}}>The Daily Spend</div>
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.14em",textTransform:"uppercase",color:t.inkMuted,marginTop:8}}>{dateline}</div>
+          </div>
 
           {/* Header */}
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
@@ -475,23 +562,23 @@
                 <React.Fragment>
                   {/* click-outside backdrop */}
                   <div onClick={()=>setShowSettings(false)} style={{position:"fixed",inset:0,zIndex:40}}/>
-                  {/* popover */}
+                  {/* popover — styled as a press box */}
                   <div style={{
                     position:"absolute", top:46, right:0, width:288, zIndex:50,
-                    background:t.card, borderRadius:16, padding:16,
-                    border:`1px solid ${t.cardBorder}`,
-                    boxShadow:"0 12px 36px rgba(0,0,0,0.18)",
+                    background:t.card, borderRadius:6, padding:16,
+                    border:`1px solid ${t.ruleBold}`,
+                    boxShadow:"0 14px 40px rgba(0,0,0,0.20)",
                   }}>
                     {/* Appearance */}
-                    <div style={{fontSize:11,fontWeight:600,color:t.textMuted,textTransform:"uppercase",letterSpacing:0.8,marginBottom:8}}>Appearance</div>
-                    <div style={{display:"flex",background:segTrack,borderRadius:100,padding:3,gap:3,marginBottom:18}}>
-                      {[{m:"light",label:"Light",icon:<SunIcon size={13}/>},{m:"dark",label:"Dark",icon:<MoonIcon size={13}/>}].map(({m,label,icon}) => (
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase",marginBottom:8}}>Edition</div>
+                    <div style={{display:"flex",background:segTrack,borderRadius:6,padding:3,gap:3,marginBottom:18}}>
+                      {[{m:"light",label:"Day",icon:<SunIcon size={13}/>},{m:"dark",label:"Night",icon:<MoonIcon size={13}/>}].map(({m,label,icon}) => (
                         <button key={m} onClick={()=>setThemeMode(m)} style={{
                           flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:6,
                           background: mode===m ? segActive : "transparent",
-                          color:      mode===m ? t.text : t.textMuted,
-                          border:"none", borderRadius:100, padding:"7px 10px",
-                          fontWeight:500, fontSize:12, cursor:"pointer", fontFamily:"inherit",
+                          color:      mode===m ? t.ink : t.inkMuted,
+                          border:"none", borderRadius:4, padding:"7px 10px",
+                          fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:TOKENS.type.ui,
                           boxShadow: mode===m ? "0 1px 3px rgba(0,0,0,0.16)" : "none",
                           transition:"background 0.15s,color 0.15s",
                         }}>{icon}{label}</button>
@@ -499,42 +586,42 @@
                     </div>
 
                     {/* Thresholds */}
-                    <div style={{fontSize:11,fontWeight:600,color:t.textMuted,textTransform:"uppercase",letterSpacing:0.8,marginBottom:10}}>Spending thresholds</div>
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase",marginBottom:10}}>Spending thresholds</div>
                     <div style={{marginBottom:14}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                        <label style={{fontSize:12,fontWeight:500,color:t.tiers.low.text}}>🏆 Low spending</label>
-                        <span style={{fontWeight:600,fontSize:12,color:t.text,...numeral}}>under ${lowThreshold}</span>
+                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>✓ Low spending</label>
+                        <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:t.ink,...numeral}}>under ${lowThreshold}</span>
                       </div>
                       <input type="range" min={0} max={500} step={5} value={lowThreshold}
                         onChange={e=>setLowThreshold(Number(e.target.value))}
-                        style={{accentColor:t.tiers.low.accent}}/>
+                        style={{accentColor:t.accent}}/>
                     </div>
                     <div style={{marginBottom:16}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                        <label style={{fontSize:12,fontWeight:500,color:t.tiers.high.text}}>High spending</label>
-                        <span style={{fontWeight:600,fontSize:12,color:t.text,...numeral}}>over ${highThreshold}</span>
+                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>High spending</label>
+                        <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:t.ink,...numeral}}>over ${highThreshold}</span>
                       </div>
                       <input type="range" min={0} max={3000} step={25} value={highThreshold}
                         onChange={e=>setHighThreshold(Number(e.target.value))}
-                        style={{accentColor:t.tiers.high.accent}}/>
+                        style={{accentColor:t.accent}}/>
                     </div>
 
                     {/* Tier legend */}
                     <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                       {[
-                        {label:"💚 $0 day", tier:"zero"},
-                        {label:"🏆 Low",    tier:"low"},
-                        {label:"Medium",    tier:"medium"},
-                        {label:"High",      tier:"high"},
-                        {label:"No data",   tier:"none"},
+                        {label:"$0 day", tier:"zero"},
+                        {label:"Low",    tier:"low"},
+                        {label:"Medium", tier:"medium"},
+                        {label:"High",   tier:"high"},
+                        {label:"No data",tier:"none"},
                       ].map(({label,tier}) => {
                         const s = t.tiers[tier];
                         return (
                           <div key={tier} style={{
-                            background: tier==="none" ? t.navBg : s.bg,
-                            color:      tier==="none" ? t.textMuted : s.text,
-                            border:`1px solid ${tier==="none" ? t.cardBorder : s.badge}`,
-                            borderRadius:100, padding:"4px 10px", fontSize:11, fontWeight:500,
+                            background: tier==="none" ? "transparent" : s.bg,
+                            color:      tier==="none" ? t.inkMuted : s.text,
+                            border:`1px solid ${tier==="none" ? t.ruleHair : s.badge}`,
+                            borderRadius:4, padding:"4px 10px", fontSize:11, fontWeight:500,
                           }}>{label}</div>
                         );
                       })}
@@ -545,35 +632,41 @@
             </div>
           </div>
 
-          {/* Stale data banner — shown when generatedAt is >26h ago */}
+          {/* Errata strip — refreshStatus-aware: distinguishes token-expired from a missed run */}
           {(() => {
-            if (staleDismissed || !GENERATED_AT) return null;
-            const ageHours = (Date.now() - new Date(GENERATED_AT).getTime()) / 36e5;
-            if (ageHours <= 26) return null;
-            const syncedLabel = new Date(GENERATED_AT).toLocaleDateString("en-US", {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
-            const bannerBg   = mode === "dark" ? "#2a1f08" : "#fff8e6";
-            const bannerBdr  = mode === "dark" ? "#4a3510" : "#f0d080";
-            const bannerText = mode === "dark" ? "#d4a840" : "#7a5010";
+            if (staleDismissed) return null;
+            const authFailed = REFRESH_STATUS === "auth_failed";
+            const ageHours = GENERATED_AT ? (Date.now() - new Date(GENERATED_AT).getTime()) / 36e5 : 0;
+            const stale = GENERATED_AT && ageHours > 26;
+            if (!authFailed && !stale) return null;
+            const syncedLabel = GENERATED_AT ? new Date(GENERATED_AT).toLocaleDateString("en-US", {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "unknown";
+            const msg = authFailed
+              ? <span><b>Token expired.</b> The Monarch token needs re-auth — see <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>docs/solutions/monarch-auth-and-refresh.md</code></span>
+              : <span><b>Refresh missed.</b> Last synced {syncedLabel} — check <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>logs/refresh.log</code></span>;
             return (
-              <div style={{background:bannerBg,border:`1px solid ${bannerBdr}`,borderRadius:12,padding:"10px 14px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:15}}>⚠️</span>
-                <span style={{flex:1,fontSize:12,color:bannerText,fontWeight:500}}>
-                  Data last synced {syncedLabel} — daily refresh may have failed.
-                  Check <code style={{fontSize:11,background:"rgba(0,0,0,0.08)",borderRadius:4,padding:"1px 4px"}}>logs/refresh.log</code>
-                </span>
-                <button onClick={()=>setStaleDismissed(true)} style={{background:"none",border:"none",cursor:"pointer",color:bannerText,padding:4,lineHeight:1,fontSize:16}}>✕</button>
+              <div style={{background:t.accentTint,border:`1px solid ${t.accent}`,borderRadius:4,padding:"9px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent,whiteSpace:"nowrap"}}>Stop&nbsp;Press</span>
+                <span style={{flex:1,fontSize:12,color:t.ink,fontWeight:400}}>{msg}</span>
+                <button onClick={()=>setStaleDismissed(true)} style={{background:"none",border:"none",cursor:"pointer",color:t.inkMuted,padding:4,lineHeight:1,fontSize:16}}>✕</button>
               </div>
             );
           })()}
 
-          {/* Month switcher */}
-          {(view==="month" || view==="year") && (
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:12,padding:"8px 4px",background:t.card,borderRadius:100,border:`1px solid ${t.cardBorder}`}}>
-              <span style={{fontWeight:500,fontSize:12,color:t.monthPrevNext,letterSpacing:0.3,minWidth:32,textAlign:"right"}}>{MONTH_NAMES[(currentMonth+11)%12].slice(0,3)}</span>
+          {/* Dateline nav — month stepper (month view) or year stepper (year view) */}
+          {view==="month" && (
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:14,padding:"8px 4px",borderTop:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`}}>
+              <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.monthPrevNext,minWidth:34,textAlign:"right"}}>{MONTH_NAMES[(currentMonth+11)%12].slice(0,3)}</span>
               <button onClick={prevMonth} style={chevronBtn}><ChevLeft/></button>
-              <span style={{fontSize:15,fontWeight:700,color:t.text,letterSpacing:0.3,minWidth:46,textAlign:"center"}}>{MONTH_NAMES[currentMonth].slice(0,3).toUpperCase()}</span>
+              <span style={{fontFamily:TOKENS.type.chic,fontSize:16,color:t.ink,letterSpacing:"0.04em",minWidth:120,textAlign:"center"}}>{MONTH_NAMES[currentMonth].toUpperCase()} {currentYear}</span>
               <button onClick={nextMonth} style={chevronBtn}><ChevRight/></button>
-              <span style={{fontWeight:500,fontSize:12,color:t.monthPrevNext,letterSpacing:0.3,minWidth:32}}>{MONTH_NAMES[(currentMonth+1)%12].slice(0,3)}</span>
+              <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.monthPrevNext,minWidth:34}}>{MONTH_NAMES[(currentMonth+1)%12].slice(0,3)}</span>
+            </div>
+          )}
+          {view==="year" && (
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:14,padding:"8px 4px",borderTop:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`}}>
+              <button onClick={()=>setCurrentYear(y=>y-1)} style={chevronBtn}><ChevLeft/></button>
+              <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:t.ink,letterSpacing:"0.01em",...numeral}}>{currentYear}</span>
+              <button onClick={()=>setCurrentYear(y=>y+1)} style={chevronBtn}><ChevRight/></button>
             </div>
           )}
 
@@ -585,6 +678,40 @@
       );
     }
 
+    // ─── Error boundary ─────────────────────────────────────────────────────────
+    // A render bug should show a graceful card, never a blank white page.
+    class ErrorBoundary extends React.Component {
+      constructor(props) { super(props); this.state = { error: null }; }
+      static getDerivedStateFromError(error) { return { error }; }
+      render() {
+        if (this.state.error) {
+          return (
+            <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#9f2f23",background:"#f7f7f5",minHeight:"100vh"}}>
+              <div style={{fontWeight:700,fontSize:16,marginBottom:8}}>Something went wrong rendering the page.</div>
+              <div style={{fontSize:13,color:"#6b6a72"}}>{String(this.state.error && this.state.error.message || this.state.error)}</div>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    // ─── Data validation ──────────────────────────────────────────────────────────
+    // Tolerant shape check: data must be an array of day records we can render.
+    function validateSpending(j) {
+      if (!j || typeof j !== "object") throw new Error("response is not an object");
+      const data = j.data;
+      if (!Array.isArray(data)) throw new Error("`data` is missing or not an array");
+      const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+      data.forEach((d, i) => {
+        if (!d || typeof d !== "object")        throw new Error(`day ${i} is not an object`);
+        if (!dateRe.test(d.date))               throw new Error(`day ${i} has a bad date: ${d.date}`);
+        if (typeof d.total !== "number")        throw new Error(`day ${i} (${d.date}) has a non-numeric total`);
+        if (!Array.isArray(d.transactions))     throw new Error(`day ${i} (${d.date}) transactions is not an array`);
+      });
+      return j;
+    }
+
     // ─── Bootstrap ────────────────────────────────────────────────────────────────
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(
@@ -592,18 +719,35 @@
         Loading…
       </div>
     );
-    fetch("data/spending.json", { cache: "no-store" })
-      .then(r => { if (!r.ok) throw new Error("fetch failed"); return r.json(); })
+
+    // Fetch with a small retry/backoff — a transient network blip shouldn't blank the app.
+    async function loadSpending(attempts = 3) {
+      let lastErr;
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const r = await fetch("data/spending.json", { cache: "no-store" });
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return validateSpending(await r.json());
+        } catch (err) {
+          lastErr = err;
+          if (i < attempts - 1) await new Promise(res => setTimeout(res, 400 * (i + 1)));
+        }
+      }
+      throw lastErr;
+    }
+
+    loadSpending()
       .then(j => {
-        RAW_DATA      = j.data || [];
-        TODAY         = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
-        GENERATED_AT  = j.generatedAt || "";
-        root.render(<SpendingCalendar/>);
+        RAW_DATA       = j.data || [];
+        TODAY          = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
+        GENERATED_AT   = j.generatedAt || "";
+        REFRESH_STATUS = j.refreshStatus || "";
+        root.render(<ErrorBoundary><SpendingCalendar/></ErrorBoundary>);
       })
       .catch(err => {
         root.render(
           <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#9f2f23",background:"#f7f7f5",minHeight:"100vh"}}>
-            Couldn't load spending data ({String(err.message)}). Check that data/spending.json exists.
+            Couldn't load spending data ({String(err && err.message || err)}). Check that data/spending.json exists and is valid.
           </div>
         );
       });

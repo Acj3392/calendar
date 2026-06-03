@@ -71,6 +71,7 @@ def build(transactions: list, today: str) -> dict:
     return {
         "today": today,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "refreshStatus": "ok",
         "data": data,
     }
 

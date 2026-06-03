@@ -20,5 +20,16 @@ logs/
 # OS
 .DS_Store
 
+# Node / Playwright (dev + CI only — the app itself is no-build)
+node_modules/
+/screenshots/
+/test-results/
+/playwright-report/
+.playwright-mcp/
+# stray verification screenshots from local runs
+/task*-verify.png
+/task*.png
+/page-*.png
+
 # Session scratch / handoff notes — not part of the project
 docs/SESSION-HANDOFF.md

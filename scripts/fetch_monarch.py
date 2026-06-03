@@ -113,8 +113,26 @@ async def fetch() -> dict:
     return {
         "today": end.isoformat(),
         "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "refreshStatus": "ok",
         "data": data,
     }
+
+
+# Error-message fragments that indicate the Monarch token/session is bad,
+# vs. a transient network/other failure. The app's banner reads refreshStatus
+# to tell "re-auth needed" apart from "a run was just missed".
+_AUTH_HINTS = ("401", "403", "405", "429", "auth", "token", "login", "unauthor", "forbidden")
+
+
+def _stamp_auth_failed() -> None:
+    """Mark the existing spending.json as auth_failed without clobbering its data."""
+    try:
+        existing = json.loads(OUT_PATH.read_text())
+    except Exception:  # noqa: BLE001 - nothing to update
+        return
+    existing["refreshStatus"] = "auth_failed"
+    OUT_PATH.write_text(json.dumps(existing, indent=2))
+    print("Marked existing data/spending.json refreshStatus=auth_failed", file=sys.stderr)
 
 
 def main() -> int:
@@ -124,7 +142,10 @@ def main() -> int:
         print(f"Missing required env var: {e}", file=sys.stderr)
         return 2
     except Exception as e:  # noqa: BLE001 - surface any Monarch/auth failure to CI
+        msg = str(e).lower()
         print(f"Fetch failed: {e}", file=sys.stderr)
+        if any(h in msg for h in _AUTH_HINTS):
+            _stamp_auth_failed()
         return 1
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spending Calendar — Three Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; background: #0c0d10; color: #e8e8ec; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .page { max-width: 1180px; margin: 0 auto; padding: 48px 24px 96px; }
+  .masthead { text-align: center; margin-bottom: 8px; }
+  .masthead h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 38px; letter-spacing: -0.02em; color: #fff; }
+  .masthead p { color: #8a8a96; font-size: 15px; margin-top: 10px; max-width: 640px; margin-left:auto; margin-right:auto; line-height: 1.55; }
+  .switcher { display: flex; justify-content: center; gap: 6px; margin: 32px 0 44px; position: sticky; top: 14px; z-index: 30; }
+  .switcher .pillwrap { display:flex; gap:4px; background:#16181d; border:1px solid #23262e; border-radius:100px; padding:5px; box-shadow:0 8px 30px rgba(0,0,0,.4); }
+  .tab { border:none; background:transparent; color:#9a9aa6; font-family:inherit; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; cursor:pointer; transition:all .18s; display:flex; align-items:center; gap:8px; }
+  .tab[data-active="true"] { color:#fff; }
+  .tab.spec[data-active="true"]  { background:#1a1a1a; }
+  .tab.land[data-active="true"] { background:linear-gradient(90deg,#7a3b6b,#e0623a); }
+  .tab.broad[data-active="true"] { background:#6c5cf6; }
+
+  .stage { display:none; }
+  .stage[data-active="true"] { display:block; animation: fade .35s ease; }
+  @keyframes fade { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;} }
+
+  .frame-label { text-align:center; margin-bottom:22px; }
+  .frame-label .k { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:#7a7a86; font-weight:600; }
+  .frame-label .v { font-family:'Fraunces',serif; font-size:24px; color:#fff; margin-top:6px; }
+  .frame-label .d { color:#8a8a96; font-size:13px; margin-top:8px; max-width:580px; margin-left:auto;margin-right:auto; line-height:1.5; }
+
+  .device { width: 390px; margin: 0 auto; border-radius: 40px; padding: 12px; background:#1a1c22; box-shadow: 0 30px 80px rgba(0,0,0,.55); border:1px solid #2a2d36; }
+  .screen { border-radius: 30px; overflow:hidden; height: 760px; overflow-y:auto; }
+  .screen::-webkit-scrollbar { width:0; }
+
+  /* ════════════════ A · THE SPECIMEN ════════════════ */
+  .spec-app { background:#f1efe9; min-height:100%; padding:24px 20px 40px; font-family:'Inter',sans-serif; color:#15140f; }
+  .spec-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .spec-top .mark { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; letter-spacing:-0.01em; }
+  .spec-top .mo { font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#9a978c; font-weight:700; }
+  .spec-spec { font-size:9px; letter-spacing:0.24em; text-transform:uppercase; color:#aaa79a; font-weight:700; margin-top:18px; }
+  .spec-hero { line-height:.8; margin:2px 0 4px; }
+  .spec-hero .fig { font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:140px; letter-spacing:-0.05em; color:#15140f; }
+  .spec-hero .fig .c { font-size:54px; font-style:italic; color:#b8b4a6; vertical-align:super; }
+  .spec-sub { display:flex; align-items:baseline; gap:10px; margin-top:8px; }
+  .spec-sub .lab { font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:#15140f; }
+  .spec-sub .meta { font-size:12px; color:#8a877c; }
+  .spec-chips { display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 20px; }
+  .spec-chip { border:1.5px solid #15140f; border-radius:100px; padding:5px 12px; font-size:11px; font-weight:600; }
+  .spec-chip.acid { background:#d8ff3e; border-color:#d8ff3e; }
+  /* specimen tile = the one saturated quarantine */
+  .spec-tile { background:#3a32ff; color:#fff; border-radius:18px; padding:18px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .spec-tile .tk { font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; opacity:.7; font-weight:700; }
+  .spec-tile .tv { font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:64px; line-height:.85; margin-top:4px; letter-spacing:-0.03em; }
+  .spec-tile .tm { font-size:12px; opacity:.8; margin-top:6px; }
+  .spec-grid-h { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:6px; }
+  .spec-grid-h span { text-align:center; font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:#b3b0a4; font-weight:700; }
+  .spec-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .spec-cell { aspect-ratio:1; border-radius:10px; padding:5px 6px; display:flex; flex-direction:column; background:#e6e3da; }
+  .spec-cell .dn { font-size:10px; color:#9a978c; font-variant-numeric:tabular-nums; }
+  .spec-cell .am { font-family:'Fraunces',serif; font-weight:600; font-size:13px; margin-top:auto; font-variant-numeric:tabular-nums; }
+  .spec-cell.today { background:#d8ff3e; }
+  .spec-cell.today .dn { color:#5a6e00; font-weight:700; }
+
+  /* ════════════════ B · THE LANDSCAPE ════════════════ */
+  .land-app { background:#1a1320; min-height:100%; padding:26px 22px 40px; font-family:'Space Grotesk',sans-serif; color:#f3e8e0; }
+  .land-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+  .land-top .mark { font-weight:600; font-size:14px; letter-spacing:0.16em; text-transform:uppercase; color:#f0d4c4; }
+  .land-top .mo { font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#b07a8a; font-weight:500; }
+  .land-hero { margin-bottom:18px; }
+  .land-hero .lab { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#c08498; font-weight:500; }
+  .land-hero .fig { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:66px; line-height:1; letter-spacing:-0.03em; margin-top:6px;
+       background:linear-gradient(90deg,#ffd6a0,#ff8f6b,#ff6b9d); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .land-hero .sub { font-size:13px; color:#c89aa8; margin-top:8px; }
+  .wave-wrap { border-radius:18px; overflow:hidden; margin:14px 0 26px; position:relative; background:#120c18; border:1px solid #2e2030; }
+  .wave-cap { position:absolute; top:12px; left:14px; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#d0a0b0; font-weight:500; z-index:2; }
+  .land-grid-h { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:8px; }
+  .land-grid-h span { text-align:center; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#8a6478; font-weight:500; }
+  .land-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .land-cell { aspect-ratio:1; border-radius:9px; padding:6px 6px; display:flex; flex-direction:column; background:#221728; }
+  .land-cell .dn { font-size:11px; color:#caa6b6; font-variant-numeric:tabular-nums; }
+  .land-cell .am { font-size:11px; font-weight:600; margin-top:auto; font-variant-numeric:tabular-nums; }
+  .land-cell.today { outline:2px solid #ff8f6b; outline-offset:-2px; }
+
+  /* ════════════════ C · THE BROADSHEET ════════════════ */
+  .broad-app { background:#efe9da; min-height:100%; padding:0; font-family:'Inter',sans-serif; color:#16131c;
+      background-image:radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px); background-size:3px 3px; }
+  .broad-pad { padding:22px 20px 40px; }
+  .broad-mast { text-align:center; border-bottom:3px double #16131c; padding-bottom:10px; margin-bottom:4px; }
+  .broad-mast .kick { display:flex; justify-content:space-between; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#6c5cf6; font-weight:700; margin-bottom:6px; }
+  .broad-mast h2 { font-family:'Anton',sans-serif; font-size:40px; letter-spacing:-0.01em; text-transform:uppercase; line-height:.9; }
+  .broad-mast .ed { font-family:'Fraunces',serif; font-style:italic; font-size:12px; color:#4a4654; margin-top:6px; }
+  .broad-lead { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; border-bottom:1px solid #16131c; padding:14px 0; align-items:center; }
+  .broad-lead .num { font-family:'Anton',sans-serif; font-size:88px; line-height:.82; color:#16131c; letter-spacing:-0.01em; }
+  .broad-lead .num .c { color:#6c5cf6; }
+  .broad-lead .col .lab { font-family:'Anton',sans-serif; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#6c5cf6; }
+  .broad-lead .col p { font-family:'Fraunces',serif; font-size:13px; line-height:1.35; color:#2a2632; margin-top:4px; }
+  .broad-lead .col .stamp { display:inline-block; transform:rotate(-7deg); border:2px solid #6c5cf6; color:#6c5cf6; font-family:'Anton',sans-serif; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:3px 8px; border-radius:4px; margin-top:10px; }
+  .broad-secthead { font-family:'Anton',sans-serif; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; margin:16px 0 0; padding-bottom:4px; border-bottom:1px solid #16131c; display:flex; justify-content:space-between; }
+  .broad-secthead span:last-child { color:#6c5cf6; }
+  .broad-grid-h { display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid #16131c; }
+  .broad-grid-h span { text-align:center; font-family:'Anton',sans-serif; font-size:9px; letter-spacing:0.04em; text-transform:uppercase; color:#6a6676; padding:5px 0; }
+  .broad-grid { display:grid; grid-template-columns:repeat(7,1fr); }
+  .broad-cell { aspect-ratio:1; border-right:1px solid #cfc7b4; border-bottom:1px solid #cfc7b4; padding:4px 5px; position:relative; }
+  .broad-cell:nth-child(7n){ border-right:none; }
+  .broad-cell .dn { font-family:'Fraunces',serif; font-size:11px; color:#8a8676; font-variant-numeric:tabular-nums; }
+  .broad-cell .am { font-family:'Anton',sans-serif; font-size:13px; margin-top:1px; font-variant-numeric:tabular-nums; line-height:1; }
+  .broad-cell.hi .am { color:#6c5cf6; }
+  .broad-cell.today { background:#6c5cf6; }
+  .broad-cell.today .dn { color:#dcd6ff; }
+  .broad-cell.today .am { color:#fff; }
+
+  .footnote { text-align:center; color:#6a6a76; font-size:12px; margin-top:40px; line-height:1.6; }
+  .footnote code { background:#1a1c22; padding:2px 6px; border-radius:5px; font-size:11px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <h1>Spending Calendar — Three Directions</h1>
+    <p>The same app, three souls. Same data (June 2026), same screens. The non-negotiables hold across all three (money is the only loud color, one giant hero number, warm-not-cold). What changes is how funky we get. Tap a direction.</p>
+  </div>
+
+  <div class="switcher">
+    <div class="pillwrap">
+      <button class="tab spec"  data-tab="spec"  data-active="true">🅰️ The Specimen</button>
+      <button class="tab land" data-tab="land">🌅 The Landscape</button>
+      <button class="tab broad" data-tab="broad">📰 The Broadsheet</button>
+    </div>
+  </div>
+
+  <!-- A · SPECIMEN -->
+  <div class="stage" data-stage="spec" data-active="true">
+    <div class="frame-label">
+      <div class="k">Direction A · Type as art</div>
+      <div class="v">The Specimen</div>
+      <div class="d">Acanski / Ujjo foundry energy: the dollar amount is the artwork. Gigantic italic Fraunces, set like a typeface showing off. One electric tile quarantines the only saturated color; acid-lime marks today. Editorial, confident, a little cheeky.</div>
+    </div>
+    <div class="device"><div class="screen"><div class="spec-app" id="specApp"></div></div></div>
+  </div>
+
+  <!-- B · LANDSCAPE -->
+  <div class="stage" data-stage="land">
+    <div class="frame-label">
+      <div class="k">Direction B · Emotion-first</div>
+      <div class="v">The Landscape</div>
+      <div class="d">The Quake move (kept — you liked the graph): a month of daily spend as a warm aubergine→coral→peach waveform with a glowing center seam. Dry data becomes a sunset.</div>
+    </div>
+    <div class="device"><div class="screen"><div class="land-app" id="landApp"></div></div></div>
+  </div>
+
+  <!-- C · BROADSHEET -->
+  <div class="stage" data-stage="broad">
+    <div class="frame-label">
+      <div class="k">Direction C · Print / riso</div>
+      <div class="v">The Broadsheet</div>
+      <div class="d">atozsurfing's hairline-ruled ledger as a financial print zine: a newspaper masthead, condensed Anton headlines, electric periwinkle ink, a ruled ledger-table grid, an overprint stamp. Looks printed. Irreverent-premium.</div>
+    </div>
+    <div class="device"><div class="screen"><div class="broad-app" id="broadApp"></div></div></div>
+  </div>
+
+  <div class="footnote">
+    Mockups for direction-setting — illustrative data, not your live numbers.<br/>
+    Full write-up in <code>docs/design/aspirational-direction.md</code>.
+  </div>
+</div>
+
+<script>
+const FIRST_DOW = 1; // June 1 2026 = Monday
+const DAYS = 30, TODAY = 12;
+const SPEND = {1:42,2:0,3:118,4:64,5:210,6:340,7:88,8:0,9:54,10:156,11:72,12:84,13:430,14:96,15:0,16:128,17:61,18:240,19:310,20:55,21:0,22:140,23:78,24:0,25:188,26:520,27:104,28:0,29:67,30:152};
+const DOW = ["S","M","T","W","T","F","S"];
+const fmt = n => n.toLocaleString('en-US');
+
+// ── A · SPECIMEN ──────────────────────────────
+(function(){
+  let cells='';
+  for(let i=0;i<FIRST_DOW;i++) cells+='<div class="spec-cell" style="background:transparent"></div>';
+  for(let d=1;d<=DAYS;d++){
+    const v=SPEND[d], isT=d===TODAY;
+    cells+=`<div class="spec-cell ${isT?'today':''}">
+      <div class="dn">${d}</div>
+      ${v>0?`<div class="am">$${v}</div>`:`<div class="am" style="color:#bdbaae">·</div>`}
+    </div>`;
+  }
+  document.getElementById('specApp').innerHTML = `
+    <div class="spec-top"><div class="mark">spend.</div><div class="mo">Jun ’26</div></div>
+    <div class="spec-spec">Today · Friday · Display 140pt</div>
+    <div class="spec-hero"><div class="fig tnum">$84<span class="c">.00</span></div></div>
+    <div class="spec-sub"><div class="lab">Spent today</div><div class="meta">$2,847 this month · $95/day avg</div></div>
+    <div class="spec-chips">
+      <span class="spec-chip acid">🏆 Low spend</span>
+      <span class="spec-chip">☕ Little Treats</span>
+      <span class="spec-chip">🥑 Eating Out</span>
+      <span class="spec-chip">🚗 Getting Around</span>
+    </div>
+    <div class="spec-tile">
+      <div class="tk">Biggest day this month · Jun 26</div>
+      <div class="tv">$520</div>
+      <div class="tm">One big swing — the rest of the month stayed calm.</div>
+    </div>
+    <div class="spec-grid-h">${DOW.map(d=>`<span>${d}</span>`).join('')}</div>
+    <div class="spec-grid">${cells}</div>`;
+})();
+
+// ── B · LANDSCAPE ──────────────────────────────
+(function(){
+  const W=346, H=150, mid=H/2, max=520;
+  const pts=[];
+  for(let d=1;d<=DAYS;d++){ const x=((d-1)/(DAYS-1))*W; const amp=(SPEND[d]/max)*(mid-12); pts.push([x,amp]); }
+  const path=(sign)=>{ let p=`M0 ${mid}`; pts.forEach(([x,a])=>{p+=` L${x.toFixed(1)} ${(mid+sign*a).toFixed(1)}`;}); p+=` L${W} ${mid} Z`; return p; };
+  const svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block">
+    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5a1e50"/><stop offset="0.4" stop-color="#b03a6a"/>
+      <stop offset="0.7" stop-color="#e0623a"/><stop offset="1" stop-color="#ffba82"/></linearGradient></defs>
+    <path d="${path(-1)}" fill="url(#lg)" opacity="0.92"/>
+    <path d="${path(1)}"  fill="url(#lg)" opacity="0.55"/>
+    <line x1="0" y1="${mid}" x2="${W}" y2="${mid}" stroke="#ffe6c8" stroke-width="1.2" opacity="0.9"/></svg>`;
+  let cells='';
+  for(let i=0;i<FIRST_DOW;i++) cells+='<div class="land-cell" style="background:transparent"></div>';
+  function landColor(v){ if(v===0) return '#241a2c'; const t=Math.min(v/520,1);
+    const stops=[[60,30,80],[150,50,110],[224,98,107],[255,180,130]];
+    const seg=t*3,i=Math.floor(seg),f=seg-i,a=stops[Math.min(i,2)],b=stops[Math.min(i+1,3)];
+    const c=k=>Math.round(a[k]+(b[k]-a[k])*f); return `rgb(${c(0)},${c(1)},${c(2)})`; }
+  for(let d=1;d<=DAYS;d++){ const v=SPEND[d], isT=d===TODAY, bg=landColor(v); const tx=v>250?'#1a0e16':'#f3e0d4';
+    cells+=`<div class="land-cell ${isT?'today':''}" style="background:${bg}">
+      <div class="dn" style="color:${v>250?'rgba(0,0,0,.55)':'#caa6b6'}">${d}</div>
+      ${v>0?`<div class="am" style="color:${tx}">$${v}</div>`:`<div class="am" style="color:#5a4458">·</div>`}</div>`; }
+  document.getElementById('landApp').innerHTML = `
+    <div class="land-top"><div class="mark">spending</div><div class="mo">June 2026</div></div>
+    <div class="land-hero"><div class="lab">Spent today</div><div class="fig tnum">$84</div>
+      <div class="sub">$2,847 this month · trending calm</div></div>
+    <div class="wave-wrap"><div class="wave-cap">Your June, as a landscape</div>${svg}</div>
+    <div class="land-grid-h">${DOW.map(d=>`<span>${d}</span>`).join('')}</div>
+    <div class="land-grid">${cells}</div>`;
+})();
+
+// ── C · BROADSHEET ──────────────────────────────
+(function(){
+  let cells='';
+  for(let i=0;i<FIRST_DOW;i++) cells+='<div class="broad-cell"></div>';
+  for(let d=1;d<=DAYS;d++){ const v=SPEND[d], isT=d===TODAY, hi=v>300;
+    cells+=`<div class="broad-cell ${isT?'today':''} ${hi?'hi':''}">
+      <div class="dn">${d}</div>
+      ${v>0?`<div class="am">$${v}</div>`:`<div class="am" style="color:#b8b09a">—</div>`}</div>`; }
+  document.getElementById('broadApp').innerHTML = `
+    <div class="broad-pad">
+      <div class="broad-mast">
+        <div class="kick"><span>No. 162</span><span>Personal Edition</span></div>
+        <h2>The Daily Spend</h2>
+        <div class="ed">Friday, June 12, 2026 — your money, in print</div>
+      </div>
+      <div class="broad-lead">
+        <div class="num tnum">$84<span class="c">.</span></div>
+        <div class="col">
+          <div class="lab">Spent today</div>
+          <p>$2,847 so far this month. Pace is calm — a single $520 splurge on the 26th aside.</p>
+          <span class="stamp">Low spend ✓</span>
+        </div>
+      </div>
+      <div class="broad-secthead"><span>The Month in Full</span><span>June 2026</span></div>
+      <div class="broad-grid-h">${DOW.map(d=>`<span>${d}</span>`).join('')}</div>
+      <div class="broad-grid">${cells}</div>
+    </div>`;
+})();
+
+// ── tabs ──────────────────────────────
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const tab=btn.dataset.tab;
+    document.querySelectorAll('.tab').forEach(b=>b.dataset.active=(b===btn));
+    document.querySelectorAll('.stage').forEach(s=>s.dataset.active=(s.dataset.stage===tab));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "spending-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Daily Spend — a personal spending calendar (static, no build). Node is dev/CI-only for the Playwright smoke test.",
+  "scripts": {
+    "test": "playwright test",
+    "test:install": "playwright install --with-deps chromium",
+    "serve": "python3 -m http.server 8899"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
