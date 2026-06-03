@@ -352,7 +352,6 @@
       function TodayView() {
         const dd    = viewDay(spendingMap[TODAY]);
         const lvl   = getDateLevel(TODAY);
-        const isLow  = lvl === "low";
         const isZero = lvl === "zero";
         const total = dd ? dd.total : (isZero ? 0 : null);
         const verdict = verdictOf(lvl);
@@ -364,7 +363,7 @@
         const mAvg = mDays ? mTotal / mDays : 0;
         const note = isZero
           ? "A clean day. Nothing left the account."
-          : isLow ? "A light day, comfortably under goal."
+          : lvl==="low" ? "A light day, comfortably under goal."
           : lvl==="high" ? "Over goal today, a heavier day than most."
           : "A steady, ordinary spending day.";
 
@@ -426,9 +425,7 @@
                 const isToday = ds === TODAY;
                 const isSel   = selectedDay === ds;
                 const isZero  = lvl === "zero";
-                const isHigh  = lvl === "high";
                 const dayNum  = parseInt(ds.split("-")[2]);
-                const amtColor = isToday ? "#fff" : isHigh ? t.accent : t.ink;
                 const ct = cellTone(lvl);
                 const over = lvl === "high";
                 return (
