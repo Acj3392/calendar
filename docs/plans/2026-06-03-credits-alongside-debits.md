@@ -1,5 +1,12 @@
 # Plan — Credits alongside debits ("The Daily Spend")
 
+> **STATUS: SHIPPED 2026-06-03** (PR1 credits + PR2 net toggle, both live on
+> `main`). Two things evolved past this plan during build: (a) the data shape is
+> **Option A** (positive amount + `type`), not signed amounts as first chosen;
+> (b) "net" is displayed as **net spent** (`total − received`, positive) and, in
+> Net mode, is the headline/cell number everywhere. The authoritative write-up is
+> `docs/solutions/credits-and-net-basis.md` — trust it over this plan.
+
 > Phase 2 output. Brainstorm + senior review applied 2026-06-03. Read alongside
 > `docs/solutions/design-tokens-and-verdict-encoding.md` (the verdict/token
 > pattern this extends), `docs/solutions/smoke-test-fixed-data-blind-spots.md`,

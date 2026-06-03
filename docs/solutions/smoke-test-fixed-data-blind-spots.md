@@ -47,7 +47,26 @@ In-browser Babel transpiles but does not do static analysis. An unused/removed
 function of the input data, so "green smoke" means "no errors *for this data*",
 not "no errors".
 
+## Update (2026-06-03): the credits work added two more blind-spot lessons
+
+1. **Route a committed fixture for feature assertions, not the live window.**
+   Credit-rendering assertions can't depend on `data/spending.json` (a rolling
+   90-day window — income/refunds may not be present). The smoke test now
+   `page.route()`s `**/data/spending.json` to `tests/fixtures/spending.sample.json`,
+   which guarantees a credit day, a refund-offset day, and a pure-income day. Live
+   data is left untouched, so the credit tests are deterministic.
+
+2. **A fixture must mirror real data's *messiness*, not just its happy path.**
+   The credit-chip de-dup bug (a category that is both debit and credit getting a
+   redundant second chip) shipped green because the fixture's credit categories
+   never *overlapped* a debit category — real data has 16 such overlaps. The fix
+   added an overlapping category (a Groceries return) to the fixture so the
+   regression is actually exercised. When a fixture is "too clean," it tests a
+   world your users don't live in.
+
 ## Related
 - `tests/smoke.spec.js` — the smoke test
+- `tests/fixtures/spending.sample.json` — the credit fixture (overlap included)
 - `index.html` — `ErrorBoundary` (the safety net that downgrades such bugs)
+- [[credits-and-net-basis]] — the feature these lessons came from
 - Fixed in commit `a6c097b`

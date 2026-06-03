@@ -153,6 +153,20 @@ datacenter IP or unknown device does not. The MCP connector keeps that session
 alive in the keyring, so a Claude session can pull live data on demand — the one
 context that satisfies Monarch's checks.
 
+## Gotcha (2026-06-03): a data refresh can outrun the UI code
+
+`refresh_local.sh` commits + pushes `data/spending.json` on its own. During the
+credits work it ran mid-feature and pushed **new-shape data ahead of the
+matching `index.html`**, so production briefly served old UI + new data
+(credits rendered as plain spend rows; category filters inflated totals). The
+old code was backward-tolerant enough not to crash, which made it easy to miss.
+
+Lesson: when a data-shape change is in flight, **land the UI code first (or in
+the same push)**. If a refresh fires in between, expect prod to render the new
+data with old code until the code catches up. Also note `index.html` is *not*
+no-store cached (only `/data/spending.json` is), so a code push needs a hard
+refresh to appear even after Vercel reports success.
+
 ## Related
 - `README.md` — happy-path setup & refresh steps
 - `scripts/build_from_mcp.py` — the transform

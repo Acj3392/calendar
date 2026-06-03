@@ -55,51 +55,29 @@ A personal-finance **newspaper** (Broadsheet) crossed with a **type foundry**
 
 ---
 
-## ▶ NEXT UP: add credits alongside debits
+## ✅ SHIPPED: credits alongside debits (2026-06-03)
 
-Today the app is **spend-only**: both pipeline scripts drop every inflow and the
-UI assumes positive outflow. The next task is to bring **credits (income,
-refunds, transfers in)** into the picture.
+Credits (income, refunds) are now in end to end, plus a Spend/Net verdict toggle.
+**Read `docs/solutions/credits-and-net-basis.md` first** — it's the authoritative
+write-up. Highlights:
+- **Data shape:** transactions are positive `amount` + `type:"debit"|"credit"`;
+  days carry `total` (gross spend), `received`, `net`. Shared `scripts/aggregate.py`
+  feeds both pipeline scripts.
+- **Net is "net spent"** (`total − received`, positive). A Spend/Net toggle
+  (`scVerdictBasis`, default spend) routes through `basisAmount(dd)`: Net mode makes
+  net cost the headline + every cell number; Spend mode is unchanged.
+- **Heatmap reads by shape now:** verdict glyphs ▲ – ✓ ● ✦ (`verdictOf().mark`),
+  with repaired Night-edition tints. Credit chips list income-only categories.
+- Tests: `tests/fixtures/spending.sample.json` + fixture-routed credit assertions.
 
-### The exact code that excludes credits
-Both scripts keep only `amount < 0` (Monarch convention: outflows negative) and
-store the absolute value as a positive `amount`:
-- `scripts/fetch_monarch.py` ~line 92-96 (`if amount >= 0: continue`)
-- `scripts/build_from_mcp.py` ~line 51-55 (`if amount is None or amount >= 0: continue`)
+Gotchas captured this session: [[css-grid-1fr-overflow]] (use `minmax(0,1fr)`),
+the fixture-overlap blind spot ([[smoke-test-fixed-data-blind-spots]]), and the
+refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
-### Decisions to make first (these shape everything downstream)
-1. **Data shape.** Keep `amount` positive + add a `type: "debit" | "credit"` (or
-   `direction`) per transaction? Or switch to **signed** amounts? Recommend
-   `type` + positive `amount` (least churn to `validateSpending` and existing
-   render code; explicit). Whatever you pick, update `validateSpending()` in
-   `index.html` to accept it (it currently requires `total` number +
-   `transactions[]` with numeric `amount`).
-2. **What is a day's `total`?** Options: keep `total` = gross spend (debits) and
-   add a separate `received`/`credits` field; OR a `net`. Recommend keeping
-   `total` = spend (so the verdict/heatmap stay meaningful) and adding
-   `received` alongside — don't let credits silently change the "overspent"
-   reading.
-3. **Verdict semantics.** "Overspent / met goal" is about *spending*. Decide if
-   credits affect the verdict (probably not — keep verdict on debits, show
-   credits as a separate positive signal).
-
-### UI surfaces that assume spend-only (all in `index.html`)
-- `viewDay()` — filters/sums `transactions`; will need to respect debit/credit.
-- `cellTone()` / `verdictOf()` / `getDateLevel()` — driven by spend `total`.
-- **TodayView** hero + "Today's Ledger" rows · **DayDetail** rows + total ·
-  **Month/Week/Year** cell amounts + section totals.
-- **FilterBar** — categories derived from `transactions`; credits add new ones.
-- Likely want a **visual language for credits** (e.g. a `+$X` in a calm
-  positive treatment — careful: acid-lime is already "met goal", green could
-  read as that; consider a distinct ink or a `+` prefix + lighter weight).
-
-### Suggested flow
-Run the loop: `/workflow-brainstorm` (lock the 3 decisions above) →
-`/workflow-plan` → `/workflow-work` (start with the two Python scripts + a
-hand-edited `data/spending.json` sample so you can build the UI before a live
-refresh) → `/workflow-review` → `/workflow-compound`. Apply `/impeccable` for the
-credit visual language. Verify with the Playwright smoke + browser screenshots in
-both editions.
+### Possible next ideas (not committed)
+- `no-store` cache header for `index.html` so code pushes show without a hard
+  refresh (intentionally skipped for now).
+- Net-mode Year month aggregate still uses a spend-based color heuristic (minor).
 
 ---
 
