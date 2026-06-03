@@ -243,7 +243,11 @@
           bucket[tx.category] = (bucket[tx.category] || 0) + tx.amount;
         }));
         const sortDesc = (o) => Object.entries(o).sort((a,b) => b[1]-a[1]).map(([c]) => c);
-        return { debitCategories: sortDesc(dSums), creditCategories: sortDesc(cSums) };
+        // Credit chips list only credit-ONLY categories (income types). A category
+        // that also has debits (e.g. a refund in "Groceries") is already reachable
+        // via its debit chip — filtering is by category name, so a separate credit
+        // chip would be a redundant duplicate that returns the identical set.
+        return { debitCategories: sortDesc(dSums), creditCategories: sortDesc(cSums).filter(c => !(c in dSums)) };
       }, []);
       const categories = debitCategories;
 

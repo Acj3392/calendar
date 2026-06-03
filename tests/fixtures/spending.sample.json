@@ -15,12 +15,14 @@
     },
     {
       "date": "2026-06-02",
-      "total": 40.0,
-      "received": 30.0,
-      "net": -10.0,
+      "total": 65.0,
+      "received": 42.0,
+      "net": -23.0,
       "transactions": [
         { "merchant": "Teos Tacos", "amount": 40.0, "category": "Restaurants & Bars", "type": "debit" },
-        { "merchant": "Amazon Refund", "amount": 30.0, "category": "Shopping", "type": "credit" }
+        { "merchant": "Whole Foods", "amount": 25.0, "category": "Groceries", "type": "debit" },
+        { "merchant": "Amazon Refund", "amount": 30.0, "category": "Shopping", "type": "credit" },
+        { "merchant": "Whole Foods Return", "amount": 12.0, "category": "Groceries", "type": "credit" }
       ]
     },
     {

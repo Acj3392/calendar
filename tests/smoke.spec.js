@@ -62,13 +62,19 @@ test('credits render and filter against the sample fixture', async ({ page }) =>
   await expect(page.getByText('+$2000.00', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Money in', { exact: true })).toBeVisible();
 
-  // A credit category chip exists ("+ Income") and filters without errors.
+  // A credit-only category chip exists ("+ Income") and filters without errors.
   const incomeChip = page.getByRole('button', { name: '+ Income', exact: true });
   await expect(incomeChip).toBeVisible();
   await incomeChip.click();
   await expect(incomeChip).toHaveAttribute('aria-pressed', 'true');
   await page.waitForTimeout(150);
   await page.screenshot({ path: 'screenshots/credits-fixture.png' });
+
+  // A category that has BOTH debits and credits (Groceries: spend + a return)
+  // must NOT spawn a redundant "+ Groceries" credit chip — the debit chip
+  // already filters it. Only its debit chip should exist.
+  await expect(page.getByRole('button', { name: 'Groceries', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '+ Groceries', exact: true })).toHaveCount(0);
 
   const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
