@@ -550,7 +550,7 @@
               </span>
               <button onClick={()=>setWeekOffset(w=>w+1)} style={chevronBtn}><ChevRight size={18}/></button>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
               {dates.map((ds,i) => {
                 const dd  = viewDay(spendingMap[ds]);
                 const lvl = getDateLevel(ds);
@@ -636,12 +636,12 @@
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
               <span>The Month in Full</span><span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:`1px solid ${t.ruleBold}`}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (
                 <div key={i} style={{textAlign:"center",fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:t.inkMuted,padding:"6px 0"}}>{d}</div>
               ))}
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>{cells}</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>{cells}</div>
             {selectedDay && <DayDetail/>}
           </div>
         );
@@ -684,7 +684,7 @@
                       </span>
                       {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.over:t.inkMuted,...numeral}}>{fmtAmt(tot,0,true).text}</span>}
                     </div>
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",gap:2}}>
                       {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
                       {Array(dim).fill(null).map((_,i) => {
                         const d  = i+1;
@@ -894,15 +894,6 @@
 
           {/* Category filters */}
           <FilterBar/>
-
-          {/* Net-mode indicator — the heatmap/verdicts mean net, not spend, while this is on */}
-          {netMode && (
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,padding:"7px 11px",borderRadius:4,background:t.goodTint,border:`1px solid ${t.credit}`}}>
-              <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:t.credit,whiteSpace:"nowrap"}}>Net&nbsp;view</span>
-              <span style={{flex:1,fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.ink}}>Days are judged on net outflow (spend − money in).</span>
-              <button onClick={()=>setBasis("spend")} style={{background:"none",border:"none",cursor:"pointer",fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.06em",textTransform:"uppercase",color:t.inkMuted,padding:2}}>Spend</button>
-            </div>
-          )}
 
           {/* Errata strip — refreshStatus-aware: distinguishes token-expired from a missed run */}
           {(() => {
