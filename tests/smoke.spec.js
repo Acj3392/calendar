@@ -27,6 +27,14 @@ test('loads cleanly, no console errors, all views in both editions', async ({ pa
     }
   }
 
+  // Category filter: toggle a chip, confirm it recomputes without errors, then clear.
+  await page.getByRole('button', { name: 'Groceries', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Groceries', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: 'screenshots/filtered.png' });
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true');
+
   const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });

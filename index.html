@@ -23,6 +23,7 @@
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; transition: background 0.25s; }
     input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; border-radius: 2px; outline: none; }
     input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%; cursor: pointer; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
 </head>
 <body>
@@ -58,7 +59,9 @@
         // print tokens
         paper:  "#efe9da", ink: "#16131c", inkMuted: "#6a6676",
         accent: "#6c5cf6", accentTint: "#e7e3ff",
-        accent2: "#cdee2a", accent2Ink: "#3a4500",   // acid-lime fill + dark ink
+        accent2: "#cdee2a", accent2Ink: "#3a4500",   // acid-lime fill + dark ink (good / met goal)
+        over: "#bf3b2e", overTint: "#f4ddd5",         // rust-red (overspent)
+        goodTint: "#ebf3c4",                          // pale lime wash (good days)
         ruleHair: "#cfc7b4", ruleBold: "#16131c",
         grain: "radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px)",
         // legacy keys (still referenced by views until each is reskinned)
@@ -88,7 +91,9 @@
       dark: {
         paper:  "#14121a", ink: "#ece8f4", inkMuted: "#9a93a8",
         accent: "#7b6cff", accentTint: "#221d3a",
-        accent2: "#c2e000", accent2Ink: "#1a2000",   // acid-lime fill + dark ink
+        accent2: "#c2e000", accent2Ink: "#1a2000",   // acid-lime fill + dark ink (good / met goal)
+        over: "#e0654f", overTint: "#3a1a12",         // rust-red (overspent)
+        goodTint: "#222a09",                          // deep lime wash (good days)
         ruleHair: "#2e2a3a", ruleBold: "#5a5470",
         grain: "radial-gradient(rgba(255,255,255,.022) 1px, transparent 1px)",
         canvas:          "#14121a",
@@ -165,6 +170,7 @@
       const [currentYear,  setCurrentYear]  = useState(() => parseInt(TODAY.split("-")[0]));
       const [weekOffset,   setWeekOffset]   = useState(0);
       const [staleDismissed, setStaleDismissed] = useState(false);
+      const [activeCats,   setActiveCats]   = useState([]); // [] = all categories
       const [mode,         setMode]         = useState(() => {
         try { const s = localStorage.getItem("scTheme"); if (s) return s; } catch {}
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -208,6 +214,25 @@
 
       const MIN_DATE = RAW_DATA.length ? RAW_DATA[0].date : TODAY;
 
+      // Categories present in the data, ordered by total spend (biggest first).
+      const categories = useMemo(() => {
+        const sums = {};
+        RAW_DATA.forEach(d => d.transactions.forEach(tx => {
+          if (tx.category) sums[tx.category] = (sums[tx.category] || 0) + tx.amount;
+        }));
+        return Object.entries(sums).sort((a,b) => b[1]-a[1]).map(([c]) => c);
+      }, []);
+
+      // Apply the active category filter to a day record. Empty filter = passthrough.
+      // Returns null for a missing day, or a {date,total,transactions} view of it.
+      const viewDay = (dd) => {
+        if (!dd) return null;
+        if (!activeCats.length) return dd;
+        const txns = dd.transactions.filter(tx => activeCats.includes(tx.category));
+        const total = Math.round(txns.reduce((s,tx) => s + tx.amount, 0) * 100) / 100;
+        return { ...dd, transactions: txns, total };
+      };
+
       const getLevel = (total) => {
         if (total === undefined || total === null) return "none";
         // Clamp so an inverted config (low > high) can't mis-classify.
@@ -217,13 +242,29 @@
         return "high";
       };
 
-      // In-range days with no transactions = "zero" (green celebration)
+      // In-range days with no (matching) spend = "zero". Filtered total of 0 counts as zero.
       const getDateLevel = (ds) => {
-        const dd = spendingMap[ds];
-        if (dd) return getLevel(dd.total);
-        if (ds >= MIN_DATE && ds <= TODAY) return "zero";
-        return "none";
+        const dd = viewDay(spendingMap[ds]);
+        const inRange = ds >= MIN_DATE && ds <= TODAY;
+        if (dd) {
+          if (dd.total === 0) return inRange ? "zero" : "none";
+          return getLevel(dd.total);
+        }
+        return inRange ? "zero" : "none";
       };
+
+      // Verdict: maps a spend tier to a clear good / on-pace / over signal.
+      const verdictOf = (lvl) =>
+        lvl === "high"   ? { tone: "over",    label: "Overspent"  } :
+        lvl === "zero"   ? { tone: "good",    label: "No spend ●" } :
+        lvl === "low"    ? { tone: "good",    label: "Met goal ✓" } :
+        lvl === "medium" ? { tone: "neutral", label: "On pace"    } : null;
+
+      // Cell fill + text by verdict — the at-a-glance heatmap encoding.
+      const cellTone = (lvl) =>
+        lvl === "high"                    ? { bg: t.over,     num: "#fff",      amt: "#fff"   } :
+        (lvl === "low" || lvl === "zero") ? { bg: t.goodTint, num: t.inkMuted,  amt: t.ink    } :
+                                            { bg: "transparent", num: t.inkMuted, amt: t.ink  };
 
       const numeral    = { fontVariantNumeric: "tabular-nums" };
       const formatDate = (y,m,d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
@@ -255,27 +296,27 @@
       // ── DayDetail = a ruled ledger clipping ─────────────────────────────────────
       function DayDetail() {
         if (!selectedDay) return null;
-        const dd  = spendingMap[selectedDay];
+        const dd  = viewDay(spendingMap[selectedDay]);
         const lvl = getDateLevel(selectedDay);
-        const isLow  = lvl === "low";
         const isZero = lvl === "zero";
         const [yr,mo,dy] = selectedDay.split("-");
         const label = `${MONTH_NAMES[parseInt(mo)-1]} ${parseInt(dy)}, ${yr}`;
-        const stampLabel = isZero ? "No spend ●" : isLow ? "Low spend ✓" : null;
+        const v = verdictOf(lvl);
+        const totColor = lvl === "high" ? t.over : t.ink;
         return (
           <div style={{background:t.card,borderRadius:6,padding:16,marginTop:14,border:`1px solid ${t.ruleBold}`,boxShadow:"0 6px 22px rgba(0,0,0,0.10)"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",borderBottom:`1px solid ${t.ruleBold}`,paddingBottom:8,marginBottom:4}}>
               <div>
                 <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent}}>{label}</div>
                 {dd
-                  ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:32,color:t.ink,marginTop:2,...numeral}}>${dd.total.toFixed(2)}</div>
+                  ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:32,color:totColor,marginTop:2,...numeral}}>${dd.total.toFixed(2)}</div>
                   : isZero
                     ? <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:28,color:t.ink,marginTop:2,...numeral}}>$0.00</div>
                     : <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.inkMuted,marginTop:4}}>No data for this day</div>
                 }
               </div>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
-                {stampLabel && <Stamp label={stampLabel}/>}
+                {v && <Stamp label={v.label} tone={v.tone}/>}
                 <button onClick={()=>setSelectedDay(null)} style={{...iconBtn,width:28,height:28,background:t.btnBg,color:t.btnIcon}}><XIcon/></button>
               </div>
             </div>
@@ -294,34 +335,40 @@
       }
 
       // ── Stamp (rotated overprint status mark) ───────────────────────────────────
-      function Stamp({label}) {
+      // tone: "over" (red outline) · "good" (lime fill, dark ink) · "neutral" (periwinkle outline)
+      function Stamp({label, tone="neutral"}) {
+        const s = tone === "over"
+            ? { background:"transparent", color:t.over,        border:`2px solid ${t.over}` }
+          : tone === "good"
+            ? { background:t.accent2,     color:t.accent2Ink,  border:`2px solid ${t.accent2}` }
+            : { background:"transparent", color:t.accent,      border:`2px solid ${t.accent}` };
         return (
-          <span style={{display:"inline-block",transform:"rotate(-6deg)",border:`2px solid ${t.accent}`,color:t.accent,
-            fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",padding:"3px 9px",borderRadius:4}}>{label}</span>
+          <span style={{display:"inline-block",transform:"rotate(-6deg)",...s,
+            fontFamily:TOKENS.type.chic,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"3px 9px",borderRadius:4}}>{label}</span>
         );
       }
 
       // ── Today view = the "lead story" ───────────────────────────────────────────
       function TodayView() {
-        const dd    = spendingMap[TODAY];
+        const dd    = viewDay(spendingMap[TODAY]);
         const lvl   = getDateLevel(TODAY);
         const isLow  = lvl === "low";
         const isZero = lvl === "zero";
         const total = dd ? dd.total : (isZero ? 0 : null);
-        const stampLabel = isZero ? "No spend ●" : isLow ? "Low spend ✓" : lvl==="medium" ? "Moderate spend" : lvl==="high" ? "High spend" : null;
+        const verdict = verdictOf(lvl);
 
         // Month-to-date editorial figures
         const mPrefix = TODAY.slice(0,7);
         let mTotal = 0, mDays = 0;
-        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { mTotal += d.total; mDays++; } });
+        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += v.total; mDays++; } });
         const mAvg = mDays ? mTotal / mDays : 0;
         const note = isZero
-          ? "A clean day — nothing left the account."
-          : isLow ? "A light day. The month stays calm."
-          : lvl==="high" ? "A heavier day than most this month."
+          ? "A clean day. Nothing left the account."
+          : isLow ? "A light day, comfortably under goal."
+          : lvl==="high" ? "Over goal today, a heavier day than most."
           : "A steady, ordinary spending day.";
 
-        const numColor = lvl==="high" ? t.accent : t.ink;
+        const numColor = lvl==="high" ? t.over : t.ink;
         return (
           <div>
             {/* Lead */}
@@ -334,7 +381,7 @@
                 <p style={{fontFamily:TOKENS.type.serif,fontSize:13,lineHeight:1.4,color:t.ink,marginTop:5}}>
                   ${mTotal.toFixed(0)} so far this month, ${mAvg.toFixed(0)}/day on average. {note}
                 </p>
-                {stampLabel && <div style={{marginTop:12}}><Stamp label={stampLabel}/></div>}
+                {verdict && <div style={{marginTop:12}}><Stamp label={verdict.label} tone={verdict.tone}/></div>}
               </div>
             </div>
 
@@ -361,7 +408,7 @@
       function WeekView() {
         const dates = getWeekDates(weekOffset);
         let wTotal = 0;
-        dates.forEach(ds => { if (spendingMap[ds]) wTotal += spendingMap[ds].total; });
+        dates.forEach(ds => { const v = viewDay(spendingMap[ds]); if (v) wTotal += v.total; });
         const weekLabel = weekOffset===0 ? "This Week" : weekOffset===-1 ? "Last Week" : `${weekOffset>0?"+":""}${weekOffset} Weeks`;
         return (
           <div>
@@ -374,7 +421,7 @@
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
               {dates.map((ds,i) => {
-                const dd  = spendingMap[ds];
+                const dd  = viewDay(spendingMap[ds]);
                 const lvl = getDateLevel(ds);
                 const isToday = ds === TODAY;
                 const isSel   = selectedDay === ds;
@@ -382,20 +429,22 @@
                 const isHigh  = lvl === "high";
                 const dayNum  = parseInt(ds.split("-")[2]);
                 const amtColor = isToday ? "#fff" : isHigh ? t.accent : t.ink;
+                const ct = cellTone(lvl);
+                const over = lvl === "high";
                 return (
                   <div key={ds} onClick={()=>toggleDay(ds)} style={{
-                    background: isToday ? t.accent : isSel ? t.accentTint : "transparent",
+                    background: ct.bg,
                     borderRight:`1px solid ${t.ruleHair}`, borderBottom:`1px solid ${t.ruleHair}`,
-                    boxShadow: isSel && !isToday ? `inset 0 0 0 1.5px ${t.accent}` : "none",
+                    boxShadow: isToday ? `inset 0 0 0 2px ${t.accent}` : isSel ? `inset 0 0 0 1.5px ${t.accent}` : "none",
                     cursor:"pointer", textAlign:"center", padding:"9px 3px", minHeight:90,
                     display:"flex", flexDirection:"column", alignItems:"center",
                   }}>
-                    <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:isToday?"rgba(255,255,255,.75)":t.inkMuted}}>{DAY_NAMES[i].toUpperCase()}</div>
-                    <div style={{fontFamily:TOKENS.type.serif,fontSize:20,color:isToday?"#fff":t.ink,lineHeight:1.1,marginTop:2,...numeral}}>{dayNum}</div>
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:over?"rgba(255,255,255,.8)":t.inkMuted}}>{DAY_NAMES[i].toUpperCase()}</div>
+                    <div style={{fontFamily:TOKENS.type.serif,fontSize:20,color:isToday?(over?"#fff":t.accent):ct.num,lineHeight:1.1,marginTop:2,...numeral}}>{dayNum}</div>
                     {dd
-                      ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amtColor,marginTop:"auto",...numeral}}>${dd.total.toFixed(0)}</div>
+                      ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:ct.amt,marginTop:"auto",...numeral}}>${dd.total.toFixed(0)}</div>
                       : isZero
-                        ? <div style={{fontSize:12,color:isToday?"rgba(255,255,255,.7)":t.textFaint,marginTop:"auto"}}>●</div>
+                        ? <div style={{fontSize:12,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
                         : <div style={{fontSize:12,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
                     }
                   </div>
@@ -416,27 +465,26 @@
         for(let i=0; i<fd; i++) cells.push(<div key={`e${i}`} style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`}}/>);
         for(let d=1; d<=dim; d++) {
           const ds  = formatDate(currentYear, currentMonth, d);
-          const dd  = spendingMap[ds];
+          const dd  = viewDay(spendingMap[ds]);
           const lvl = getDateLevel(ds);
           const isToday = ds === TODAY;
           const isSel   = selectedDay === ds;
-          const isLow   = lvl === "low";
           const isZero  = lvl === "zero";
-          const isHigh  = lvl === "high";
+          const over    = lvl === "high";
           if (dd) mTotal += dd.total;
-          const amtColor = isToday ? "#fff" : isHigh ? t.accent : t.ink;
+          const ct = cellTone(lvl);
           cells.push(
             <div key={d} onClick={()=>toggleDay(ds)} style={{
-              background: isToday ? t.accent : isSel ? t.accentTint : "transparent",
+              background: ct.bg,
               borderRight:`1px solid ${t.ruleHair}`, borderBottom:`1px solid ${t.ruleHair}`,
-              boxShadow: isSel && !isToday ? `inset 0 0 0 1.5px ${t.accent}` : "none",
+              boxShadow: isToday ? `inset 0 0 0 2px ${t.accent}` : isSel ? `inset 0 0 0 1.5px ${t.accent}` : "none",
               padding:"5px 6px", cursor:"pointer", minHeight:54, display:"flex", flexDirection:"column",
             }}>
-              <div style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?"#fff":(lvl==="none"?t.textFaint:t.inkMuted),...numeral}}>{d}</div>
+              <div style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?(over?"#fff":t.accent):(lvl==="none"?t.textFaint:ct.num),...numeral}}>{d}</div>
               {dd
-                ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amtColor,marginTop:"auto",lineHeight:1,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>
+                ? <div style={{fontFamily:TOKENS.type.serif,fontSize:13,color:ct.amt,marginTop:"auto",lineHeight:1,...numeral}}>${dd.total>=1000?(dd.total/1000).toFixed(1)+"k":dd.total.toFixed(0)}</div>
                 : isZero
-                  ? <div style={{fontSize:11,color:isToday?"rgba(255,255,255,.7)":t.textFaint,marginTop:"auto"}}>●</div>
+                  ? <div style={{fontSize:11,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
                   : <div style={{fontSize:11,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
               }
             </div>
@@ -463,7 +511,7 @@
         let yTotal = 0;
         MONTH_NAMES.forEach((_,mi) => {
           const dim = getDIM(currentYear, mi);
-          for(let d=1; d<=dim; d++){ const ds=formatDate(currentYear,mi,d); if(spendingMap[ds]) yTotal += spendingMap[ds].total; }
+          for(let d=1; d<=dim; d++){ const v=viewDay(spendingMap[formatDate(currentYear,mi,d)]); if(v) yTotal += v.total; }
         });
         return (
           <div>
@@ -477,7 +525,7 @@
                 let tot=0, has=false;
                 for(let d=1; d<=dim; d++) {
                   const ds = formatDate(currentYear, mi, d);
-                  if (spendingMap[ds]) { tot += spendingMap[ds].total; has = true; }
+                  const v = viewDay(spendingMap[ds]); if (v && v.total > 0) { tot += v.total; has = true; }
                 }
                 const avgDaily = has ? tot/dim : 0;
                 const hi = Math.max(highThreshold, lowThreshold);
@@ -489,7 +537,7 @@
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
                       <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.04em",color:has?t.ink:t.textFaint}}>{mName.slice(0,3).toUpperCase()}</span>
-                      {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.accent:t.inkMuted,...numeral}}>${tot>=1000?(tot/1000).toFixed(1)+"k":tot.toFixed(0)}</span>}
+                      {has && <span style={{fontFamily:TOKENS.type.serif,fontSize:11,color:mLvl==="high"?t.over:t.inkMuted,...numeral}}>${tot>=1000?(tot/1000).toFixed(1)+"k":tot.toFixed(0)}</span>}
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
                       {Array(fd).fill(null).map((_,i) => <div key={`ep${i}`}/>)}
@@ -497,11 +545,13 @@
                         const d  = i+1;
                         const ds = formatDate(currentYear, mi, d);
                         const lvl= getDateLevel(ds);
-                        const s2 = t.tiers[lvl];
+                        const dot = lvl==="high" ? t.over
+                          : (lvl==="low"||lvl==="zero") ? t.accent2
+                          : lvl==="medium" ? t.inkMuted : t.ruleHair;
                         return (
                           <div key={d} style={{
                             width:5, height:5, borderRadius:"50%",
-                            background: lvl==="none" ? t.ruleHair : lvl==="high" ? t.accent : s2.accent,
+                            background: dot,
                             outline: ds===TODAY ? `1.5px solid ${t.accent}` : "none", outlineOffset:1,
                           }}/>
                         );
@@ -511,6 +561,38 @@
                 );
               })}
             </div>
+          </div>
+        );
+      }
+
+      // ── Category filter bar (Specimen chips) ────────────────────────────────────
+      function FilterBar() {
+        if (!categories.length) return null;
+        const toggle = (c) => setActiveCats(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
+        const chip = (on) => ({
+          flexShrink: 0, whiteSpace: "nowrap", cursor: "pointer",
+          fontFamily: TOKENS.type.chic, fontSize: 11, fontWeight: 600, letterSpacing: "0.02em",
+          padding: "5px 12px", borderRadius: 100,
+          background: on ? t.accent2 : "transparent",
+          color: on ? t.accent2Ink : t.inkMuted,
+          border: `1px solid ${on ? t.accent2 : t.ruleHair}`,
+          transition: "background 0.14s, color 0.14s, border-color 0.14s",
+        });
+        const allOn = activeCats.length === 0;
+        return (
+          <div style={{marginBottom:14}}>
+            <div className="no-scrollbar" style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:5,scrollbarWidth:"none",WebkitOverflowScrolling:"touch"}}>
+              <button onClick={()=>setActiveCats([])} aria-pressed={allOn} style={chip(allOn)}>All</button>
+              {categories.map(c => {
+                const on = activeCats.includes(c);
+                return <button key={c} onClick={()=>toggle(c)} aria-pressed={on} style={chip(on)}>{c}</button>;
+              })}
+            </div>
+            {!allOn && (
+              <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent,marginTop:2}}>
+                Filtered · {activeCats.length} {activeCats.length===1?"category":"categories"} · tap All to clear
+              </div>
+            )}
           </div>
         );
       }
@@ -589,7 +671,7 @@
                     <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase",marginBottom:10}}>Spending thresholds</div>
                     <div style={{marginBottom:14}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>✓ Low spending</label>
+                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>Met goal under</label>
                         <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:t.ink,...numeral}}>under ${lowThreshold}</span>
                       </div>
                       <input type="range" min={0} max={500} step={5} value={lowThreshold}
@@ -598,7 +680,7 @@
                     </div>
                     <div style={{marginBottom:16}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>High spending</label>
+                        <label style={{fontSize:12,fontWeight:500,color:t.ink}}>Overspent over</label>
                         <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:t.ink,...numeral}}>over ${highThreshold}</span>
                       </div>
                       <input type="range" min={0} max={3000} step={25} value={highThreshold}
@@ -606,31 +688,28 @@
                         style={{accentColor:t.accent}}/>
                     </div>
 
-                    {/* Tier legend */}
+                    {/* Verdict legend */}
                     <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                       {[
-                        {label:"$0 day", tier:"zero"},
-                        {label:"Low",    tier:"low"},
-                        {label:"Medium", tier:"medium"},
-                        {label:"High",   tier:"high"},
-                        {label:"No data",tier:"none"},
-                      ].map(({label,tier}) => {
-                        const s = t.tiers[tier];
-                        return (
-                          <div key={tier} style={{
-                            background: tier==="none" ? "transparent" : s.bg,
-                            color:      tier==="none" ? t.inkMuted : s.text,
-                            border:`1px solid ${tier==="none" ? t.ruleHair : s.badge}`,
-                            borderRadius:4, padding:"4px 10px", fontSize:11, fontWeight:500,
-                          }}>{label}</div>
-                        );
-                      })}
+                        {label:"Met goal ✓", bg:t.accent2,     fg:t.accent2Ink, bd:t.accent2},
+                        {label:"On pace",    bg:"transparent", fg:t.inkMuted,   bd:t.ruleHair},
+                        {label:"Overspent",  bg:t.over,        fg:"#fff",        bd:t.over},
+                        {label:"No data",    bg:"transparent", fg:t.textFaint,  bd:t.ruleHair},
+                      ].map(({label,bg,fg,bd}) => (
+                        <div key={label} style={{
+                          background:bg, color:fg, border:`1px solid ${bd}`,
+                          fontFamily:TOKENS.type.chic, borderRadius:4, padding:"4px 10px", fontSize:11, fontWeight:600,
+                        }}>{label}</div>
+                      ))}
                     </div>
                   </div>
                 </React.Fragment>
               )}
             </div>
           </div>
+
+          {/* Category filters */}
+          <FilterBar/>
 
           {/* Errata strip — refreshStatus-aware: distinguishes token-expired from a missed run */}
           {(() => {
@@ -641,8 +720,8 @@
             if (!authFailed && !stale) return null;
             const syncedLabel = GENERATED_AT ? new Date(GENERATED_AT).toLocaleDateString("en-US", {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "unknown";
             const msg = authFailed
-              ? <span><b>Token expired.</b> The Monarch token needs re-auth — see <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>docs/solutions/monarch-auth-and-refresh.md</code></span>
-              : <span><b>Refresh missed.</b> Last synced {syncedLabel} — check <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>logs/refresh.log</code></span>;
+              ? <span><b>Token expired.</b> The Monarch token needs re-auth; see <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>docs/solutions/monarch-auth-and-refresh.md</code></span>
+              : <span><b>Refresh missed.</b> Last synced {syncedLabel}; check <code style={{fontSize:11,background:t.accentTint,borderRadius:3,padding:"1px 4px"}}>logs/refresh.log</code></span>;
             return (
               <div style={{background:t.accentTint,border:`1px solid ${t.accent}`,borderRadius:4,padding:"9px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
                 <span style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent,whiteSpace:"nowrap"}}>Stop&nbsp;Press</span>
