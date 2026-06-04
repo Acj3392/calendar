@@ -532,10 +532,18 @@
         const heroParts = headline !== null ? fmtAmt(headline, 0) : null;
         const verdict = verdictOf(lvl);
 
-        // Month-to-date editorial figures (net cost in Net mode, gross in Spend)
+        // Month-to-date editorial figures (net cost in Net mode, gross in Spend).
+        // Sum only days up to today, and average over days with actual activity in
+        // the current (possibly filtered) slice — not every record in the month,
+        // which would dilute the average with future and zero-spend days.
         const mPrefix = TODAY.slice(0,7);
         let mTotal = 0, mDays = 0;
-        RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += basisAmount(v); mDays++; } });
+        RAW_DATA.forEach(d => {
+          if (d.date.slice(0,7) !== mPrefix || d.date > TODAY) return;
+          const v = viewDay(d);
+          mTotal += basisAmount(v);
+          if (v.total > 0 || v.received > 0) mDays++;
+        });
         const mAvg = mDays ? mTotal / mDays : 0;
         const received = dd ? dd.received : 0;
         const note = lvl==="absent" ? `Nothing spent on ${filterLabel} today.`
@@ -735,11 +743,13 @@
                   const v = viewDay(spendingMap[ds]);
                   if (v) { tot += basisAmount(v); recv += v.received; if (v.total > 0) has = true; }
                 }
-                const avgDaily = has ? tot/dim : 0;
-                const yLow = filteredThresholds ? filteredThresholds.low  : lowThreshold;
-                const yHigh= filteredThresholds ? filteredThresholds.high : highThreshold;
-                const hi = Math.max(yHigh, yLow);
-                const mLvl = !has ? "none" : avgDaily<=yLow ? "low" : avgDaily<=hi ? "medium" : "high";
+                // Average over days ELAPSED, not the whole month — otherwise the
+                // current (partial) month divides MTD spend by 30 and always reads
+                // light. getLevel applies the same (filtered) thresholds + clamp.
+                const isCurMonth = currentYear === parseInt(TODAY.slice(0,4)) && mi === parseInt(TODAY.slice(5,7)) - 1;
+                const denom = isCurMonth ? Math.max(1, parseInt(TODAY.slice(8,10))) : dim;
+                const avgDaily = has ? tot/denom : 0;
+                const mLvl = has ? getLevel(avgDaily) : "none";
                 return (
                   <div key={mi} onClick={()=>{ setCurrentMonth(mi); setView("month"); }}
                     style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`,padding:"9px 9px 11px",cursor:"pointer",transition:"background 0.12s"}}
@@ -1052,6 +1062,11 @@
           throw new Error(`day ${i} (${d.date}) has a non-numeric net`);
         if (!Array.isArray(d.transactions))     throw new Error(`day ${i} (${d.date}) transactions is not an array`);
         d.transactions.forEach((tx, k) => {
+          if (!tx || typeof tx !== "object")
+            throw new Error(`day ${i} (${d.date}) tx ${k} is not an object`);
+          // amount is load-bearing — every total/verdict is recomputed from it.
+          if (typeof tx.amount !== "number" || !isFinite(tx.amount))
+            throw new Error(`day ${i} (${d.date}) tx ${k} has a non-numeric amount: ${tx.amount}`);
           if (tx.type !== undefined && tx.type !== "debit" && tx.type !== "credit")
             throw new Error(`day ${i} (${d.date}) tx ${k} has a bad type: ${tx.type}`);
         });

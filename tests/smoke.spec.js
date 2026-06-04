@@ -165,6 +165,26 @@ test('Focus mode fills only category-spend days; zero-spend days recede', async 
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Validation guards the load-bearing field: every total/verdict is recomputed
+// from tx.amount, so a non-numeric amount must fail loudly (error card) rather
+// than silently render "$NaN". Guards the otherwise-uncovered failure path.
+test('rejects non-numeric tx.amount with a clear error card, not $NaN', async ({ page }) => {
+  const bad = JSON.stringify({
+    today: '2026-06-03',
+    data: [{ date: '2026-06-01', total: 10, transactions: [
+      { merchant: 'Mystery', amount: 'oops', category: 'Groceries', type: 'debit' },
+    ] }],
+  });
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: bad }));
+
+  await page.goto('/index.html');
+  await expect(page.getByText(/Couldn't load spending data/)).toBeVisible();
+  await expect(page.getByText(/non-numeric amount/)).toBeVisible();
+  // The app must NOT render the calendar with bad data.
+  await expect(page.getByText('The Daily Spend')).toHaveCount(0);
+});
+
 // Net-mode Month header decomposes into Out · In so a net figure can't bury
 // gross spend (a paycheck month nets near zero while spend is large). Fixture
 // June: out 130, in 2042 -> net inflow +$1912, Out $130, In +$2.0k.
