@@ -1,6 +1,6 @@
 {
   "today": "2026-06-04",
-  "generatedAt": "2026-06-04T04:37:23.969529+00:00",
+  "generatedAt": "2026-06-04T15:00:08.834254+00:00",
   "refreshStatus": "ok",
   "data": [
     {
@@ -3175,21 +3175,27 @@
     },
     {
       "date": "2026-06-01",
-      "total": 1136.58,
+      "total": 1736.58,
       "received": 1433.0,
-      "net": 296.42,
+      "net": -303.58,
       "transactions": [
-        {
-          "merchant": "Breanna Real",
-          "amount": 1189.0,
-          "category": "Mortgage",
-          "type": "credit"
-        },
         {
           "merchant": "Life Time",
           "amount": 488.58,
           "category": "Fitness",
           "type": "debit"
+        },
+        {
+          "merchant": "Eclipse Veterinary Imaging",
+          "amount": 600.0,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 1189.0,
+          "category": "Mortgage",
+          "type": "credit"
         },
         {
           "merchant": "Eclipse Veterinary Imaging",
@@ -3213,8 +3219,8 @@
     },
     {
       "date": "2026-06-02",
-      "total": 180.79,
-      "received": 2544.0,
+      "total": 155.79,
+      "received": 2519.0,
       "net": 2363.21,
       "transactions": [
         {
@@ -3237,21 +3243,23 @@
         },
         {
           "merchant": "ChargePoint",
-          "amount": 25.0,
-          "category": "EV Charge",
-          "type": "debit"
-        },
-        {
-          "merchant": "ChargePoint",
-          "amount": 25.0,
-          "category": "EV Charge",
-          "type": "credit"
-        },
-        {
-          "merchant": "ChargePoint",
           "amount": 3.8,
           "category": "EV Charge",
           "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-03",
+      "total": 0,
+      "received": 330.0,
+      "net": 330.0,
+      "transactions": [
+        {
+          "merchant": "Discover Bank",
+          "amount": 330.0,
+          "category": "Loan Repayment",
+          "type": "credit"
         }
       ]
     }
