@@ -1,0 +1,43 @@
+{
+  "today": "2026-06-05",
+  "generatedAt": "2026-06-05T15:00:00+00:00",
+  "refreshStatus": "ok",
+  "data": [
+    {
+      "date": "2026-06-01",
+      "total": 40.0,
+      "received": 0.0,
+      "net": -40.0,
+      "transactions": [
+        { "merchant": "Teos Tacos", "amount": 40.0, "category": "Restaurants & Bars", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-02",
+      "total": 30.0,
+      "received": 0.0,
+      "net": -30.0,
+      "transactions": [
+        { "merchant": "Whole Foods", "amount": 30.0, "category": "Groceries", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-03",
+      "total": 0.0,
+      "received": 15.0,
+      "net": 15.0,
+      "transactions": [
+        { "merchant": "Restaurant Refund", "amount": 15.0, "category": "Restaurants & Bars", "type": "credit" }
+      ]
+    },
+    {
+      "date": "2026-06-04",
+      "total": 200.0,
+      "received": 0.0,
+      "net": -200.0,
+      "transactions": [
+        { "merchant": "Steakhouse", "amount": 200.0, "category": "Restaurants & Bars", "type": "debit" }
+      ]
+    }
+  ]
+}

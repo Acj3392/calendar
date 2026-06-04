@@ -325,12 +325,22 @@
         const raw = spendingMap[ds];
         const dd = viewDay(raw);
         const inRange = ds >= MIN_DATE && ds <= TODAY;
-        if (!dd) return inRange ? "zero" : "none";
-        // Focus mode: a day that exists and had activity, but nothing in the active
-        // categories, recedes as "absent" — visibly different from a clean day.
-        if (isFiltered && dd.total === 0 && dd.received === 0) {
-          return raw.transactions.length ? "absent" : (inRange ? "zero" : "none");
+
+        // Focus mode: only days with category SPEND earn a verdict fill. Every
+        // zero-spend day — empty, out-of-category, or refund-only — recedes as
+        // "absent" so the filtered view answers "which days did I spend on this?".
+        // (Refund-only days keep their faint "+" marker via the per-cell badge.)
+        if (isFiltered) {
+          if (!dd || dd.total === 0) return (!raw && !inRange) ? "none" : "absent";
+          if (netMode) {
+            const outflow = Math.round((dd.total - dd.received) * 100) / 100;
+            if (dd.received > 0 && outflow <= 0) return "gain";
+            return getLevel(outflow);
+          }
+          return getLevel(dd.total);
         }
+
+        if (!dd) return inRange ? "zero" : "none";
         if (netMode) {
           // Empty day → zero (NOT a "gain"); pure-income day → gain (not "No spend").
           if (dd.total === 0 && dd.received === 0) return inRange ? "zero" : "none";
@@ -652,7 +662,7 @@
           const ct = cellTone(lvl);
           const amt = dd ? fmtAmt(basisAmount(dd),0,true) : null;
           cells.push(
-            <div key={d} onClick={()=>toggleDay(ds)} style={{
+            <div key={d} data-day={ds} onClick={()=>toggleDay(ds)} style={{
               background: ct.bg,
               borderRight:`1px solid ${t.ruleHair}`, borderBottom:`1px solid ${t.ruleHair}`,
               boxShadow: isToday ? `inset 0 0 0 2px ${t.accent}` : isSel ? `inset 0 0 0 1.5px ${t.accent}` : "none",

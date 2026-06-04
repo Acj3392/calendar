@@ -115,6 +115,56 @@ test('filtering engages Focus mode — strip + reframed header', async ({ page }
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Focus fill = category spend ONLY. With Restaurants & Bars filtered, only the
+// spend days (06-01 $40, 06-04 $200) carry a verdict fill; the refund-only day
+// (06-03) and the empty in-range day (06-05) recede to a transparent cell. The
+// refund day keeps its faint "+" marker. Guards against the lime "good" wash
+// leaking onto zero-spend days.
+test('Focus mode fills only category-spend days; zero-spend days recede', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'focus.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+
+  // Filter to the category.
+  await page.getByRole('button', { name: 'Restaurants & Bars', exact: true }).click();
+  await expect(page.getByText('Focus · Restaurants & Bars')).toBeVisible();
+
+  const TRANSPARENT = 'rgba(0, 0, 0, 0)';
+  const bg = (ds) => page.locator(`[data-day="${ds}"]`)
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
+
+  // Spend days are filled; zero-spend days (refund-only, empty in-range) recede.
+  expect(await bg('2026-06-01'), 'spend day $40 should be filled').not.toBe(TRANSPARENT);
+  expect(await bg('2026-06-04'), 'spend day $200 should be filled').not.toBe(TRANSPARENT);
+  expect(await bg('2026-06-03'), 'refund-only day should recede').toBe(TRANSPARENT);
+  expect(await bg('2026-06-05'), 'empty in-range day should recede').toBe(TRANSPARENT);
+  // The other-category day (Groceries) also recedes under a Restaurants filter.
+  expect(await bg('2026-06-02'), 'other-category day should recede').toBe(TRANSPARENT);
+
+  // Spend days carry the right verdict, not just any fill: 06-01 ($40, under the
+  // $120 avg) reads "met goal ✓"; 06-04 ($200, over) reads "overspent ▲".
+  await expect(page.locator('[data-day="2026-06-01"]').getByText('$40')).toBeVisible();
+  await expect(page.locator('[data-day="2026-06-01"]').getByText('✓')).toBeVisible();
+  await expect(page.locator('[data-day="2026-06-04"]').getByText('$200')).toBeVisible();
+  await expect(page.locator('[data-day="2026-06-04"]').getByText('▲')).toBeVisible();
+
+  // The refund-only day keeps its faint "+" money-in marker.
+  await expect(page.locator('[data-day="2026-06-03"]').getByText('+', { exact: true })).toBeVisible();
+
+  await page.screenshot({ path: 'screenshots/focus-spend-only.png' });
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
 // Net-mode Month header decomposes into Out · In so a net figure can't bury
 // gross spend (a paycheck month nets near zero while spend is large). Fixture
 // June: out 130, in 2042 -> net inflow +$1912, Out $130, In +$2.0k.
