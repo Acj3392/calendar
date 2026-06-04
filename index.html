@@ -636,7 +636,7 @@
       function MonthView() {
         const dim = getDIM(currentYear, currentMonth);
         const fd  = getFDOM(currentYear, currentMonth);
-        let mTotal = 0;
+        let mTotal = 0, mOut = 0, mIn = 0;
         const cells = [];
         for(let i=0; i<fd; i++) cells.push(<div key={`e${i}`} style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`}}/>);
         for(let d=1; d<=dim; d++) {
@@ -648,7 +648,7 @@
           const isZero  = lvl === "zero";
           const isAbsent= lvl === "absent";
           const over    = lvl === "high";
-          if (dd) mTotal += basisAmount(dd);
+          if (dd) { mTotal += basisAmount(dd); mOut += dd.total; mIn += dd.received; }
           const ct = cellTone(lvl);
           const amt = dd ? fmtAmt(basisAmount(dd),0,true) : null;
           cells.push(
@@ -678,8 +678,19 @@
         }
         return (
           <div>
-            <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
-              <span>{filterLabel ? `${filterLabel} · The Month` : "The Month in Full"}</span><span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",alignItems:"flex-end",color:t.ink}}>
+              <span>{filterLabel ? `${filterLabel} · The Month` : "The Month in Full"}</span>
+              {netMode
+                ? <div style={{textAlign:"right",textTransform:"none",letterSpacing:0}}>
+                    <span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
+                    {/* Net alone hides gross magnitude (a paycheck month nets near 0);
+                        surface Out + In so the spend total is never buried. */}
+                    <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:t.inkMuted,marginTop:1}}>
+                      Out <span style={{color:t.ink,...numeral}}>{fmtAmt(mOut,0,true).text}</span>
+                      {" · In "}<span style={{color:t.credit,...numeral}}>+{fmtAmt(mIn,0,true).text}</span>
+                    </div>
+                  </div>
+                : <span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>}
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (

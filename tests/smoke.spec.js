@@ -115,6 +115,38 @@ test('filtering engages Focus mode — strip + reframed header', async ({ page }
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Net-mode Month header decomposes into Out · In so a net figure can't bury
+// gross spend (a paycheck month nets near zero while spend is large). Fixture
+// June: out 130, in 2042 -> net inflow +$1912, Out $130, In +$2.0k.
+test('Net-mode Month header surfaces Out and In, not just net', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Flip to Net mode.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Net', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+
+  // The net headline alone (+$1912) would read as near-zero spend; the Out/In
+  // decomposition makes the $130 gross spend and $2042 money-in explicit.
+  await expect(page.getByText('+$1912')).toBeVisible();
+  await expect(page.getByText(/Out\s*\$130/)).toBeVisible();
+  await expect(page.getByText(/In\s*\+\$2\.0k/)).toBeVisible();
+  await page.screenshot({ path: 'screenshots/net-month-decomp.png' });
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
 // Net-verdict toggle (PR2): flipping the basis re-reads the verdict as net.
 // Today in the fixture is a pure-income day (total 0, received 2000): spend
 // mode reads "No spend", net mode reads "Net positive".
