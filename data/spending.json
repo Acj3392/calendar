@@ -1,76 +1,8 @@
 {
-  "today": "2026-06-03",
-  "generatedAt": "2026-06-03T17:07:32.652839+00:00",
+  "today": "2026-06-04",
+  "generatedAt": "2026-06-04T04:28:31.726344+00:00",
   "refreshStatus": "ok",
   "data": [
-    {
-      "date": "2026-03-05",
-      "total": 2674.53,
-      "received": 18.0,
-      "net": -2656.53,
-      "transactions": [
-        {
-          "merchant": "Apple",
-          "amount": 9.99,
-          "category": "Subscriptions",
-          "type": "debit"
-        },
-        {
-          "merchant": "Ozo Coffee Roasters",
-          "amount": 3.95,
-          "category": "Coffee Shops",
-          "type": "debit"
-        },
-        {
-          "merchant": "Teos Tacos",
-          "amount": 27.1,
-          "category": "Restaurants & Bars",
-          "type": "debit"
-        },
-        {
-          "merchant": "Xcel Energy",
-          "amount": 55.55,
-          "category": "Gas & Electric",
-          "type": "debit"
-        },
-        {
-          "merchant": "Movement Mortgage",
-          "amount": 2377.94,
-          "category": "Mortgage",
-          "type": "debit"
-        },
-        {
-          "merchant": "Lauren Vallee",
-          "amount": 170.0,
-          "category": "Therapy",
-          "type": "debit"
-        },
-        {
-          "merchant": "Ellen True",
-          "amount": 9.0,
-          "category": "Restaurants & Bars",
-          "type": "credit"
-        },
-        {
-          "merchant": "Melany Hallgren",
-          "amount": 15.0,
-          "category": "Restaurants & Bars",
-          "type": "debit"
-        },
-        {
-          "merchant": "Amy Jackson",
-          "amount": 15.0,
-          "category": "Restaurants & Bars",
-          "type": "debit"
-        },
-        {
-          "merchant": "Scott Nusz",
-          "amount": 9.0,
-          "category": "Restaurants & Bars",
-          "type": "credit"
-        }
-      ]
-    },
     {
       "date": "2026-03-06",
       "total": 2536.26,
@@ -3198,13 +3130,13 @@
         {
           "merchant": "Breanna Real",
           "amount": 25.0,
-          "category": "Groceries",
+          "category": "Beer & Liquor",
           "type": "credit"
         },
         {
           "merchant": "Breanna Real",
           "amount": 13.0,
-          "category": "Groceries",
+          "category": "Restaurants & Bars",
           "type": "credit"
         }
       ]
@@ -3236,7 +3168,7 @@
         {
           "merchant": "Laurie Jay",
           "amount": 200.0,
-          "category": "Other Income",
+          "category": "Travel & Vacation",
           "type": "credit"
         }
       ]
@@ -3244,9 +3176,15 @@
     {
       "date": "2026-06-01",
       "total": 1136.58,
-      "received": 244.0,
-      "net": -892.58,
+      "received": 1433.0,
+      "net": 296.42,
       "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 1189.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
         {
           "merchant": "Life Time",
           "amount": 488.58,
@@ -3276,8 +3214,8 @@
     {
       "date": "2026-06-02",
       "total": 180.79,
-      "received": 25.0,
-      "net": -155.79,
+      "received": 2544.0,
+      "net": 2363.21,
       "transactions": [
         {
           "merchant": "Capital One",
@@ -3290,6 +3228,12 @@
           "amount": 56.99,
           "category": "Pet Insurance",
           "type": "debit"
+        },
+        {
+          "merchant": "Nicci Jay",
+          "amount": 2519.0,
+          "category": "Mortgage",
+          "type": "credit"
         },
         {
           "merchant": "ChargePoint",
