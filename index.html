@@ -257,6 +257,33 @@
       }, []);
       const categories = debitCategories;
 
+      // ── Filtered "Focus mode" ──────────────────────────────────────────────────
+      // When categories are selected the view stops asking "how was my day overall?"
+      // and starts asking "how much went to THIS, and on which days?". Two things
+      // change: (1) verdict tiers re-scope to the filtered slice's own scale, and
+      // (2) days with no spend in the slice recede (the "absent" level) so the days
+      // that DID spend stand out — while every day stays on the grid.
+      const isFiltered  = activeCats.length > 0;
+      const filterLabel = activeCats.length === 1 ? activeCats[0]
+        : activeCats.length > 1 ? `${activeCats.length} categories` : null;
+
+      // Per-slice thresholds derived from the filtered category's own distribution:
+      // low/high sit at 0.6×/1.4× the mean spend across days the slice appears on,
+      // so ✓ / – / ▲ mean "light / typical / heavy <category> day for you". Falls
+      // back to the global thresholds when nothing's filtered or the slice is empty.
+      const filteredThresholds = useMemo(() => {
+        if (!activeCats.length) return null;
+        let sum = 0, days = 0;
+        RAW_DATA.forEach(d => {
+          const tot = d.transactions.reduce((s,tx) =>
+            (!isCredit(tx) && activeCats.includes(tx.category)) ? s + tx.amount : s, 0);
+          if (tot > 0) { sum += tot; days++; }
+        });
+        if (days === 0) return null;
+        const avg = sum / days;
+        return { low: avg * 0.6, high: avg * 1.4, avg };
+      }, [activeCats]);
+
       // Sum a transaction list into spend / received / net. `total` is gross spend
       // (debits only) so the verdict + heatmap keep their meaning; credits are
       // tracked separately as `received`, with `net = received - total`.
@@ -281,10 +308,13 @@
 
       const getLevel = (total) => {
         if (total === undefined || total === null) return "none";
+        // Filtered → judge against the slice's own scale; else the global budget.
+        const lo = filteredThresholds ? filteredThresholds.low  : lowThreshold;
+        const hiT= filteredThresholds ? filteredThresholds.high : highThreshold;
         // Clamp so an inverted config (low > high) can't mis-classify.
-        const hi = Math.max(highThreshold, lowThreshold);
-        if (total <= lowThreshold)  return "low";
-        if (total <= hi)            return "medium";
+        const hi = Math.max(hiT, lo);
+        if (total <= lo)  return "low";
+        if (total <= hi)  return "medium";
         return "high";
       };
 
@@ -292,9 +322,15 @@
       // net outflow (spend − money in), with a "gain" tier for net-inflow days.
       // In-range days with no activity = "zero".
       const getDateLevel = (ds) => {
-        const dd = viewDay(spendingMap[ds]);
+        const raw = spendingMap[ds];
+        const dd = viewDay(raw);
         const inRange = ds >= MIN_DATE && ds <= TODAY;
         if (!dd) return inRange ? "zero" : "none";
+        // Focus mode: a day that exists and had activity, but nothing in the active
+        // categories, recedes as "absent" — visibly different from a clean day.
+        if (isFiltered && dd.total === 0 && dd.received === 0) {
+          return raw.transactions.length ? "absent" : (inRange ? "zero" : "none");
+        }
         if (netMode) {
           // Empty day → zero (NOT a "gain"); pure-income day → gain (not "No spend").
           if (dd.total === 0 && dd.received === 0) return inRange ? "zero" : "none";
@@ -311,6 +347,7 @@
       // colorblind-safe): ▲ over · – on pace · ✓ met goal · ● no spend · ✦ net+.
       const verdictOf = (lvl) =>
         lvl === "high"   ? { tone: "over",    label: "Overspent",      mark: "▲" } :
+        lvl === "absent" ? { tone: "neutral", label: filterLabel ? `No ${filterLabel}` : "None", mark: "·" } :
         lvl === "gain"   ? { tone: "good",    label: "Net positive ✦", mark: "✦" } :
         lvl === "zero"   ? { tone: "good",    label: "No spend ●",     mark: "●" } :
         lvl === "low"    ? { tone: "good",    label: "Met goal ✓",     mark: "✓" } :
@@ -320,9 +357,10 @@
       // (verdictOf.mark) is the primary signal; fill reinforces it. "On pace" gets
       // a faint tint so it's distinct from an empty (no-data) cell.
       const cellTone = (lvl) =>
-        lvl === "high"                                       ? { bg: t.over,        num: "#fff",     amt: "#fff" } :
-        (lvl === "low" || lvl === "zero" || lvl === "gain")  ? { bg: t.goodTint,    num: t.inkMuted, amt: t.ink  } :
-        lvl === "medium"                                     ? { bg: t.neutralTint, num: t.inkMuted, amt: t.ink  } :
+        lvl === "high"                                       ? { bg: t.over,        num: "#fff",      amt: "#fff"      } :
+        (lvl === "low" || lvl === "zero" || lvl === "gain")  ? { bg: t.goodTint,    num: t.inkMuted,  amt: t.ink       } :
+        lvl === "medium"                                     ? { bg: t.neutralTint, num: t.inkMuted,  amt: t.ink       } :
+        lvl === "absent"                                     ? { bg: "transparent", num: t.textFaint, amt: t.textFaint } :
                                                                { bg: "transparent",  num: t.inkMuted, amt: t.ink  };
 
       const numeral    = { fontVariantNumeric: "tabular-nums" };
@@ -490,11 +528,12 @@
         RAW_DATA.forEach(d => { if (d.date.slice(0,7) === mPrefix) { const v = viewDay(d); mTotal += basisAmount(v); mDays++; } });
         const mAvg = mDays ? mTotal / mDays : 0;
         const received = dd ? dd.received : 0;
-        const note = lvl==="gain" ? "Money in outpaced spending today."
+        const note = lvl==="absent" ? `Nothing spent on ${filterLabel} today.`
+          : lvl==="gain" ? "Money in outpaced spending today."
           : isZero
           ? (received > 0 ? "No spending today, only money in." : "A clean day. Nothing left the account.")
-          : lvl==="low" ? "A light day, comfortably under goal."
-          : lvl==="high" ? "Over goal today, a heavier day than most."
+          : lvl==="low" ? (filterLabel ? `A light ${filterLabel} day.` : "A light day, comfortably under goal.")
+          : lvl==="high" ? (filterLabel ? `A heavy ${filterLabel} day.` : "Over goal today, a heavier day than most.")
           : "A steady, ordinary spending day.";
 
         const numColor = lvl==="high" ? t.over : (heroParts && heroParts.gain ? t.credit : t.ink);
@@ -506,7 +545,7 @@
                 {heroParts ? <span>{heroParts.text}<span style={{color:t.accent}}>.</span></span> : <span style={{fontSize:40,color:t.inkMuted}}>No data</span>}
               </div>
               <div>
-                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent}}>{netMode ? "Net today" : "Spent today"}</div>
+                <div style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent}}>{filterLabel ? `${filterLabel} today` : netMode ? "Net today" : "Spent today"}</div>
                 <p style={{fontFamily:TOKENS.type.serif,fontSize:13,lineHeight:1.4,color:t.ink,marginTop:5}}>
                   {fmtAmt(mTotal,0).text} so far this month, {fmtAmt(mAvg,0).text}/day on average. {note}
                 </p>
@@ -546,7 +585,7 @@
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`}}>
               <button onClick={()=>setWeekOffset(w=>w-1)} style={chevronBtn}><ChevLeft size={18}/></button>
               <span style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",color:t.ink}}>
-                {weekLabel} <span style={{color:t.accent}}>· {fmtAmt(wTotal,0).text}</span>
+                {filterLabel ? `${filterLabel} · ${weekLabel}` : weekLabel} <span style={{color:t.accent}}>· {fmtAmt(wTotal,0).text}</span>
               </span>
               <button onClick={()=>setWeekOffset(w=>w+1)} style={chevronBtn}><ChevRight size={18}/></button>
             </div>
@@ -557,6 +596,7 @@
                 const isToday = ds === TODAY;
                 const isSel   = selectedDay === ds;
                 const isZero  = lvl === "zero";
+                const isAbsent= lvl === "absent";
                 const dayNum  = parseInt(ds.split("-")[2]);
                 const ct = cellTone(lvl);
                 const over = lvl === "high";
@@ -571,14 +611,16 @@
                   }}>
                     <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:over?"rgba(255,255,255,.8)":t.inkMuted}}>{DAY_NAMES[i].toUpperCase()}</div>
                     <div style={{fontFamily:TOKENS.type.serif,fontSize:20,color:isToday?(over?"#fff":t.accent):ct.num,lineHeight:1.1,marginTop:2,...numeral}}>{dayNum}</div>
-                    {dd
-                      ? <div style={{marginTop:"auto",display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
-                          <span title={verdictOf(lvl)?.label} style={{fontSize:11,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
-                          <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,...numeral}}>{amt.text}</span>
-                        </div>
-                      : isZero
-                        ? <div style={{fontSize:12,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
-                        : <div style={{fontSize:12,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
+                    {isAbsent
+                      ? <div title={verdictOf(lvl)?.label} style={{fontSize:16,color:t.textFaint,marginTop:"auto",opacity:0.5}}>·</div>
+                      : dd
+                        ? <div style={{marginTop:"auto",display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
+                            <span title={verdictOf(lvl)?.label} style={{fontSize:11,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
+                            <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,...numeral}}>{amt.text}</span>
+                          </div>
+                        : isZero
+                          ? <div style={{fontSize:12,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
+                          : <div style={{fontSize:12,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
                     }
                     {dd && dd.received > 0 && <div title="money in" style={{fontFamily:TOKENS.type.chic,fontSize:12,fontWeight:700,lineHeight:1,marginTop:2,color:over?"rgba(255,255,255,.9)":t.credit}}>+</div>}
                   </div>
@@ -604,6 +646,7 @@
           const isToday = ds === TODAY;
           const isSel   = selectedDay === ds;
           const isZero  = lvl === "zero";
+          const isAbsent= lvl === "absent";
           const over    = lvl === "high";
           if (dd) mTotal += basisAmount(dd);
           const ct = cellTone(lvl);
@@ -619,14 +662,16 @@
                 <span style={{fontFamily:TOKENS.type.serif,fontSize:12,color:isToday?(over?"#fff":t.accent):(lvl==="none"?t.textFaint:ct.num),...numeral}}>{d}</span>
                 {dd && dd.received > 0 && <span title="money in" style={{fontFamily:TOKENS.type.chic,fontSize:11,fontWeight:700,lineHeight:1,color:over?"rgba(255,255,255,.9)":t.credit}}>+</span>}
               </div>
-              {dd
-                ? <div style={{display:"flex",alignItems:"baseline",gap:3,marginTop:"auto"}}>
-                    <span title={verdictOf(lvl)?.label} style={{fontSize:9,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
-                    <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,lineHeight:1,...numeral}}>{amt.text}</span>
-                  </div>
-                : isZero
-                  ? <div style={{fontSize:11,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
-                  : <div style={{fontSize:11,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
+              {isAbsent
+                ? <div title={verdictOf(lvl)?.label} style={{fontSize:13,color:t.textFaint,marginTop:"auto",opacity:0.5}}>·</div>
+                : dd
+                  ? <div style={{display:"flex",alignItems:"baseline",gap:3,marginTop:"auto"}}>
+                      <span title={verdictOf(lvl)?.label} style={{fontSize:9,lineHeight:1,color:ct.num}}>{verdictOf(lvl)?.mark}</span>
+                      <span style={{fontFamily:TOKENS.type.serif,fontSize:13,color:amt.gain?t.credit:ct.amt,lineHeight:1,...numeral}}>{amt.text}</span>
+                    </div>
+                  : isZero
+                    ? <div style={{fontSize:11,color:over?"rgba(255,255,255,.7)":t.accent2Ink,marginTop:"auto"}}>●</div>
+                    : <div style={{fontSize:11,color:t.textFaint,marginTop:"auto",opacity:0.4}}>—</div>
               }
             </div>
           );
@@ -634,7 +679,7 @@
         return (
           <div>
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
-              <span>The Month in Full</span><span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
+              <span>{filterLabel ? `${filterLabel} · The Month` : "The Month in Full"}</span><span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (
@@ -657,7 +702,7 @@
         return (
           <div>
             <div style={{fontFamily:TOKENS.type.chic,fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase",margin:"2px 0 0",paddingBottom:5,borderBottom:`1px solid ${t.ruleBold}`,display:"flex",justifyContent:"space-between",color:t.ink}}>
-              <span>The Annual Report · {currentYear}</span><span style={{color:t.accent,...numeral}}>{fmtAmt(yTotal,0).text}</span>
+              <span>{filterLabel ? `${filterLabel} · ${currentYear}` : `The Annual Report · ${currentYear}`}</span><span style={{color:t.accent,...numeral}}>{fmtAmt(yTotal,0).text}</span>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderLeft:`1px solid ${t.ruleHair}`,borderTop:`1px solid ${t.ruleHair}`}}>
               {MONTH_NAMES.map((mName,mi) => {
@@ -670,8 +715,10 @@
                   if (v) { tot += basisAmount(v); recv += v.received; if (v.total > 0) has = true; }
                 }
                 const avgDaily = has ? tot/dim : 0;
-                const hi = Math.max(highThreshold, lowThreshold);
-                const mLvl = !has ? "none" : avgDaily<=lowThreshold ? "low" : avgDaily<=hi ? "medium" : "high";
+                const yLow = filteredThresholds ? filteredThresholds.low  : lowThreshold;
+                const yHigh= filteredThresholds ? filteredThresholds.high : highThreshold;
+                const hi = Math.max(yHigh, yLow);
+                const mLvl = !has ? "none" : avgDaily<=yLow ? "low" : avgDaily<=hi ? "medium" : "high";
                 return (
                   <div key={mi} onClick={()=>{ setCurrentMonth(mi); setView("month"); }}
                     style={{borderRight:`1px solid ${t.ruleHair}`,borderBottom:`1px solid ${t.ruleHair}`,padding:"9px 9px 11px",cursor:"pointer",transition:"background 0.12s"}}
@@ -752,8 +799,16 @@
             {/* Right-edge fade hinting the chip row scrolls past the viewport */}
             <div aria-hidden="true" style={{position:"absolute",top:0,right:0,bottom:5,width:24,pointerEvents:"none",background:`linear-gradient(to right, transparent, ${t.canvas})`}}/>
             {!allOn && (
-              <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase",color:t.accent,marginTop:2}}>
-                Filtered · {activeCats.length} {activeCats.length===1?"category":"categories"} · tap All to clear
+              <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6,fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase"}}>
+                <span style={{background:t.accent2,color:t.accent2Ink,padding:"3px 9px",borderRadius:100,fontWeight:700}}>
+                  Focus · {filterLabel}
+                </span>
+                {filteredThresholds && (
+                  <span style={{color:t.inkMuted,textTransform:"none",letterSpacing:"0.02em"}}>
+                    judged vs {fmtAmt(filteredThresholds.avg,0).text}/day avg
+                  </span>
+                )}
+                <span style={{color:t.accent}}>· tap All to clear</span>
               </div>
             )}
           </div>

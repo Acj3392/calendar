@@ -80,6 +80,41 @@ test('credits render and filter against the sample fixture', async ({ page }) =>
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Focus mode: filtering reframes the view around the slice. With Coffee Shops
+// selected, 06-01 has coffee spend (figure) while 06-02 (other spend) and 06-03
+// (income only) have none (recede). The Focus strip + reframed header are the
+// unmistakable "you are filtered" signal the feature exists to provide.
+test('filtering engages Focus mode — strip + reframed header', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Unfiltered: the Month section reads its default masthead.
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+  await expect(page.getByText('The Month in Full')).toBeVisible();
+
+  // Filter to Coffee Shops → Focus strip names the slice, header reframes.
+  await page.getByRole('button', { name: 'Coffee Shops', exact: true }).click();
+  await expect(page.getByText('Focus · Coffee Shops')).toBeVisible();
+  await expect(page.getByText('Coffee Shops · The Month')).toBeVisible();
+  await expect(page.getByText('The Month in Full')).toHaveCount(0);
+  await page.screenshot({ path: 'screenshots/focus-mode.png' });
+
+  // Tapping All clears the filter and restores the default masthead.
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+  await expect(page.getByText('The Month in Full')).toBeVisible();
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
 // Net-verdict toggle (PR2): flipping the basis re-reads the verdict as net.
 // Today in the fixture is a pure-income day (total 0, received 2000): spend
 // mode reads "No spend", net mode reads "Net positive".
