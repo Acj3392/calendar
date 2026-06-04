@@ -77,7 +77,9 @@ index.html`).
 ## Refreshing the data
 
 **Daily (automatic):** a launchd job on the Mac runs `refresh_local.sh` at 9am
-MST → `fetch_monarch.py` (token auth) → commits + pushes → Vercel redeploys.
+local (America/Denver) → `fetch_monarch.py` (token auth) → commits + pushes →
+Vercel redeploys. (If the repo lives under `~/Desktop`, the agent needs Full Disk
+Access granted to `/bin/bash` or macOS TCC blocks it — see the auth solution doc.)
 
 **On-demand (Claude session):** pull recent transactions via the Monarch MCP,
 then:

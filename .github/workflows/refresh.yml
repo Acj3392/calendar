@@ -32,7 +32,10 @@ jobs:
       - name: Fetch Monarch transactions
         env:
           # Token-only auth: never hits Monarch's login endpoint (avoids 429).
-          # Mint the token locally with scripts/mint_token.py.
+          # NOTE: scripts/mint_token.py is a DEAD path (the library login 405s) —
+          # this CI job cannot actually authenticate. Refresh runs from the Mac
+          # (launchd) or a Claude session instead. See
+          # docs/solutions/monarch-auth-and-refresh.md.
           MONARCH_TOKEN: ${{ secrets.MONARCH_TOKEN }}
         run: python scripts/fetch_monarch.py
 

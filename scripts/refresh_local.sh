@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # refresh_local.sh — pull fresh Monarch data, commit, and push to trigger Vercel redeploy.
-# Designed to run as a launchd job (daily at 7am) or manually: bash scripts/refresh_local.sh
+# Designed to run as a launchd job (daily at 9am) or manually: bash scripts/refresh_local.sh
 set -euo pipefail
 
 REPO="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"

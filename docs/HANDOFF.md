@@ -83,7 +83,7 @@ refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
 ## Data refresh (unchanged)
 
-Daily launchd job on Anna's Mac (9am MST) runs `scripts/refresh_local.sh` →
+Daily launchd job on Anna's Mac (9am local, America/Denver) runs `scripts/refresh_local.sh` →
 `fetch_monarch.py` (token auth) → commits `data/spending.json` → push →
 Vercel redeploys. Manual path: Monarch MCP `get_transactions` →
 `python scripts/build_from_mcp.py <dump> --today $(date +%F)`.
@@ -99,6 +99,13 @@ git push origin main # auto-deploys to Vercel (direct-to-main authorized)
 ```
 
 ## Note
-`README.md` is pre-redesign (mentions emoji markers, a 6h cron) and is stale on
-the UI; trust this handoff + the solution docs. Worth refreshing the README at
-some point, but it's not load-bearing.
+`README.md` has been refreshed to the current design (glyph verdicts, credits/net,
+no-CI-cron rationale) and is no longer stale — trust it alongside this handoff and
+the solution docs.
+
+## ⚠️ Known issue (2026-06-03): the 9am launchd job is failing
+The agent dies with exit 126 ("Operation not permitted") — macOS TCC blocks
+launchd from running a script under `~/Desktop`. Today's data was refreshed by a
+**manual** `bash scripts/refresh_local.sh` run at ~11am, not the 9am job. Fix:
+grant Full Disk Access to `/bin/bash`, then reload the agent. Full write-up in
+[[monarch-auth-and-refresh]]. Until that's done, the daily refresh is manual.

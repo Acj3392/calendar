@@ -2,13 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Launchd agent — runs refresh_local.sh daily at 7am.
+  Launchd agent — runs refresh_local.sh daily at 9am local time.
 
   One-time setup:
     cp scripts/com.anna.spending-calendar.plist ~/Library/LaunchAgents/
     launchctl load ~/Library/LaunchAgents/com.anna.spending-calendar.plist
 
-  To test it immediately (without waiting for 7am):
+  REQUIRED if the repo lives under ~/Desktop (or ~/Documents): macOS TCC blocks
+  launchd from executing scripts in those folders, so the job dies with exit 126
+  ("Operation not permitted"). Grant Full Disk Access to /bin/bash:
+    System Settings → Privacy & Security → Full Disk Access → + → /bin/bash
+  then unload + load the agent again. (The `bash -l` flag does NOT fix this.)
+
+  To test it immediately (without waiting for 9am):
     launchctl start com.anna.spending-calendar
 
   To stop / unload:
@@ -28,7 +34,7 @@
     <string>/Users/anna/Desktop/Home/AI-Projects/calendar/scripts/refresh_local.sh</string>
   </array>
 
-  <!-- Run daily at 9:00am MST -->
+  <!-- Run daily at 9:00am local time (America/Denver) -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>

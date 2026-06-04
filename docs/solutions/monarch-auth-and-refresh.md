@@ -100,17 +100,32 @@ The working version is **1.3.0**, installed in the PersonalOS project's venv:
 `refresh_local.sh` is wired to use this venv explicitly. **1.3.0 is NOT on PyPI** —
 it's a local/community build; `pip install 'monarchmoney>=1.3.0'` will fail.
 
-### launchd: use `-l` flag on bash or get "Operation not permitted"
-The plist must invoke bash with the login flag so it loads the user environment:
-```xml
-<key>ProgramArguments</key>
-<array>
-  <string>/bin/bash</string>
-  <string>-l</string>
-  <string>/full/path/to/refresh_local.sh</string>
-</array>
+### launchd "Operation not permitted" = macOS TCC, NOT the `-l` flag
+**Confirmed 2026-06-03:** the job was failing with `LastExitStatus = 32256`
+(exit code 126, "Operation not permitted") even though the plist already passes
+`bash -l` and the script's exec bit is set. The real cause: the repo lives under
+`~/Desktop`, a **TCC-protected folder**. Terminal/Claude have been granted Desktop
+access so manual runs work, but the launchd agent has not — so it can't even
+*execute* a script under `~/Desktop`. The `-l` flag is unrelated and does not fix
+this (an earlier version of this doc wrongly claimed it did).
+
+**Fix (chosen): grant Full Disk Access to the program launchd runs.**
 ```
-Without `-l`, launchd returns "Operation not permitted" on the script.
+System Settings → Privacy & Security → Full Disk Access → + → /bin/bash
+```
+Then reload the agent:
+```bash
+launchctl unload ~/Library/LaunchAgents/com.anna.spending-calendar.plist
+launchctl load   ~/Library/LaunchAgents/com.anna.spending-calendar.plist
+launchctl start  com.anna.spending-calendar   # test now
+tail -f logs/refresh.log                        # should no longer say "Operation not permitted"
+```
+Alternative (more robust, not chosen): move the repo out of `~/Desktop`/`~/Documents`
+to a non-TCC path (e.g. `~/AI-Projects/calendar`) and update the hardcoded paths
+in the plist. That removes the protection boundary entirely.
+
+The plist still passes `bash -l` so the job loads the login environment — keep it,
+just don't expect it to solve TCC.
 
 ### Token expiry
 The `MONARCH_TOKEN` session will eventually expire. When it does:
