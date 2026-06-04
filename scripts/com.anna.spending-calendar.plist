@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Launchd agent — runs refresh_local.sh daily at 9am local time.
+  Launchd agent — runs refresh_local.sh daily at 9am and 4pm local time.
 
   One-time setup:
     cp scripts/com.anna.spending-calendar.plist ~/Library/LaunchAgents/
@@ -14,7 +14,7 @@
     System Settings → Privacy & Security → Full Disk Access → + → /bin/bash
   then unload + load the agent again. (The `bash -l` flag does NOT fix this.)
 
-  To test it immediately (without waiting for 9am):
+  To test it immediately (without waiting for a scheduled time):
     launchctl start com.anna.spending-calendar
 
   To stop / unload:
@@ -34,18 +34,23 @@
     <string>/Users/anna/Desktop/Home/AI-Projects/calendar/scripts/refresh_local.sh</string>
   </array>
 
-  <!-- Run daily at 9:00am local time (America/Denver) -->
+  <!-- Run daily at 9:00am and 4:00pm local time (America/Denver).
+       launchd reruns a missed time when the Mac wakes. -->
   <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key>
-    <integer>9</integer>
-    <key>Minute</key>
-    <integer>0</integer>
-  </dict>
-
-  <!-- If the Mac was asleep at 9am, run as soon as it wakes -->
-  <key>StartInterval</key>
-  <integer>86400</integer>
+  <array>
+    <dict>
+      <key>Hour</key>
+      <integer>9</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+    <dict>
+      <key>Hour</key>
+      <integer>16</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+  </array>
 
   <key>StandardOutPath</key>
   <string>/Users/anna/Desktop/Home/AI-Projects/calendar/logs/refresh.log</string>

@@ -83,7 +83,7 @@ refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
 ## Data refresh (unchanged)
 
-Daily launchd job on Anna's Mac (9am local, America/Denver) runs `scripts/refresh_local.sh` →
+Daily launchd job on Anna's Mac (9am + 4pm local, America/Denver) runs `scripts/refresh_local.sh` →
 `fetch_monarch.py` (token auth) → commits `data/spending.json` → push →
 Vercel redeploys. Manual path: Monarch MCP `get_transactions` →
 `python scripts/build_from_mcp.py <dump> --today $(date +%F)`.

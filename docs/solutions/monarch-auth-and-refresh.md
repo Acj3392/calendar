@@ -75,7 +75,7 @@ app process kept the old one.)
 ## What WORKS: local launchd daily refresh (2026-06-02 addition)
 
 A second working path was established: a **local Mac launchd job** that runs
-`scripts/refresh_local.sh` at 9am daily. It authenticates via a saved
+`scripts/refresh_local.sh` at 9am and 4pm daily. It authenticates via a saved
 `MONARCH_TOKEN` (not email/password login), so it bypasses Monarch's login
 endpoint entirely.
 
