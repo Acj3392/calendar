@@ -1,14 +1,32 @@
 {
   "today": "2026-06-05",
-  "generatedAt": "2026-06-05T20:42:53.678997+00:00",
+  "generatedAt": "2026-06-05T22:00:09.009509+00:00",
   "refreshStatus": "ok",
   "data": [
     {
       "date": "2026-01-01",
-      "total": 274.22,
+      "total": 488.49,
       "received": 4153.0,
-      "net": 3878.78,
+      "net": 3664.51,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 14.41,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 142.25,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 57.61,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Venmo",
           "amount": 1302.0,
@@ -79,10 +97,34 @@
     },
     {
       "date": "2026-01-02",
-      "total": 3265.77,
-      "received": 2598.55,
-      "net": -667.22,
+      "total": 3302.32,
+      "received": 2678.1,
+      "net": -624.22,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 36.55,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.96,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 39.25,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 28.34,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "TikTok",
           "amount": 50.9,
@@ -297,10 +339,22 @@
     },
     {
       "date": "2026-01-09",
-      "total": 236.93,
+      "total": 354.74,
       "received": 50.0,
-      "net": -186.93,
+      "net": -304.74,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 98.39,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.42,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Whole Foods",
           "amount": 98.39,
@@ -475,10 +529,16 @@
     },
     {
       "date": "2026-01-14",
-      "total": 260.85,
+      "total": 370.27,
       "received": 0,
-      "net": -260.85,
+      "net": -370.27,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 109.42,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Petals & Pages",
           "amount": 125.0,
@@ -591,10 +651,22 @@
     },
     {
       "date": "2026-01-18",
-      "total": 501.0,
+      "total": 722.21,
       "received": 40.0,
-      "net": -461.0,
+      "net": -682.21,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 213.75,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 7.46,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Rover.com",
           "amount": 194.25,
@@ -635,10 +707,22 @@
     },
     {
       "date": "2026-01-19",
-      "total": 84.08,
+      "total": 104.01,
       "received": 107.0,
-      "net": 22.92,
+      "net": 2.99,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 8.74,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "TikTok",
           "amount": 64.15,
@@ -717,10 +801,22 @@
     },
     {
       "date": "2026-01-21",
-      "total": 450.87,
-      "received": 72.01,
-      "net": -378.86,
+      "total": 458.5,
+      "received": 84.0,
+      "net": -374.5,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 7.63,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.99,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "Interest Charge",
           "amount": 0.03,
@@ -1111,10 +1207,22 @@
     },
     {
       "date": "2026-01-29",
-      "total": 252.4,
+      "total": 454.63,
       "received": 12.0,
-      "net": -240.4,
+      "net": -442.63,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 178.37,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 23.86,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Snarf's",
           "amount": 27.55,
@@ -1199,10 +1307,16 @@
     },
     {
       "date": "2026-01-31",
-      "total": 251.95,
+      "total": 282.9,
       "received": 60.0,
-      "net": -191.95,
+      "net": -222.9,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 30.95,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Docapet.com",
           "amount": 126.0,
@@ -1317,10 +1431,40 @@
     },
     {
       "date": "2026-02-02",
-      "total": 443.58,
-      "received": 180.95,
-      "net": -262.63,
+      "total": 510.17,
+      "received": 211.9,
+      "net": -298.27,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 19.82,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.29,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 30.95,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 15.12,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Relaxing Station",
           "amount": 60.0,
@@ -1385,10 +1529,28 @@
     },
     {
       "date": "2026-02-03",
-      "total": 241.71,
+      "total": 314.42,
       "received": 752.35,
-      "net": 510.64,
+      "net": 437.93,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 18.83,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 29.87,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 24.01,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Tender Warrior Co Tenderwarriorvt",
           "amount": 81.6,
@@ -1447,10 +1609,16 @@
     },
     {
       "date": "2026-02-04",
-      "total": 231.28,
+      "total": 257.94,
       "received": 155.0,
-      "net": -76.28,
+      "net": -102.94,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 26.66,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 26.66,
@@ -1541,10 +1709,22 @@
     },
     {
       "date": "2026-02-06",
-      "total": 3337.45,
+      "total": 3472.24,
       "received": 423.0,
-      "net": -2914.45,
+      "net": -3049.24,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 13.16,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 121.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Zelle",
           "amount": 300.0,
@@ -1591,10 +1771,28 @@
     },
     {
       "date": "2026-02-07",
-      "total": 146.07,
+      "total": 192.14,
       "received": 293.78,
-      "net": 147.71,
+      "net": 101.64,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 19.88,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 21.83,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 19.88,
@@ -1629,10 +1827,22 @@
     },
     {
       "date": "2026-02-08",
-      "total": 252.0,
+      "total": 282.82,
       "received": 101.0,
-      "net": -151.0,
+      "net": -181.82,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Going",
           "amount": 39.0,
@@ -1825,10 +2035,16 @@
     },
     {
       "date": "2026-02-13",
-      "total": 46.45,
+      "total": 70.52,
       "received": 3609.17,
-      "net": 3562.72,
+      "net": 3538.65,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 24.07,
+          "category": "Groceries",
+          "type": "debit"
+        },
         {
           "merchant": "Google One",
           "amount": 2.12,
@@ -1869,10 +2085,16 @@
     },
     {
       "date": "2026-02-14",
-      "total": 243.85,
+      "total": 385.88,
       "received": 0,
-      "net": -243.85,
+      "net": -385.88,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 142.03,
+          "category": "Groceries",
+          "type": "debit"
+        },
         {
           "merchant": "Whole Foods",
           "amount": 142.03,
@@ -1901,10 +2123,22 @@
     },
     {
       "date": "2026-02-15",
-      "total": 175.21,
+      "total": 205.27,
       "received": 119.47,
-      "net": -55.74,
+      "net": -85.8,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 13.69,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 16.37,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Machete Tequila Taco",
           "amount": 78.42,
@@ -1995,10 +2229,28 @@
     },
     {
       "date": "2026-02-17",
-      "total": 205.57,
+      "total": 290.14,
       "received": 0,
-      "net": -205.57,
+      "net": -290.14,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.55,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 55.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 17.74,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 11.55,
@@ -2028,9 +2280,15 @@
     {
       "date": "2026-02-18",
       "total": 172.48,
-      "received": 106.66,
-      "net": -65.82,
+      "received": 133.32,
+      "net": -39.16,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 26.66,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "Amazon",
           "amount": 26.66,
@@ -2117,10 +2375,22 @@
     },
     {
       "date": "2026-02-21",
-      "total": 890.7,
+      "total": 891.26,
       "received": 60.0,
-      "net": -830.7,
+      "net": -831.26,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Xcel Energy",
           "amount": 686.19,
@@ -2185,10 +2455,16 @@
     },
     {
       "date": "2026-02-22",
-      "total": 24.85,
+      "total": 49.7,
       "received": 0,
-      "net": -24.85,
+      "net": -49.7,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 24.85,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 24.85,
@@ -2251,10 +2527,28 @@
     },
     {
       "date": "2026-02-25",
-      "total": 145.26,
+      "total": 202.19,
       "received": 0,
-      "net": -145.26,
+      "net": -202.19,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 28.52,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 20.5,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 7.91,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 28.52,
@@ -2309,10 +2603,16 @@
     },
     {
       "date": "2026-02-27",
-      "total": 48.26,
+      "total": 61.63,
       "received": 3584.18,
-      "net": 3535.92,
+      "net": 3522.55,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.37,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "Kindle",
           "amount": 13.37,
@@ -2367,10 +2667,40 @@
     },
     {
       "date": "2026-03-01",
-      "total": 625.46,
-      "received": 3994.13,
-      "net": 3368.67,
+      "total": 685.57,
+      "received": 4036.26,
+      "net": 3350.69,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 27.27,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 14.84,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.57,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 5.27,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.29,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "Wonder Press Bould",
           "amount": 17.86,
@@ -2447,10 +2777,28 @@
     },
     {
       "date": "2026-03-02",
-      "total": 251.79,
-      "received": 214.76,
-      "net": -37.03,
+      "total": 341.51,
+      "received": 259.18,
+      "net": -82.33,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 89.72,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 33.84,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 10.58,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "Whole Foods",
           "amount": 89.72,
@@ -2504,9 +2852,15 @@
     {
       "date": "2026-03-03",
       "total": 156.93,
-      "received": 85.58,
-      "net": -71.35,
+      "received": 96.16,
+      "net": -60.77,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 10.58,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "East West Integrated",
           "amount": 137.93,
@@ -2687,10 +3041,22 @@
     },
     {
       "date": "2026-03-08",
-      "total": 183.2,
+      "total": 329.36,
       "received": 0,
-      "net": -183.2,
+      "net": -329.36,
       "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 144.59,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 1.57,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Whole Foods",
           "amount": 144.59,
@@ -2719,10 +3085,16 @@
     },
     {
       "date": "2026-03-09",
-      "total": 39.34,
+      "total": 52.34,
       "received": 73.0,
-      "net": 33.66,
+      "net": 20.66,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 13.0,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 13.0,
@@ -2829,10 +3201,22 @@
     },
     {
       "date": "2026-03-13",
-      "total": 379.86,
+      "total": 402.51,
       "received": 3481.03,
-      "net": 3101.17,
+      "net": 3078.52,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 2.71,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.94,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Google One",
           "amount": 2.12,
@@ -2891,10 +3275,16 @@
     },
     {
       "date": "2026-03-14",
-      "total": 390.0,
+      "total": 394.36,
       "received": 0,
-      "net": -390.0,
+      "net": -394.36,
       "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Lifetime Fitness",
           "amount": 1.99,
@@ -3037,10 +3427,16 @@
     },
     {
       "date": "2026-03-18",
-      "total": 123.83,
+      "total": 137.76,
       "received": 90.0,
-      "net": -33.83,
+      "net": -47.76,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.93,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "Apple",
           "amount": 9.8,
@@ -3075,10 +3471,22 @@
     },
     {
       "date": "2026-03-19",
-      "total": 578.78,
+      "total": 809.65,
       "received": 0,
-      "net": -578.78,
+      "net": -809.65,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 181.48,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 49.39,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 181.48,
@@ -3119,10 +3527,22 @@
     },
     {
       "date": "2026-03-21",
-      "total": 656.3,
+      "total": 696.62,
       "received": 2647.64,
-      "net": 1991.34,
+      "net": 1951.02,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 34.87,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 5.45,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "LendingClub - Personal & Business",
           "amount": 114.91,
@@ -3187,10 +3607,16 @@
     },
     {
       "date": "2026-03-22",
-      "total": 35.69,
+      "total": 46.88,
       "received": 80.0,
-      "net": 44.31,
+      "net": 33.12,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "ChargePoint",
           "amount": 5.1,
@@ -3283,10 +3709,22 @@
     },
     {
       "date": "2026-03-25",
-      "total": 24.14,
+      "total": 48.28,
       "received": 0,
-      "net": -24.14,
+      "net": -48.28,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 23.86,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 0.28,
@@ -3303,10 +3741,28 @@
     },
     {
       "date": "2026-03-26",
-      "total": 108.96,
-      "received": 0.28,
-      "net": -108.68,
+      "total": 131.46,
+      "received": 0.56,
+      "net": -130.9,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.35,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.15,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "The Coffee Ride",
           "amount": 11.47,
@@ -3348,9 +3804,15 @@
     {
       "date": "2026-03-27",
       "total": 152.87,
-      "received": 91.58,
-      "net": -61.29,
+      "received": 115.16,
+      "net": -37.71,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 23.58,
+          "category": "Amazon",
+          "type": "credit"
+        },
         {
           "merchant": "The Golden Mill",
           "amount": 36.8,
@@ -3391,10 +3853,22 @@
     },
     {
       "date": "2026-03-28",
-      "total": 206.72,
+      "total": 230.72,
       "received": 40.0,
-      "net": -166.72,
+      "net": -190.72,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.09,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 10.91,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "Ace Eat Serve",
           "amount": 95.79,
@@ -3497,10 +3971,16 @@
     },
     {
       "date": "2026-03-30",
-      "total": 478.75,
+      "total": 511.27,
       "received": 0,
-      "net": -478.75,
+      "net": -511.27,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 32.52,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 32.52,
@@ -3529,10 +4009,16 @@
     },
     {
       "date": "2026-03-31",
-      "total": 169.28,
+      "total": 206.66,
       "received": 3544.04,
-      "net": 3374.76,
+      "net": 3337.38,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 37.38,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 37.38,
@@ -3585,10 +4071,16 @@
     },
     {
       "date": "2026-04-01",
-      "total": 701.77,
+      "total": 710.99,
       "received": 3952.0,
-      "net": 3250.23,
+      "net": 3241.01,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 9.22,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Life Time",
           "amount": 488.58,
@@ -3660,7 +4152,7 @@
         {
           "merchant": "Thrivepass",
           "amount": 75.0,
-          "category": "Business Income",
+          "category": "Other Income",
           "type": "credit"
         },
         {
@@ -3813,10 +4305,16 @@
     },
     {
       "date": "2026-04-07",
-      "total": 37.18,
+      "total": 51.36,
       "received": 3.3,
-      "net": -33.88,
+      "net": -48.06,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 14.18,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "The New York Times",
           "amount": 23.0,
@@ -3839,10 +4337,16 @@
     },
     {
       "date": "2026-04-08",
-      "total": 69.57,
+      "total": 102.3,
       "received": 0,
-      "net": -69.57,
+      "net": -102.3,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 32.73,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Wonder Press",
           "amount": 16.76,
@@ -3885,10 +4389,16 @@
     },
     {
       "date": "2026-04-10",
-      "total": 92.63,
+      "total": 100.26,
       "received": 0,
-      "net": -92.63,
+      "net": -100.26,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 7.63,
@@ -3905,10 +4415,16 @@
     },
     {
       "date": "2026-04-11",
-      "total": 134.31,
+      "total": 209.92,
       "received": 0,
-      "net": -134.31,
+      "net": -209.92,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 75.61,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "The Flats Beer Garde",
           "amount": 9.0,
@@ -3931,10 +4447,16 @@
     },
     {
       "date": "2026-04-12",
-      "total": 298.25,
+      "total": 328.82,
       "received": 83.0,
-      "net": -215.25,
+      "net": -245.82,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 30.57,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Whole Foods Co-op",
           "amount": 107.81,
@@ -4249,10 +4771,16 @@
     },
     {
       "date": "2026-04-21",
-      "total": 155.2,
+      "total": 195.49,
       "received": 679.0,
-      "net": 523.8,
+      "net": 483.51,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 40.29,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "LendingClub - Personal & Business",
           "amount": 114.91,
@@ -4295,10 +4823,16 @@
     },
     {
       "date": "2026-04-23",
-      "total": 191.64,
+      "total": 197.75,
       "received": 39.68,
-      "net": -151.96,
+      "net": -158.07,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 6.11,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Ally Bank",
           "amount": 1.4,
@@ -4389,10 +4923,16 @@
     },
     {
       "date": "2026-04-25",
-      "total": 360.26,
+      "total": 363.69,
       "received": 0,
-      "net": -360.26,
+      "net": -363.69,
       "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 3.43,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Bartaco",
           "amount": 36.17,
@@ -4611,10 +5151,22 @@
     },
     {
       "date": "2026-05-01",
-      "total": 826.64,
+      "total": 856.1,
       "received": 3952.0,
-      "net": 3125.36,
+      "net": 3095.9,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.09,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 16.37,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Kindle",
           "amount": 13.09,
@@ -4691,10 +5243,16 @@
     },
     {
       "date": "2026-05-02",
-      "total": 154.61,
+      "total": 159.59,
       "received": 0,
-      "net": -154.61,
+      "net": -159.59,
       "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 4.98,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Prime Video",
           "amount": 4.98,
@@ -4729,10 +5287,16 @@
     },
     {
       "date": "2026-05-03",
-      "total": 102.46,
+      "total": 104.0,
       "received": 0,
-      "net": -102.46,
+      "net": -104.0,
       "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 1.54,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "ChargePoint",
           "amount": 5.06,
@@ -4787,10 +5351,22 @@
     },
     {
       "date": "2026-05-05",
-      "total": 2819.59,
+      "total": 2895.41,
       "received": 75.0,
-      "net": -2744.59,
+      "net": -2820.41,
       "transactions": [
+        {
+          "merchant": "ParkMobile",
+          "amount": 2.85,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 72.97,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "ParkMobile",
           "amount": 2.85,
@@ -4863,10 +5439,22 @@
     },
     {
       "date": "2026-05-07",
-      "total": 163.71,
+      "total": 196.94,
       "received": 95.0,
-      "net": -68.71,
+      "net": -101.94,
       "transactions": [
+        {
+          "merchant": "New Yorkese",
+          "amount": 29.28,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
         {
           "merchant": "New Yorkese",
           "amount": 29.28,
@@ -4913,10 +5501,34 @@
     },
     {
       "date": "2026-05-08",
-      "total": 435.41,
-      "received": 15.07,
-      "net": -420.34,
+      "total": 680.9,
+      "received": 30.14,
+      "net": -650.76,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 15.07,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 60.33,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 134.2,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 50.96,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "ChargePoint",
           "amount": 31.49,
@@ -4975,10 +5587,16 @@
     },
     {
       "date": "2026-05-09",
-      "total": 15.87,
+      "total": 31.74,
       "received": 65.0,
-      "net": 49.13,
+      "net": 33.26,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 15.87,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 15.87,
@@ -4995,10 +5613,16 @@
     },
     {
       "date": "2026-05-10",
-      "total": 7.63,
+      "total": 15.26,
       "received": 0,
-      "net": -7.63,
+      "net": -15.26,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 7.63,
@@ -5009,10 +5633,16 @@
     },
     {
       "date": "2026-05-11",
-      "total": 171.99,
+      "total": 188.37,
       "received": 62.5,
-      "net": -109.49,
+      "net": -125.87,
       "transactions": [
+        {
+          "merchant": "US Postal Service",
+          "amount": 16.38,
+          "category": "Postage & Shipping",
+          "type": "debit"
+        },
         {
           "merchant": "US Postal Service",
           "amount": 16.38,
@@ -5079,10 +5709,16 @@
     },
     {
       "date": "2026-05-13",
-      "total": 452.8,
+      "total": 476.6,
       "received": 91.74,
-      "net": -361.06,
+      "net": -384.86,
       "transactions": [
+        {
+          "merchant": "DoorDash",
+          "amount": 23.8,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
         {
           "merchant": "Hazel's Beverage World",
           "amount": 13.0,
@@ -5153,10 +5789,16 @@
     },
     {
       "date": "2026-05-14",
-      "total": 148.64,
+      "total": 151.57,
       "received": 40.0,
-      "net": -108.64,
+      "net": -111.57,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 2.93,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "PayPal",
           "amount": 110.03,
@@ -5231,10 +5873,28 @@
     },
     {
       "date": "2026-05-17",
-      "total": 559.97,
+      "total": 917.29,
       "received": 80.0,
-      "net": -479.97,
+      "net": -837.29,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 17.65,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 20.7,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 318.97,
+          "category": "Groceries",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 17.65,
@@ -5319,10 +5979,16 @@
     },
     {
       "date": "2026-05-19",
-      "total": 11.0,
+      "total": 22.0,
       "received": 158.0,
-      "net": 147.0,
+      "net": 136.0,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.0,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Amazon",
           "amount": 11.0,
@@ -5371,10 +6037,16 @@
     },
     {
       "date": "2026-05-21",
-      "total": 383.45,
+      "total": 396.44,
       "received": 0,
-      "net": -383.45,
+      "net": -396.44,
       "transactions": [
+        {
+          "merchant": "Walgreens",
+          "amount": 12.99,
+          "category": "Medical",
+          "type": "debit"
+        },
         {
           "merchant": "Walgreens",
           "amount": 12.99,
@@ -5441,10 +6113,28 @@
     },
     {
       "date": "2026-05-23",
-      "total": 169.92,
+      "total": 202.23,
       "received": 112.14,
-      "net": -57.78,
+      "net": -90.09,
       "transactions": [
+        {
+          "merchant": "Prime Video",
+          "amount": 1.49,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Ally Bank",
           "amount": 2.34,
@@ -5521,10 +6211,22 @@
     },
     {
       "date": "2026-05-24",
-      "total": 75.42,
+      "total": 114.17,
       "received": 0,
-      "net": -75.42,
+      "net": -114.17,
       "transactions": [
+        {
+          "merchant": "DoorDash",
+          "amount": 32.64,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Audible",
+          "amount": 6.11,
+          "category": "Streaming",
+          "type": "debit"
+        },
         {
           "merchant": "Improper City",
           "amount": 9.48,
@@ -5559,10 +6261,34 @@
     },
     {
       "date": "2026-05-25",
-      "total": 47.85,
+      "total": 75.14,
       "received": 0,
-      "net": -47.85,
+      "net": -75.14,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 10.91,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 1.93,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 10.09,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "Laughing Goat Coffee",
           "amount": 10.57,
@@ -5603,10 +6329,16 @@
     },
     {
       "date": "2026-05-26",
-      "total": 110.37,
+      "total": 119.63,
       "received": 0,
-      "net": -110.37,
+      "net": -119.63,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 9.26,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "ChargePoint",
           "amount": 9.93,
@@ -5649,10 +6381,28 @@
     },
     {
       "date": "2026-05-29",
-      "total": 388.64,
+      "total": 465.84,
       "received": 4114.83,
-      "net": 3726.19,
+      "net": 3648.99,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 34.64,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 21.99,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 20.57,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Chewy",
           "amount": 33.18,
@@ -5705,10 +6455,16 @@
     },
     {
       "date": "2026-05-30",
-      "total": 120.17,
+      "total": 125.62,
       "received": 38.0,
-      "net": -82.17,
+      "net": -87.62,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 5.45,
+          "category": "Books",
+          "type": "debit"
+        },
         {
           "merchant": "Life Time",
           "amount": 1.95,
@@ -5761,10 +6517,16 @@
     },
     {
       "date": "2026-05-31",
-      "total": 385.01,
+      "total": 404.93,
       "received": 200.0,
-      "net": -185.01,
+      "net": -204.93,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 19.92,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Boxcar Coffee",
           "amount": 16.01,
@@ -5793,10 +6555,22 @@
     },
     {
       "date": "2026-06-01",
-      "total": 1136.58,
+      "total": 1165.55,
       "received": 1433.0,
-      "net": 296.42,
+      "net": 267.45,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.02,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "USAA",
+          "amount": 21.95,
+          "category": "Insurance",
+          "type": "debit"
+        },
         {
           "merchant": "Life Time",
           "amount": 488.58,
@@ -5831,10 +6605,58 @@
     },
     {
       "date": "2026-06-02",
-      "total": 155.79,
+      "total": 517.33,
       "received": 2519.0,
-      "net": 2363.21,
+      "net": 2001.67,
       "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 18.55,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 42.56,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 12.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 30.52,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Robinhood",
+          "amount": 100.0,
+          "category": "Investments",
+          "type": "debit"
+        },
+        {
+          "merchant": "Robinhood",
+          "amount": 100.0,
+          "category": "Investments",
+          "type": "debit"
+        },
+        {
+          "merchant": "College Invest",
+          "amount": 50.0,
+          "category": "Investments",
+          "type": "debit"
+        },
         {
           "merchant": "ChargePoint",
           "amount": 3.8,
@@ -5864,9 +6686,15 @@
     {
       "date": "2026-06-03",
       "total": 0,
-      "received": 330.0,
-      "net": 330.0,
+      "received": 405.0,
+      "net": 405.0,
       "transactions": [
+        {
+          "merchant": "Thrivepass",
+          "amount": 75.0,
+          "category": "Other Income",
+          "type": "credit"
+        },
         {
           "merchant": "Discover Bank",
           "amount": 330.0,
@@ -5877,10 +6705,28 @@
     },
     {
       "date": "2026-06-04",
-      "total": 220.55,
+      "total": 754.32,
       "received": 0,
-      "net": -220.55,
+      "net": -754.32,
       "transactions": [
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.88,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Discover",
+          "amount": 330.0,
+          "category": "Loan Repayment",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.89,
+          "category": "Auto Payment",
+          "type": "debit"
+        },
         {
           "merchant": "Lauren Vallee",
           "amount": 170.0,
@@ -5909,10 +6755,16 @@
     },
     {
       "date": "2026-06-05",
-      "total": 9.99,
+      "total": 2461.0,
       "received": 0,
-      "net": -9.99,
+      "net": -2461.0,
       "transactions": [
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2451.01,
+          "category": "Mortgage",
+          "type": "debit"
+        },
         {
           "merchant": "Apple",
           "amount": 9.99,
