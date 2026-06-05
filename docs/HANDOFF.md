@@ -74,6 +74,16 @@ Gotchas captured this session: [[css-grid-1fr-overflow]] (use `minmax(0,1fr)`),
 the fixture-overlap blind spot ([[smoke-test-fixed-data-blind-spots]]), and the
 refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
+## ✅ SHIPPED: "Not applicable" categories (2026-06-05)
+
+Mark categories (e.g. Mortgage) as not-applicable in Settings → they drop from every
+total/net/verdict across all views, both directions, but stay listed muted under
+"Not applicable" in the day receipt. Reversible, persisted (`scExcludedCats`), no
+data/pipeline change. A global "N categories hidden · manage" note sits below the
+filter bar. **Read `docs/solutions/view-time-exclusion-and-choke-points.md`** — the
+reusable lesson is that `viewDay()` is the single choke point, so this was a
+one-function change. Tests + `tests/fixtures/exclude.sample.json` added.
+
 ### Possible next ideas (not committed)
 - `no-store` cache header for `index.html` so code pushes show without a hard
   refresh (intentionally skipped for now).
