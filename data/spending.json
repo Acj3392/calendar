@@ -1,34 +1,8 @@
 {
-  "today": "2026-06-04",
-  "generatedAt": "2026-06-04T15:00:08.834254+00:00",
+  "today": "2026-06-05",
+  "generatedAt": "2026-06-05T15:00:06.913878+00:00",
   "refreshStatus": "ok",
   "data": [
-    {
-      "date": "2026-03-06",
-      "total": 2536.26,
-      "received": 0,
-      "net": -2536.26,
-      "transactions": [
-        {
-          "merchant": "Backcountry Pizza",
-          "amount": 13.1,
-          "category": "Restaurants & Bars",
-          "type": "debit"
-        },
-        {
-          "merchant": "Obsidian Oakville",
-          "amount": 5.0,
-          "category": "Subscriptions",
-          "type": "debit"
-        },
-        {
-          "merchant": "ServiceMac",
-          "amount": 2518.16,
-          "category": "Mortgage",
-          "type": "debit"
-        }
-      ]
-    },
     {
       "date": "2026-03-07",
       "total": 54.29,
@@ -3175,9 +3149,9 @@
     },
     {
       "date": "2026-06-01",
-      "total": 1736.58,
+      "total": 1136.58,
       "received": 1433.0,
-      "net": -303.58,
+      "net": 296.42,
       "transactions": [
         {
           "merchant": "Life Time",
@@ -3196,12 +3170,6 @@
           "amount": 1189.0,
           "category": "Mortgage",
           "type": "credit"
-        },
-        {
-          "merchant": "Eclipse Veterinary Imaging",
-          "amount": 600.0,
-          "category": "Pets",
-          "type": "debit"
         },
         {
           "merchant": "Breanna Real",
@@ -3224,6 +3192,12 @@
       "net": 2363.21,
       "transactions": [
         {
+          "merchant": "ChargePoint",
+          "amount": 3.8,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
           "merchant": "Capital One",
           "amount": 95.0,
           "category": "Financial Fees",
@@ -3240,12 +3214,6 @@
           "amount": 2519.0,
           "category": "Mortgage",
           "type": "credit"
-        },
-        {
-          "merchant": "ChargePoint",
-          "amount": 3.8,
-          "category": "EV Charge",
-          "type": "debit"
         }
       ]
     },
@@ -3260,6 +3228,52 @@
           "amount": 330.0,
           "category": "Loan Repayment",
           "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-04",
+      "total": 220.55,
+      "received": 0,
+      "net": -220.55,
+      "transactions": [
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 25.0,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 3.93,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kelly's Wine & Spirits",
+          "amount": 21.62,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-05",
+      "total": 9.99,
+      "received": 0,
+      "net": -9.99,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions",
+          "type": "debit"
         }
       ]
     }
