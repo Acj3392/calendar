@@ -1,8 +1,2652 @@
 {
   "today": "2026-06-05",
-  "generatedAt": "2026-06-05T15:00:06.913878+00:00",
+  "generatedAt": "2026-06-05T20:40:49.886049+00:00",
   "refreshStatus": "ok",
   "data": [
+    {
+      "date": "2026-01-01",
+      "total": 274.22,
+      "received": 4153.0,
+      "net": 3878.78,
+      "transactions": [
+        {
+          "merchant": "Venmo",
+          "amount": 1302.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 142.25,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 14.41,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 57.61,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 20.54,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 14.71,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 6.7,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 72.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 18.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 30.0,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Matthew Wright",
+          "amount": 2749.0,
+          "category": "Mortgage",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-02",
+      "total": 3265.77,
+      "received": 2598.55,
+      "net": -667.22,
+      "transactions": [
+        {
+          "merchant": "TikTok",
+          "amount": 50.9,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Chewy",
+          "amount": 81.42,
+          "category": "Dog food",
+          "type": "debit"
+        },
+        {
+          "merchant": "Uber",
+          "amount": 43.03,
+          "category": "Taxi & Ride Shares",
+          "type": "debit"
+        },
+        {
+          "merchant": "Public Offering",
+          "amount": 15.88,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "Embrace Pet Insurance",
+          "amount": 56.99,
+          "category": "Pet Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 36.55,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.96,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 28.34,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 39.25,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Moneywithkatie.com",
+          "amount": 77.0,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Victoria Watson",
+          "amount": 2660.0,
+          "category": "Mortgage",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nicci Jay",
+          "amount": 2519.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 244.0,
+          "category": "Fitness",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03",
+      "total": 184.89,
+      "received": 0,
+      "net": -184.89,
+      "transactions": [
+        {
+          "merchant": "Fullscript",
+          "amount": 162.89,
+          "category": "Medical",
+          "type": "debit"
+        },
+        {
+          "merchant": "Eli Jay",
+          "amount": 22.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-04",
+      "total": 14.86,
+      "received": 330.0,
+      "net": 315.14,
+      "transactions": [
+        {
+          "merchant": "Tattered Cover B&n",
+          "amount": 3.87,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Dandy Lion Coffee",
+          "amount": 10.99,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Mobile Payment",
+          "amount": 330.0,
+          "category": "Loan Repayment",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-05",
+      "total": 2587.55,
+      "received": 0,
+      "net": -2587.55,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.62,
+          "category": "Auto Payment",
+          "type": "debit"
+        },
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2377.94,
+          "category": "Mortgage",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-06",
+      "total": 2518.16,
+      "received": 0,
+      "net": -2518.16,
+      "transactions": [
+        {
+          "merchant": "ServiceMac",
+          "amount": 2518.16,
+          "category": "Mortgage",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-07",
+      "total": 160.1,
+      "received": 0,
+      "net": -160.1,
+      "transactions": [
+        {
+          "merchant": "PayPal",
+          "amount": 128.95,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 31.15,
+          "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-08",
+      "total": 64.91,
+      "received": 0,
+      "net": -64.91,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 17.8,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Chick-fil-A",
+          "amount": 24.18,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Target",
+          "amount": 22.93,
+          "category": "Shopping",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-09",
+      "total": 236.93,
+      "received": 50.0,
+      "net": -186.93,
+      "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 98.39,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.42,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Gabee Coffee Boulder Co",
+          "amount": 12.17,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 16.95,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Pawsitive Energy Dog Grooming",
+          "amount": 90.0,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 50.0,
+          "category": "Groceries",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-10",
+      "total": 319.91,
+      "received": 0,
+      "net": -319.91,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lauren Vallee Laurenvalco",
+          "amount": 170.0,
+          "category": "Therapy",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 19.28,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 73.0,
+          "category": "Internet & Cable",
+          "type": "debit"
+        },
+        {
+          "merchant": "Briana Brooks",
+          "amount": 50.0,
+          "category": "Fun Money",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-11",
+      "total": 70.0,
+      "received": 0,
+      "net": -70.0,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 25.0,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 45.0,
+          "category": "Gifts",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-12",
+      "total": 40.73,
+      "received": 200.43,
+      "net": 159.7,
+      "transactions": [
+        {
+          "merchant": "Chipotle",
+          "amount": 40.73,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Robinhood",
+          "amount": 200.43,
+          "category": "Investments",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-13",
+      "total": 489.72,
+      "received": 20.0,
+      "net": -469.72,
+      "transactions": [
+        {
+          "merchant": "Hair Salon & Barbershops",
+          "amount": 208.88,
+          "category": "Personal",
+          "type": "debit"
+        },
+        {
+          "merchant": "New York Times",
+          "amount": 23.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Google One",
+          "amount": 2.12,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 6.52,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 14.18,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 228.93,
+          "category": "Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 6.09,
+          "category": "Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 20.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-14",
+      "total": 260.85,
+      "received": 0,
+      "net": -260.85,
+      "transactions": [
+        {
+          "merchant": "Petals & Pages",
+          "amount": 125.0,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 109.42,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 15.85,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 10.58,
+          "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "total": 2.45,
+      "received": 4505.07,
+      "net": 4502.62,
+      "transactions": [
+        {
+          "merchant": "ParkMobile",
+          "amount": 2.45,
+          "category": "Parking & Tolls",
+          "type": "debit"
+        },
+        {
+          "merchant": "TriNet",
+          "amount": 920.9,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Campminder Payroll",
+          "amount": 3584.17,
+          "category": "Paychecks",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-16",
+      "total": 7.59,
+      "received": 10.0,
+      "net": 2.41,
+      "transactions": [
+        {
+          "merchant": "Moneywithkatie.com",
+          "amount": 10.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 7.59,
+          "category": "EV Charge",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-17",
+      "total": 83.64,
+      "received": 67.0,
+      "net": -16.64,
+      "transactions": [
+        {
+          "merchant": "Moneywithkatie.com",
+          "amount": 67.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Co - Bou Store Taspenboulder Co",
+          "amount": 5.45,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Roku",
+          "amount": 20.19,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 18.0,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18",
+      "total": 501.0,
+      "received": 40.0,
+      "net": -461.0,
+      "transactions": [
+        {
+          "merchant": "Rover.com",
+          "amount": 194.25,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "DoorDash",
+          "amount": 79.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 6.54,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 213.75,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 7.46,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-19",
+      "total": 84.08,
+      "received": 107.0,
+      "net": 22.92,
+      "transactions": [
+        {
+          "merchant": "TikTok",
+          "amount": 64.15,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 8.74,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 107.0,
+          "category": "Groceries",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-20",
+      "total": 550.24,
+      "received": 0,
+      "net": -550.24,
+      "transactions": [
+        {
+          "merchant": "Matthew Wright",
+          "amount": 300.0,
+          "category": "Mortgage",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 11.95,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 3.66,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Spot & Tango",
+          "amount": 121.0,
+          "category": "Dog food",
+          "type": "debit"
+        },
+        {
+          "merchant": "Interest Charge",
+          "amount": 20.93,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "Interest Charge",
+          "amount": 2.7,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 90.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-21",
+      "total": 450.87,
+      "received": 72.01,
+      "net": -378.86,
+      "transactions": [
+        {
+          "merchant": "Interest Charge",
+          "amount": 0.03,
+          "category": "Interest",
+          "type": "credit"
+        },
+        {
+          "merchant": "Paddle",
+          "amount": 59.99,
+          "category": "Subscriptions",
+          "type": "credit"
+        },
+        {
+          "merchant": "Denver Airport",
+          "amount": 6.54,
+          "category": "Parking & Tolls",
+          "type": "debit"
+        },
+        {
+          "merchant": "Root Down Dia",
+          "amount": 27.38,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Paddle",
+          "amount": 59.99,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Harmons",
+          "amount": 260.0,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Anthropic",
+          "amount": 20.77,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 7.63,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.99,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Interest Charge",
+          "amount": 2.64,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "East West Integrated",
+          "amount": 65.92,
+          "category": "Medical",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-22",
+      "total": 733.21,
+      "received": 288.0,
+      "net": -445.21,
+      "transactions": [
+        {
+          "merchant": "Flanagans",
+          "amount": 60.05,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Atticus Coffee & Teahpark City Ut",
+          "amount": 18.52,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Atticus Coffee & Teahpark City Ut",
+          "amount": 15.12,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Xcel Energy",
+          "amount": 472.61,
+          "category": "Gas & Electric",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lending Club",
+          "amount": 114.91,
+          "category": "Loan Repayment",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 236.0,
+          "category": "Gas & Electric",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 52.0,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 52.0,
+          "category": "Groceries",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "total": 446.64,
+      "received": 0,
+      "net": -446.64,
+      "transactions": [
+        {
+          "merchant": "Starbucks",
+          "amount": 35.44,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Park City Film Park City Ut",
+          "amount": 12.08,
+          "category": "Parking & Tolls",
+          "type": "debit"
+        },
+        {
+          "merchant": "Uber",
+          "amount": 14.94,
+          "category": "Taxi & Ride Shares",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sundance.org",
+          "amount": 182.9,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sundance.org",
+          "amount": 109.74,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 6.54,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 85.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-24",
+      "total": 204.81,
+      "received": 107.01,
+      "net": -97.8,
+      "transactions": [
+        {
+          "merchant": "Nuuly",
+          "amount": 107.01,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Mother Coffee New",
+          "amount": 14.46,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sundance Institute",
+          "amount": 60.0,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Drew Eaton",
+          "amount": 25.0,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        },
+        {
+          "merchant": "Uber",
+          "amount": 46.98,
+          "category": "Taxi & Ride Shares",
+          "type": "debit"
+        },
+        {
+          "merchant": "East West Integrated",
+          "amount": 58.37,
+          "category": "Medical",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-25",
+      "total": 686.96,
+      "received": 0,
+      "net": -686.96,
+      "transactions": [
+        {
+          "merchant": "Instagram.com",
+          "amount": 375.0,
+          "category": "Advertising & Promotion",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sundance.org",
+          "amount": 36.58,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sundance.org",
+          "amount": 36.58,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Istore Exp Relay",
+          "amount": 3.8,
+          "category": "Parking & Tolls",
+          "type": "debit"
+        },
+        {
+          "merchant": "Luna Boydstun",
+          "amount": 75.0,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 60.0,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 100.0,
+          "category": "Taxi & Ride Shares",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "total": 221.3,
+      "received": 293.0,
+      "net": 71.7,
+      "transactions": [
+        {
+          "merchant": "Marcos Coal Fired",
+          "amount": 27.29,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Petals & Pages Denver Co",
+          "amount": 0.56,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Anthropic",
+          "amount": 86.44,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sky Macfadyen",
+          "amount": 136.0,
+          "category": "Entertainment & Recreation",
+          "type": "credit"
+        },
+        {
+          "merchant": "Eli Jay",
+          "amount": 157.0,
+          "category": "Entertainment & Recreation",
+          "type": "credit"
+        },
+        {
+          "merchant": "Nuuly",
+          "amount": 107.01,
+          "category": "Clothing",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-27",
+      "total": 118.27,
+      "received": 260.0,
+      "net": 141.73,
+      "transactions": [
+        {
+          "merchant": "Zelle",
+          "amount": 260.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "Tiffins India Cafe",
+          "amount": 6.48,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 9.29,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Public Works Parking",
+          "amount": 2.5,
+          "category": "Parking & Tolls",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sarah Flores",
+          "amount": 100.0,
+          "category": "Shopping",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-28",
+      "total": 98.5,
+      "received": 30.0,
+      "net": -68.5,
+      "transactions": [
+        {
+          "merchant": "Sweet Bloom Coffee",
+          "amount": 12.13,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sweet Bloom Coffee",
+          "amount": 6.44,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Tiffins India Cafe",
+          "amount": 67.93,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sanebox Email Filter",
+          "amount": 12.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 30.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-29",
+      "total": 252.4,
+      "received": 12.0,
+      "net": -240.4,
+      "transactions": [
+        {
+          "merchant": "Snarf's",
+          "amount": 27.55,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.55,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 5.19,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 178.37,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 23.86,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 12.88,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Megan Moore",
+          "amount": 12.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-30",
+      "total": 132.72,
+      "received": 3698.18,
+      "net": 3565.46,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 89.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 49.62,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "City of Boulder",
+          "amount": 83.1,
+          "category": "Water",
+          "type": "debit"
+        },
+        {
+          "merchant": "Campminder Payroll",
+          "amount": 3584.18,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 25.0,
+          "category": "Groceries",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-31",
+      "total": 251.95,
+      "received": 60.0,
+      "net": -191.95,
+      "transactions": [
+        {
+          "merchant": "Docapet.com",
+          "amount": 126.0,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 30.95,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Annual Fee",
+          "amount": 95.0,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "Tayeb Bouhaddad",
+          "amount": 20.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Brianna Provda",
+          "amount": 40.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-01",
+      "total": 844.1,
+      "received": 4272.0,
+      "net": 3427.9,
+      "transactions": [
+        {
+          "merchant": "Annual Membership Fee",
+          "amount": 99.0,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 127.61,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 24.0,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "Roku",
+          "amount": 12.0,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lifetime Fitness",
+          "amount": 488.58,
+          "category": "Fitness",
+          "type": "debit"
+        },
+        {
+          "merchant": "Beleza Coffee Bar",
+          "amount": 11.37,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nicci Jay",
+          "amount": 2519.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
+        {
+          "merchant": "Chelsea Moore",
+          "amount": 120.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Caden Strasheim",
+          "amount": 200.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 1189.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 244.0,
+          "category": "Fitness",
+          "type": "credit"
+        },
+        {
+          "merchant": "Chewy",
+          "amount": 81.54,
+          "category": "Dog food",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-02",
+      "total": 443.58,
+      "received": 180.95,
+      "net": -262.63,
+      "transactions": [
+        {
+          "merchant": "Relaxing Station",
+          "amount": 60.0,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Relaxing Station",
+          "amount": 60.0,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.82,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.29,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 30.95,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 15.12,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Dylon Suggs",
+          "amount": 200.0,
+          "category": "Moving",
+          "type": "debit"
+        },
+        {
+          "merchant": "Embrace Pet Insurance",
+          "amount": 56.99,
+          "category": "Pet Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Rebecca Hetherington",
+          "amount": 150.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-03",
+      "total": 241.71,
+      "received": 752.35,
+      "net": 510.64,
+      "transactions": [
+        {
+          "merchant": "Tender Warrior Co Tenderwarriorvt",
+          "amount": 81.6,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Tender Warrior Co Tenderwarriorvt",
+          "amount": 81.6,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 29.87,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 18.83,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 24.01,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 5.8,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Thrivepass Reimbursement",
+          "amount": 75.0,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Thrivepass Reimbursement",
+          "amount": 547.35,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 130.0,
+          "category": "Moving",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "total": 231.28,
+      "received": 155.0,
+      "net": -76.28,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 26.66,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Obsidian Oakville",
+          "amount": 5.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.62,
+          "category": "Auto Payment",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kyle Morgenbesser",
+          "amount": 75.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Jamie Kitchens",
+          "amount": 70.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Bobby Jablonski",
+          "amount": 10.0,
+          "category": "Fun Money",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "total": 2686.09,
+      "received": 0,
+      "net": -2686.09,
+      "transactions": [
+        {
+          "merchant": "Hazel's Beverage World",
+          "amount": 71.49,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        },
+        {
+          "merchant": "Walgreens",
+          "amount": 16.65,
+          "category": "Medical",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.28,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "DoorDash",
+          "amount": 35.74,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2377.94,
+          "category": "Mortgage",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lauren Vallee Laurenvalco",
+          "amount": 170.0,
+          "category": "Therapy",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-06",
+      "total": 3337.45,
+      "received": 423.0,
+      "net": -2914.45,
+      "transactions": [
+        {
+          "merchant": "Zelle",
+          "amount": 300.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Cozobi Fonda Fina",
+          "amount": 141.62,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 13.16,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 121.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Corrida",
+          "amount": 542.88,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "ServiceMac",
+          "amount": 2518.16,
+          "category": "Mortgage",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lukas Moller",
+          "amount": 123.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-07",
+      "total": 146.07,
+      "received": 293.78,
+      "net": 147.71,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 19.88,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Macguffin Kitche Push",
+          "amount": 293.78,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 21.83,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 100.0,
+          "category": "Moving",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-08",
+      "total": 252.0,
+      "received": 101.0,
+      "net": -151.0,
+      "transactions": [
+        {
+          "merchant": "Going",
+          "amount": 39.0,
+          "category": "Miscellaneous",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 4.57,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 3.48,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 11.19,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 19.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Target",
+          "amount": 122.27,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Buddha Thai Cuisine",
+          "amount": 41.86,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "\ud83d\udcb8 to Rocky Mountain Equality   I\u2019m Charging My Nissan, Thank You!",
+          "amount": 10.0,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Entertainment & Recreation",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 61.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-09",
+      "total": 0.14,
+      "received": 0,
+      "net": -0.14,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 0.14,
+          "category": "EV Charge",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-10",
+      "total": 511.62,
+      "received": 0,
+      "net": -511.62,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "New York Times",
+          "amount": 23.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Schlueter Heating",
+          "amount": 250.0,
+          "category": "New Home",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.88,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 73.0,
+          "category": "Internet & Cable",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 39.11,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 114.0,
+          "category": "Water",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-11",
+      "total": 269.46,
+      "received": 35.0,
+      "net": -234.46,
+      "transactions": [
+        {
+          "merchant": "Furnis",
+          "amount": 269.46,
+          "category": "Furniture & Housewares",
+          "type": "debit"
+        },
+        {
+          "merchant": "Zelle",
+          "amount": 15.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Matt Bubernak",
+          "amount": 20.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-12",
+      "total": 311.21,
+      "received": 0,
+      "net": -311.21,
+      "transactions": [
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.28,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "ATM Withdrawal",
+          "amount": 53.0,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "ATM Fee",
+          "amount": 3.0,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 228.93,
+          "category": "Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Mya McDuffie",
+          "amount": 22.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-13",
+      "total": 46.45,
+      "received": 3609.17,
+      "net": 3562.72,
+      "transactions": [
+        {
+          "merchant": "Google One",
+          "amount": 2.12,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 24.07,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 14.18,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Campminder Payroll",
+          "amount": 3584.17,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 6.08,
+          "category": "Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 25.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-14",
+      "total": 243.85,
+      "received": 0,
+      "net": -243.85,
+      "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 142.03,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Teos Tacos",
+          "amount": 9.76,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 50.0,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 42.06,
+          "category": "Home Improvement",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-15",
+      "total": 175.21,
+      "received": 119.47,
+      "net": -55.74,
+      "transactions": [
+        {
+          "merchant": "Machete Tequila Taco",
+          "amount": 78.42,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "The Home Depot",
+          "amount": 16.47,
+          "category": "Home Improvement",
+          "type": "credit"
+        },
+        {
+          "merchant": "Meow Wolf",
+          "amount": 15.95,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 13.69,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 23.76,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Etsy",
+          "amount": 12.91,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
+          "merchant": "Damo Liquor",
+          "amount": 14.11,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 16.37,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Emily Hofman",
+          "amount": 20.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 71.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 12.0,
+          "category": "Amazon",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-16",
+      "total": 150.5,
+      "received": 120.0,
+      "net": -30.5,
+      "transactions": [
+        {
+          "merchant": "Atmos Energy",
+          "amount": 150.5,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kasey Berardi",
+          "amount": 120.0,
+          "category": "Shopping",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-17",
+      "total": 205.57,
+      "received": 0,
+      "net": -205.57,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 11.55,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 55.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 17.74,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Spot & Tango",
+          "amount": 121.0,
+          "category": "Dog food",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-18",
+      "total": 172.48,
+      "received": 106.66,
+      "net": -65.82,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 26.66,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Beyond Yoga Beyondyoga Coca",
+          "amount": 141.16,
+          "category": "Clothing",
+          "type": "debit"
+        },
+        {
+          "merchant": "Roku",
+          "amount": 18.56,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 12.76,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Emily Hellwig",
+          "amount": 65.0,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 15.0,
+          "category": "Amazon",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-19",
+      "total": 54.52,
+      "received": 0,
+      "net": -54.52,
+      "transactions": [
+        {
+          "merchant": "Mamu Coffee Mamucoffee Coca",
+          "amount": 54.52,
+          "category": "Coffee beans",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-20",
+      "total": 0,
+      "received": 434.0,
+      "net": 434.0,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 50.0,
+          "category": "Dog food",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 15.0,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 26.0,
+          "category": "Coffee beans",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 343.0,
+          "category": "Gas & Electric",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-21",
+      "total": 890.7,
+      "received": 60.0,
+      "net": -830.7,
+      "transactions": [
+        {
+          "merchant": "Xcel Energy",
+          "amount": 686.19,
+          "category": "Gas & Electric",
+          "type": "debit"
+        },
+        {
+          "merchant": "Cava",
+          "amount": 37.12,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Baggu Checkout Baggca",
+          "amount": 61.15,
+          "category": "Clothing",
+          "type": "debit"
+        },
+        {
+          "merchant": "Bustamante Firewood",
+          "amount": 36.0,
+          "category": "Home Improvement",
+          "type": "debit"
+        },
+        {
+          "merchant": "Crepe Therapy Cafe",
+          "amount": 42.11,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 0.28,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Evgo",
+          "amount": 27.57,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 42.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 18.0,
+          "category": "Home Improvement",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-22",
+      "total": 24.85,
+      "received": 0,
+      "net": -24.85,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 24.85,
+          "category": "Amazon",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-23",
+      "total": 95.07,
+      "received": 0,
+      "net": -95.07,
+      "transactions": [
+        {
+          "merchant": "Lyft",
+          "amount": 35.07,
+          "category": "Taxi & Ride Shares",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 44.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 16.0,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-24",
+      "total": 160.78,
+      "received": 0,
+      "net": -160.78,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 4.34,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lending Club",
+          "amount": 114.91,
+          "category": "Loan Repayment",
+          "type": "debit"
+        },
+        {
+          "merchant": "Apple",
+          "amount": 41.53,
+          "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-25",
+      "total": 145.26,
+      "received": 0,
+      "net": -145.26,
+      "transactions": [
+        {
+          "merchant": "Amazon",
+          "amount": 28.52,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Trader Joe's",
+          "amount": 18.45,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 20.5,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 7.91,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 4.88,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 65.0,
+          "category": "Groceries",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-26",
+      "total": 103.86,
+      "received": 0,
+      "net": -103.86,
+      "transactions": [
+        {
+          "merchant": "Anthropic",
+          "amount": 103.86,
+          "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-27",
+      "total": 48.26,
+      "received": 3584.18,
+      "net": 3535.92,
+      "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 13.37,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Fleishman?s Bagels Anboulder Co",
+          "amount": 17.89,
+          "category": "Gifts",
+          "type": "debit"
+        },
+        {
+          "merchant": "Fleishman?s Bagels Anboulder Co",
+          "amount": 17.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Campminder Payroll",
+          "amount": 3584.18,
+          "category": "Paychecks",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-28",
+      "total": 140.39,
+      "received": 0,
+      "net": -140.39,
+      "transactions": [
+        {
+          "merchant": "Depop",
+          "amount": 30.78,
+          "category": "Clothing",
+          "type": "debit"
+        },
+        {
+          "merchant": "City of Boulder",
+          "amount": 97.61,
+          "category": "Water",
+          "type": "debit"
+        },
+        {
+          "merchant": "Sanebox Email Filter",
+          "amount": 12.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-01",
+      "total": 625.46,
+      "received": 3994.13,
+      "net": 3368.67,
+      "transactions": [
+        {
+          "merchant": "Wonder Press Bould",
+          "amount": 17.86,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.27,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 14.84,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.57,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 5.27,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lifetime Fitness",
+          "amount": 488.58,
+          "category": "Fitness",
+          "type": "debit"
+        },
+        {
+          "merchant": "Roku",
+          "amount": 10.91,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 27.29,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 48.0,
+          "category": "Internet & Cable",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 244.0,
+          "category": "Fitness",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 1189.0,
+          "category": "Mortgage",
+          "type": "credit"
+        },
+        {
+          "merchant": "Nicci Jay",
+          "amount": 2519.0,
+          "category": "Mortgage",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-02",
+      "total": 251.79,
+      "received": 214.76,
+      "net": -37.03,
+      "transactions": [
+        {
+          "merchant": "Whole Foods",
+          "amount": 89.72,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Target",
+          "amount": 17.48,
+          "category": "Shopping",
+          "type": "credit"
+        },
+        {
+          "merchant": "Anthropic",
+          "amount": 103.86,
+          "category": "Subscriptions",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 33.84,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 10.58,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Embrace Pet Insurance",
+          "amount": 56.99,
+          "category": "Pet Insurance",
+          "type": "debit"
+        },
+        {
+          "merchant": "Fullscript",
+          "amount": 105.08,
+          "category": "Medical",
+          "type": "debit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 49.0,
+          "category": "Groceries",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-03",
+      "total": 156.93,
+      "received": 85.58,
+      "net": -71.35,
+      "transactions": [
+        {
+          "merchant": "East West Integrated",
+          "amount": 137.93,
+          "category": "Medical",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 10.58,
+          "category": "Amazon",
+          "type": "credit"
+        },
+        {
+          "merchant": "Thrivepass Reimbursement",
+          "amount": 75.0,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Allie Gordon",
+          "amount": 19.0,
+          "category": "Entertainment & Recreation",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-04",
+      "total": 205.69,
+      "received": 0,
+      "net": -205.69,
+      "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 5.8,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Nissan Finance",
+          "amount": 199.89,
+          "category": "Auto Payment",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-05",
+      "total": 2674.53,
+      "received": 18.0,
+      "net": -2656.53,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 9.99,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 3.95,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "Teos Tacos",
+          "amount": 27.1,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Xcel Energy",
+          "amount": 55.55,
+          "category": "Gas & Electric",
+          "type": "debit"
+        },
+        {
+          "merchant": "Movement Mortgage",
+          "amount": 2377.94,
+          "category": "Mortgage",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lauren Vallee",
+          "amount": 170.0,
+          "category": "Therapy",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ellen True",
+          "amount": 9.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        },
+        {
+          "merchant": "Melany Hallgren",
+          "amount": 15.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amy Jackson",
+          "amount": 15.0,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Scott Nusz",
+          "amount": 9.0,
+          "category": "Restaurants & Bars",
+          "type": "credit"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-06",
+      "total": 2536.26,
+      "received": 0,
+      "net": -2536.26,
+      "transactions": [
+        {
+          "merchant": "Backcountry Pizza",
+          "amount": 13.1,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "Obsidian Oakville",
+          "amount": 5.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "ServiceMac",
+          "amount": 2518.16,
+          "category": "Mortgage",
+          "type": "debit"
+        }
+      ]
+    },
     {
       "date": "2026-03-07",
       "total": 54.29,
