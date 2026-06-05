@@ -1,0 +1,47 @@
+{
+  "today": "2026-06-04",
+  "generatedAt": "2026-06-04T15:00:00+00:00",
+  "refreshStatus": "ok",
+  "data": [
+    {
+      "date": "2026-06-01",
+      "total": 900.0,
+      "received": 0.0,
+      "net": -900.0,
+      "transactions": [
+        { "merchant": "Wells Fargo Home", "amount": 800.0, "category": "Mortgage", "type": "debit" },
+        { "merchant": "Whole Foods", "amount": 100.0, "category": "Groceries", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-02",
+      "total": 250.0,
+      "received": 200.0,
+      "net": -50.0,
+      "transactions": [
+        { "merchant": "Wells Fargo Home", "amount": 200.0, "category": "Mortgage", "type": "debit" },
+        { "merchant": "Escrow Refund", "amount": 200.0, "category": "Mortgage", "type": "credit" },
+        { "merchant": "Ozo Coffee Roasters", "amount": 50.0, "category": "Coffee Shops", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-03",
+      "total": 1000.0,
+      "received": 0.0,
+      "net": -1000.0,
+      "transactions": [
+        { "merchant": "Wells Fargo Home", "amount": 1000.0, "category": "Mortgage", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-04",
+      "total": 520.0,
+      "received": 0.0,
+      "net": -520.0,
+      "transactions": [
+        { "merchant": "Wells Fargo Home", "amount": 500.0, "category": "Mortgage", "type": "debit" },
+        { "merchant": "Ozo Coffee Roasters", "amount": 20.0, "category": "Coffee Shops", "type": "debit" }
+      ]
+    }
+  ]
+}

@@ -191,6 +191,26 @@
         try { localStorage.setItem("scVerdictBasis", next); } catch {}
       };
 
+      // Categories the user has marked "not applicable" (e.g. Mortgage) — hidden
+      // from every total/verdict but still listed (muted) in the day's receipt.
+      // First array-shaped pref, so the parse is defensive: a non-array or bad JSON
+      // falls back to []; a stale name (category gone after a refresh) simply matches
+      // nothing and self-heals. Persisted in localStorage like the other prefs.
+      const [excludedCats, setExcludedCats] = useState(() => {
+        try {
+          const a = JSON.parse(localStorage.getItem("scExcludedCats"));
+          return Array.isArray(a) ? a.filter(x => typeof x === "string") : [];
+        } catch { return []; }
+      });
+      const toggleExcluded = (c) => setExcludedCats(prev => {
+        const next = prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c];
+        try { localStorage.setItem("scExcludedCats", JSON.stringify(next)); } catch {}
+        // You can't focus a category you're hiding — drop it from the active filter.
+        setActiveCats(a => a.filter(x => x !== c));
+        return next;
+      });
+      const isExcluded = (tx) => excludedCats.includes(tx.category);
+
       const t = THEMES[mode];
 
       // Keep body bg in sync so overscroll areas match
@@ -241,7 +261,7 @@
       // (biggest first). Splitting keeps credit categories (Income, refunds) from
       // distorting the spend ordering. FilterBar renders debit chips today; credit
       // chips arrive in a later slice.
-      const { debitCategories, creditCategories } = useMemo(() => {
+      const { debitCategoriesAll, creditCategoriesAll, allCategories } = useMemo(() => {
         const dSums = {}, cSums = {};
         RAW_DATA.forEach(d => d.transactions.forEach(tx => {
           if (!tx.category) return;
@@ -249,12 +269,25 @@
           bucket[tx.category] = (bucket[tx.category] || 0) + tx.amount;
         }));
         const sortDesc = (o) => Object.entries(o).sort((a,b) => b[1]-a[1]).map(([c]) => c);
+        // All categories (both directions, by total magnitude) feed the Settings
+        // hide list — including credit-only ones, or you couldn't un-hide income.
+        const allSums = {};
+        [dSums, cSums].forEach(o => Object.entries(o).forEach(([c,v]) => allSums[c] = (allSums[c]||0) + v));
         // Credit chips list only credit-ONLY categories (income types). A category
         // that also has debits (e.g. a refund in "Groceries") is already reachable
         // via its debit chip — filtering is by category name, so a separate credit
         // chip would be a redundant duplicate that returns the identical set.
-        return { debitCategories: sortDesc(dSums), creditCategories: sortDesc(cSums).filter(c => !(c in dSums)) };
+        return {
+          debitCategoriesAll: sortDesc(dSums),
+          creditCategoriesAll: sortDesc(cSums).filter(c => !(c in dSums)),
+          allCategories: sortDesc(allSums),
+        };
       }, []);
+      // Hidden categories drop out of the filter chips (you can't focus a category
+      // you've marked not-applicable); the Settings list still shows them so you can
+      // un-hide. Derived (not memoized) so it tracks excludedCats live.
+      const debitCategories  = debitCategoriesAll.filter(c => !excludedCats.includes(c));
+      const creditCategories = creditCategoriesAll.filter(c => !excludedCats.includes(c));
       const categories = debitCategories;
 
       // ── Filtered "Focus mode" ──────────────────────────────────────────────────
@@ -303,7 +336,11 @@
         const txns = activeCats.length
           ? dd.transactions.filter(tx => activeCats.includes(tx.category))
           : dd.transactions;
-        return { ...dd, transactions: txns, ...sumTxns(txns) };
+        // total/received/net count only non-excluded txns, so every view + verdict
+        // skips hidden categories. `.transactions` keeps ALL of them (incl. excluded)
+        // so the Receipt can still list them muted under "Not applicable".
+        const counted = txns.filter(tx => !isExcluded(tx));
+        return { ...dd, transactions: txns, ...sumTxns(counted) };
       };
 
       const getLevel = (total) => {
@@ -433,8 +470,11 @@
       // credits too, it splits into a "Spending" section + subtotal and a
       // "Money in" section + subtotal, closed by a Net line — like a receipt.
       function Receipt({ dd, merchantSize = 13, amountSize = 15, showNet = true }) {
-        const debits  = dd.transactions.filter(tx => !isCredit(tx));
-        const credits = dd.transactions.filter(isCredit);
+        // Partition out hidden ("not applicable") txns — they're listed muted but
+        // don't count. dd.total/received already exclude them (see viewDay).
+        const debits  = dd.transactions.filter(tx => !isCredit(tx) && !isExcluded(tx));
+        const credits = dd.transactions.filter(tx =>  isCredit(tx) && !isExcluded(tx));
+        const excluded = dd.transactions.filter(isExcluded);
         const row = (tx, i, credit) => (
           <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${t.ruleHair}`}}>
             <div>
@@ -444,11 +484,20 @@
             <div style={{fontFamily:TOKENS.type.serif,fontSize:amountSize,fontWeight:credit?400:undefined,color:credit?t.credit:t.ink,...numeral}}>{credit?creditAmt(tx.amount):`$${tx.amount.toFixed(2)}`}</div>
           </div>
         );
-        // No credits → the familiar flat spending list.
-        if (dd.received === 0) return <React.Fragment>{debits.map((tx,i) => row(tx,i,false))}</React.Fragment>;
         const kicker = (label, color) => (
           <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color,margin:"15px 0 1px"}}>{label}</div>
         );
+        // Muted "Not applicable" section — hidden txns, both directions, not counted.
+        // Rendered in BOTH the flat and split paths (a day's only credit may be hidden,
+        // which routes it through the flat path).
+        const naSection = excluded.length > 0 && (
+          <div style={{opacity:0.5}}>
+            {kicker("Not applicable", t.inkMuted)}
+            {excluded.map((tx,i) => row(tx, `na${i}`, isCredit(tx)))}
+          </div>
+        );
+        // No (counted) credits → the familiar flat spending list, plus any NA rows.
+        if (dd.received === 0) return <React.Fragment>{debits.map((tx,i) => row(tx,i,false))}{naSection}</React.Fragment>;
         const subtotal = (label, value, color) => (
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"8px 0 2px",borderTop:`2px solid ${t.ruleBold}`,marginTop:1}}>
             <span style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",color:t.inkMuted}}>{label}</span>
@@ -470,6 +519,7 @@
                 <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:22,color:netSpentParts(dd,2).color,...numeral}}>{netSpentParts(dd,2).text}</span>
               </div>
             )}
+            {naSection}
           </React.Fragment>
         );
       }
@@ -789,6 +839,25 @@
       }
 
       // ── Category filter bar (Specimen chips) ────────────────────────────────────
+      // One global reminder that figures exclude hidden categories. Tappable →
+      // opens Settings to manage the set. Rendered once (below FilterBar), not
+      // per-view, so there's a single source of truth and nothing to drift.
+      function HiddenNote() {
+        if (!excludedCats.length) return null;
+        const n = excludedCats.length;
+        return (
+          <button onClick={()=>setShowSettings(true)} style={{
+            display:"flex", alignItems:"center", gap:8, marginBottom:12, marginTop:-4,
+            background:"transparent", border:"none", cursor:"pointer", padding:"0 2px",
+            fontFamily:TOKENS.type.chic, fontSize:10, letterSpacing:"0.08em", textTransform:"uppercase", color:t.inkMuted,
+          }}>
+            <span aria-hidden="true" style={{width:5,height:5,borderRadius:"50%",background:t.accent,flexShrink:0}}/>
+            <span>{`${n} categor${n === 1 ? "y" : "ies"} hidden`}</span>
+            <span style={{color:t.accent,textTransform:"none",letterSpacing:"0.02em"}}>· manage</span>
+          </button>
+        );
+      }
+
       function FilterBar() {
         if (!debitCategories.length && !creditCategories.length) return null;
         const toggle = (c) => setActiveCats(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
@@ -957,6 +1026,44 @@
                         style={{accentColor:t.accent}}/>
                     </div>
 
+                    {/* Hide categories — mark a category "not applicable" so it
+                        drops from every total/verdict (still listed, muted, in the
+                        day's receipt). */}
+                    {allCategories.length > 0 && (
+                      <div style={{marginBottom:18}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                          <span style={{fontFamily:TOKENS.type.chic,fontSize:11,letterSpacing:"0.1em",color:t.accent,textTransform:"uppercase"}}>Hide categories</span>
+                          {excludedCats.length > 0 && (
+                            <span style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted}}>{excludedCats.length} hidden</span>
+                          )}
+                        </div>
+                        <div style={{fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:12,color:t.inkMuted,marginBottom:8,lineHeight:1.35}}>
+                          Hidden categories drop from totals everywhere, but stay listed in each day.
+                        </div>
+                        <div className="no-scrollbar" style={{display:"flex",flexDirection:"column",gap:4,maxHeight:150,overflowY:"auto",scrollbarWidth:"none"}}>
+                          {allCategories.map(c => {
+                            const hidden = excludedCats.includes(c);
+                            return (
+                              <button key={c} onClick={()=>toggleExcluded(c)}
+                                aria-pressed={hidden} aria-label={`${hidden ? "Show" : "Hide"} ${c}`}
+                                style={{
+                                  display:"flex", alignItems:"center", justifyContent:"space-between",
+                                  background: hidden ? t.accentTint : "transparent",
+                                  border:`1px solid ${hidden ? t.accent : t.ruleHair}`,
+                                  borderRadius:4, padding:"6px 10px", cursor:"pointer",
+                                  fontFamily:TOKENS.type.ui, fontSize:12,
+                                  color: hidden ? t.ink : t.inkMuted, fontWeight: hidden ? 600 : 500,
+                                  transition:"background 0.14s,color 0.14s,border-color 0.14s",
+                                }}>
+                                <span>{c}</span>
+                                <span style={{fontFamily:TOKENS.type.serif,fontSize:12,color:hidden?t.accent:t.textFaint}}>{hidden ? "Hidden" : "Shown"}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Verdict legend */}
                     <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                       {[
@@ -980,6 +1087,9 @@
 
           {/* Category filters */}
           <FilterBar/>
+
+          {/* "N categories hidden" reminder — figures exclude these */}
+          <HiddenNote/>
 
           {/* Errata strip — refreshStatus-aware: distinguishes token-expired from a missed run */}
           {(() => {

@@ -247,3 +247,166 @@ test('verdict-basis toggle flips Today between No spend and Net positive', async
   const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
+
+// ── "Not applicable" categories (user-hidden from totals) ─────────────────────
+// Hiding a category in Settings must drop it from every total/verdict, remove its
+// filter chip, persist across reload, and restore cleanly when un-hidden. Fixture
+// Today (06-04) = Mortgage $500 + Coffee $20; hiding Mortgage drops the headline
+// from $520 to $20. Hide-toggle buttons are named "Hide/Show <cat>" so they don't
+// collide with the filter chip "<cat>".
+test('hidden categories drop from totals, hide their chip, and persist', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await page.getByRole('button', { name: 'Today', exact: true }).click();
+
+  // Baseline: Today headline = $520, and a Mortgage filter chip exists.
+  await expect(page.getByText('$520', { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Mortgage', exact: true })).toBeVisible();
+
+  // Hide Mortgage via the Settings "Hide categories" toggle.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Hide Mortgage' }).click();
+  await page.keyboard.press('Escape');
+
+  // Headline drops to $20; the Mortgage chip is gone from the filter bar.
+  await expect(page.getByText('$20', { exact: false }).first()).toBeVisible();
+  await expect(page.getByText('$520', { exact: false })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Mortgage', exact: true })).toHaveCount(0);
+  await page.screenshot({ path: 'screenshots/hidden-categories.png' });
+
+  // Persists across reload (route stays registered through reload).
+  await page.reload();
+  await page.getByRole('button', { name: 'Today', exact: true }).click();
+  await expect(page.getByText('$20', { exact: false }).first()).toBeVisible();
+
+  // Un-hiding restores the full total.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Show Mortgage' }).click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('$520', { exact: false }).first()).toBeVisible();
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
+// Hidden transactions stay VISIBLE (muted) in the day's receipt under a
+// "Not applicable" heading, but don't count toward the subtotal. Day 06-02 =
+// Coffee $50 (counted) + Mortgage debit $200 + Mortgage credit $200 (both hidden).
+// With Mortgage hidden the day's only non-excluded credit is gone, so the receipt
+// takes the flat (received === 0) path — the riskiest one to get right.
+test('hidden transactions listed muted under "Not applicable", uncounted', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Hide Mortgage.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Hide Mortgage' }).click();
+  await page.keyboard.press('Escape');
+
+  // Open 06-02 in the Month grid (June is the default month for a 06-04 "today").
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+  await page.locator('[data-day="2026-06-02"]').click();
+
+  // Day headline counts only Coffee → $50.00, NOT $250 (Mortgage excluded).
+  await expect(page.getByText('$50.00').first()).toBeVisible();
+  // The hidden Mortgage transactions are still listed, under "Not applicable".
+  await expect(page.getByText('Not applicable')).toBeVisible();
+  await expect(page.getByText('Escrow Refund')).toBeVisible();
+  await page.screenshot({ path: 'screenshots/not-applicable-receipt.png' });
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
+// A single global reminder ("N categories hidden") sits below the filter bar so
+// the user knows the figures are partial. It's absent when nothing is hidden, and
+// tapping it opens Settings to manage the hidden set.
+test('HiddenNote shows the count and opens Settings; absent when none hidden', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Nothing hidden → no note.
+  await expect(page.getByText(/categor(y|ies) hidden/i)).toHaveCount(0);
+
+  // Hide Mortgage → a "1 category hidden" note appears.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Hide Mortgage' }).click();
+  await page.keyboard.press('Escape');
+
+  const note = page.getByRole('button', { name: /1 category hidden/i });
+  await expect(note).toBeVisible();
+  await page.screenshot({ path: 'screenshots/hidden-note.png' });
+
+  // Tapping it re-opens Settings (the "Show Mortgage" toggle proves the popover is open).
+  await note.click();
+  await expect(page.getByRole('button', { name: 'Show Mortgage' })).toBeVisible();
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
+// Edge + rollup propagation: 06-03's ONLY transaction is Mortgage $1000. Unfiltered
+// it reads "overspent ▲"; once Mortgage is hidden the day has no applicable activity
+// and must read "No spend ●" (not blank/error). And the Year total must drop from
+// $2670 to $170 — proving exclusion reaches the annual rollup, not just the headline.
+test('only-excluded day reads "No spend ●"; exclusion reaches the Year rollup', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Year baseline = $2670 (900 + 250 + 1000 + 520).
+  await page.getByRole('button', { name: 'Year', exact: true }).click();
+  await expect(page.getByText('$2670')).toBeVisible();
+
+  // Month baseline: 06-03 (Mortgage $1000 only) reads overspent ▲.
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+  const cell = page.locator('[data-day="2026-06-03"]');
+  await expect(cell.getByText('▲')).toBeVisible();
+
+  // Hide Mortgage.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Hide Mortgage' }).click();
+  await page.keyboard.press('Escape');
+
+  // 06-03 now reads "No spend ●", not ▲ (its only activity was hidden).
+  await expect(cell.getByText('●')).toBeVisible();
+  await expect(cell.getByText('▲')).toHaveCount(0);
+
+  // Year rollup drops to $170 (100 + 50 + 0 + 20) — exclusion reached the annual sum.
+  await page.getByRole('button', { name: 'Year', exact: true }).click();
+  await expect(page.getByText('$170').first()).toBeVisible();
+  await expect(page.getByText('$2670')).toHaveCount(0);
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
