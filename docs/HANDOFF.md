@@ -74,6 +74,15 @@ Gotchas captured this session: [[css-grid-1fr-overflow]] (use `minmax(0,1fr)`),
 the fixture-overlap blind spot ([[smoke-test-fixed-data-blind-spots]]), and the
 refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
+## ✅ SHIPPED: Year-to-date data window (2026-06-05)
+
+The Monarch fetch window changed from a trailing 90 days to **year-to-date** (Jan 1 →
+today), so every month from January is populated (resets each Jan 1;
+`MONARCH_START_DATE` overrides). Logic is a pure `compute_window()` in `aggregate.py`
+with a selftest. **Read `docs/solutions/backfill-vs-window-on-overwriting-jobs.md`** —
+the lesson is that a backfill won't stick when a scheduled job overwrites its output;
+you change the window, not the data. Verified on both refresh paths.
+
 ## ✅ SHIPPED: "Not applicable" categories (2026-06-05)
 
 Mark categories (e.g. Mortgage) as not-applicable in Settings → they drop from every
@@ -95,7 +104,10 @@ one-function change. Tests + `tests/fixtures/exclude.sample.json` added.
 
 Daily launchd job on Anna's Mac (9am + 4pm local, America/Denver) runs `scripts/refresh_local.sh` →
 `fetch_monarch.py` (token auth) → commits `data/spending.json` → push →
-Vercel redeploys. Manual path: Monarch MCP `get_transactions` →
+Vercel redeploys. **Window = year-to-date** (Jan 1 of the current year → today), so
+every month from January is populated; it resets each Jan 1. Override with
+`MONARCH_START_DATE=YYYY-MM-DD` (e.g. a prior year / all history). The manual MCP
+path has no window — query Jan 1 → today there to match. Manual path: Monarch MCP `get_transactions` →
 `python scripts/build_from_mcp.py <dump> --today $(date +%F)`.
 Full auth history + gotchas: `docs/solutions/monarch-auth-and-refresh.md`.
 Note: `MONARCH_TOKEN` lives in `.env.local` (gitignored); never commit it. When

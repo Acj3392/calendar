@@ -81,6 +81,10 @@ and 4pm local (America/Denver) → `fetch_monarch.py` (token auth) → commits +
 Vercel redeploys. (If the repo lives under `~/Desktop`, the agent needs Full Disk
 Access granted to `/bin/bash` or macOS TCC blocks it — see the auth solution doc.)
 
+The window is **year-to-date** (Jan 1 of the current year → today), so every month
+from January is populated; it resets each Jan 1. Set `MONARCH_START_DATE=YYYY-MM-DD`
+to override (prior year, all history, etc.).
+
 **On-demand (Claude session):** pull recent transactions via the Monarch MCP,
 then:
 ```bash

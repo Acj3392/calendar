@@ -15,6 +15,19 @@ Callers exclude transfers / credit-card payments (EXCLUDED_CATEGORIES) before
 calling this. amount == 0 transactions are skipped here.
 """
 from collections import defaultdict
+from datetime import date
+
+
+def compute_window(today, start_override=None):
+    """Return (start_date, end_date) for a Monarch fetch.
+
+    Default start = Jan 1 of today's year (year-to-date), so every month from
+    January is pulled. `start_override` (a "YYYY-MM-DD" string, e.g. from the
+    MONARCH_START_DATE env var) wins when provided — and a malformed value raises
+    ValueError rather than silently falling back, since it's an operator override.
+    """
+    start = date.fromisoformat(start_override) if start_override else date(today.year, 1, 1)
+    return start, today
 
 
 def aggregate_by_day(transactions):
@@ -73,6 +86,20 @@ def _selftest():
     assert d1["total"] == 0.0 and d1["received"] == 2000.0 and d1["net"] == 2000.0, d1
     assert len(d1["transactions"]) == 1
     print("aggregate_by_day self-test OK")
+
+    # compute_window: default = year-to-date (Jan 1 of today's year → today)
+    today = date(2026, 6, 5)
+    assert compute_window(today) == (date(2026, 1, 1), today), compute_window(today)
+    assert compute_window(today, None) == (date(2026, 1, 1), today)
+    # explicit override wins
+    assert compute_window(today, "2025-03-10") == (date(2025, 3, 10), today)
+    # a bad override fails loud (never silently falls back)
+    try:
+        compute_window(today, "not-a-date")
+        raise AssertionError("expected ValueError for a bad MONARCH_START_DATE")
+    except ValueError:
+        pass
+    print("compute_window self-test OK")
 
 
 if __name__ == "__main__":

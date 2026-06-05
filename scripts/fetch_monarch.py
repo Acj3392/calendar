@@ -15,7 +15,14 @@ Auth (set as GitHub Actions secrets). Two modes — token is strongly preferred:
                        (lets this script generate the 6-digit code unattended)
 
 Optional:
-  LOOKBACK_DAYS        how many days of history to include (default 90)
+  MONARCH_START_DATE   YYYY-MM-DD; overrides the window start. Without it the window
+                       is year-to-date (Jan 1 of the current year → today), so every
+                       month from January is pulled. A malformed value fails loud
+                       (ValueError → non-zero exit), never silently falls back.
+
+Note: this (token) path defines the window. The manual MCP path
+(scripts/build_from_mcp.py) has NO window — it transforms whatever the operator
+pulled in the Claude session, so query Jan 1 → today there to match.
 
 The output shape matches what index.html expects (see scripts/aggregate.py):
   { "today": "YYYY-MM-DD", "generatedAt": "<iso>", "data": [
@@ -31,12 +38,12 @@ import asyncio
 import json
 import os
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 from monarchmoney import MonarchMoney
 
-from aggregate import aggregate_by_day
+from aggregate import aggregate_by_day, compute_window
 
 # Categories that move money around rather than represent real spending.
 EXCLUDED_CATEGORIES = {"Credit Card Payment", "Transfer", "Transfers", "Balance Adjustments"}
@@ -45,7 +52,6 @@ OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "spending.json"
 
 
 async def fetch() -> dict:
-    lookback = int(os.environ.get("LOOKBACK_DAYS", "90"))
     token = os.environ.get("MONARCH_TOKEN") or None
 
     if token:
@@ -65,8 +71,9 @@ async def fetch() -> dict:
             mfa_secret_key=mfa_secret,
         )
 
+    # Year-to-date by default (Jan 1 → today); MONARCH_START_DATE overrides it.
     end = datetime.now(timezone.utc).date()
-    start = end - timedelta(days=lookback)
+    start, _ = compute_window(end, os.environ.get("MONARCH_START_DATE"))
 
     # Page through results so we don't miss days with many transactions.
     results = []
