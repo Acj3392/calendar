@@ -103,9 +103,13 @@ git push origin main # auto-deploys to Vercel (direct-to-main authorized)
 no-CI-cron rationale) and is no longer stale — trust it alongside this handoff and
 the solution docs.
 
-## ⚠️ Known issue (2026-06-03): the 9am launchd job is failing
-The agent dies with exit 126 ("Operation not permitted") — macOS TCC blocks
-launchd from running a script under `~/Desktop`. Today's data was refreshed by a
-**manual** `bash scripts/refresh_local.sh` run at ~11am, not the 9am job. Fix:
-grant Full Disk Access to `/bin/bash`, then reload the agent. Full write-up in
-[[monarch-auth-and-refresh]]. Until that's done, the daily refresh is manual.
+## ✅ Resolved (2026-06-03): launchd auto-refresh fixed + now twice daily
+The agent had been dying with exit 126 ("Operation not permitted") — macOS TCC
+blocks launchd from running a script under `~/Desktop`. Fix applied: granted Full
+Disk Access to `/bin/bash`, which cleared it (`LastExitStatus = 0`, confirmed by a
+launchd-triggered run that fetched + pushed on its own). The schedule was also
+expanded from 9am-only to **9am + 4pm local** (America/Denver). Auto-refresh now
+fires on its own — no manual step needed. Full write-up in [[monarch-auth-and-refresh]].
+
+If it ever fails again, the first check is whether the FDA grant for `/bin/bash`
+was dropped (it can reset after an OS update or if the repo moves).
