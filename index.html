@@ -957,7 +957,7 @@
                 <span style={{background:t.accent2,color:t.accent2Ink,padding:"3px 9px",borderRadius:100,fontWeight:700}}>
                   Focus · {filterLabel}
                 </span>
-                {filteredThresholds && !budgetActiveForView && (
+                {filteredThresholds && !budgetActiveForView && view !== "month" && (
                   <span style={{color:t.inkMuted,textTransform:"none",letterSpacing:"0.02em"}}>
                     judged vs {fmtAmt(filteredThresholds.avg,0).text}/day avg
                   </span>

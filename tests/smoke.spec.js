@@ -411,10 +411,11 @@ test('budget goal: header shows $spent of $budget with full-budget color states'
   await page.screenshot({ path: 'screenshots/budget-over.png' });
   await page.getByRole('button', { name: 'All', exact: true }).click();
 
-  // Groceries: no budget → no budget line; the relative "vs avg" strip still shows.
+  // Groceries: no budget → no budget line. (In Month view the relative "vs avg" strip
+  // text is intentionally hidden too, so a no-budget category shows neither line.)
   await page.getByRole('button', { name: 'Groceries', exact: true }).click();
   await expect(page.getByText(/of \$/)).toHaveCount(0);
-  await expect(page.getByText(/judged vs .*\/day avg/)).toBeVisible();
+  await expect(page.getByText(/judged vs .*\/day avg/)).toHaveCount(0);
   await page.getByRole('button', { name: 'All', exact: true }).click();
 
   // Today view shows the same month budget line for the focused category.
