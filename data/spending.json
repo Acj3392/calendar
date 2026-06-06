@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-05",
-  "generatedAt": "2026-06-05T22:00:09.009509+00:00",
+  "today": "2026-06-06",
+  "generatedAt": "2026-06-06T15:00:08.385078+00:00",
   "refreshStatus": "ok",
   "data": [
     {
@@ -6705,10 +6705,22 @@
     },
     {
       "date": "2026-06-04",
-      "total": 754.32,
+      "total": 731.78,
       "received": 0,
-      "net": -754.32,
+      "net": -731.78,
       "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 2.46,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kelly's Wine & Spirits",
+          "amount": 21.62,
+          "category": "Beer & Liquor",
+          "type": "debit"
+        },
         {
           "merchant": "Ozo Coffee Roasters",
           "amount": 3.88,
@@ -6735,20 +6747,8 @@
         },
         {
           "merchant": "ChargePoint",
-          "amount": 25.0,
-          "category": "EV Charge",
-          "type": "debit"
-        },
-        {
-          "merchant": "ChargePoint",
           "amount": 3.93,
           "category": "EV Charge",
-          "type": "debit"
-        },
-        {
-          "merchant": "Kelly's Wine & Spirits",
-          "amount": 21.62,
-          "category": "Beer & Liquor",
           "type": "debit"
         }
       ]
@@ -6769,6 +6769,20 @@
           "merchant": "Apple",
           "amount": 9.99,
           "category": "Subscriptions",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-06",
+      "total": 40.0,
+      "received": 0,
+      "net": -40.0,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 40.0,
+          "category": "Restaurants & Bars",
           "type": "debit"
         }
       ]
