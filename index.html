@@ -35,6 +35,7 @@
     let TODAY = "";
     let GENERATED_AT = "";
     let REFRESH_STATUS = "";
+    let BUDGETS = {};   // { "YYYY-MM": { category: plannedMonthly } } — from Monarch
 
     const MONTH_NAMES     = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const DAY_NAMES_SHORT = ["S","M","T","W","T","F","S"];
@@ -316,6 +317,37 @@
         const avg = sum / days;
         return { low: avg * 0.6, high: avg * 1.4, avg };
       }, [activeCats]);
+
+      // Budget goal for a month: sum the focused cats that HAVE a Monarch budget that
+      // month, and the matching gross spend — both over the SAME set, or a mixed focus
+      // (one budgeted, one not) reads falsely "over". null when none are budgeted.
+      const budgetStatus = (monthKey, cats) => {
+        const m = BUDGETS[monthKey];
+        const budgetedCats = m ? cats.filter(c => typeof m[c] === "number") : [];
+        if (!budgetedCats.length) return null;
+        const budget = budgetedCats.reduce((s,c) => s + m[c], 0);
+        const spent = RAW_DATA.reduce((s,d) =>
+          d.date.slice(0,7) !== monthKey ? s :
+          s + d.transactions.reduce((tt,tx) =>
+            (!isCredit(tx) && budgetedCats.includes(tx.category)) ? tt + tx.amount : tt, 0), 0);
+        const cur = TODAY.slice(0,7);
+        const dim = new Date(+monthKey.slice(0,4), +monthKey.slice(5,7), 0).getDate();
+        const isCur = monthKey === cur, future = monthKey > cur;
+        const elapsed = isCur ? Math.max(1, +TODAY.slice(8,10)) : dim;  // past → full month
+        const target  = budget * (elapsed / dim);                      // prorated pace (hint only)
+        // COLOR is driven by over/under the FULL budget (unambiguous). aheadOfPace is a
+        // text hint only — a linear pace line trips constantly early in a bursty month.
+        return { budget, spent, future, isCur, overBudget: spent > budget, aheadOfPace: spent > target };
+      };
+      // The month a surface judges against: Month follows the navigated month; the
+      // day-scale views use today's month. (Week/Year don't show a budget line in v1.)
+      const monthKeyForView = () => view === "month"
+        ? `${currentYear}-${String(currentMonth+1).padStart(2,"0")}`
+        : TODAY.slice(0,7);
+      // When a budget line is showing for this view, suppress the relative "vs avg"
+      // strip text so the two yardsticks never appear at once.
+      const budgetActiveForView = isFiltered && (view === "month" || view === "today")
+        && !!budgetStatus(monthKeyForView(), activeCats);
 
       // Sum a transaction list into spend / received / net. `total` is gross spend
       // (debits only) so the verdict + heatmap keep their meaning; credits are
@@ -621,6 +653,8 @@
               </div>
             </div>
 
+            <BudgetLine monthKey={TODAY.slice(0,7)}/>
+
             {/* Money-in deck — only on days with credits, so spend-only days are unchanged */}
             {received > 0 && (
               <div style={{display:"flex",justifyContent:"flex-end",alignItems:"baseline",gap:10,padding:"11px 2px 0"}}>
@@ -760,6 +794,7 @@
                   </div>
                 : <span style={{color:t.accent,...numeral}}>{fmtAmt(mTotal,0).text}</span>}
             </div>
+            <BudgetLine monthKey={`${currentYear}-${String(currentMonth+1).padStart(2,"0")}`}/>
             <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",borderBottom:`1px solid ${t.ruleBold}`}}>
               {DAY_NAMES_SHORT.map((d,i) => (
                 <div key={i} style={{textAlign:"center",fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.04em",color:t.inkMuted,padding:"6px 0"}}>{d}</div>
@@ -838,6 +873,25 @@
         );
       }
 
+      // Budget goal readout — "$spent of $budget · status", shown in a view header
+      // when the focused category(ies) have a Monarch budget for that month. Color is
+      // rust only when actually over the full budget; pace is a text hint, never red.
+      function BudgetLine({ monthKey }) {
+        if (!isFiltered) return null;
+        const bs = budgetStatus(monthKey, activeCats);
+        if (!bs) return null;
+        const status = bs.future ? null
+          : bs.isCur ? (bs.overBudget ? "over budget" : bs.aheadOfPace ? "ahead of pace" : "on track")
+          : (bs.overBudget ? "over budget" : "under budget");
+        const statusColor = bs.overBudget ? t.over : t.accent;
+        return (
+          <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"7px 0 0",fontFamily:TOKENS.type.serif,fontStyle:"italic",fontSize:13,color:t.ink,...numeral}}>
+            <span>{fmtAmt(bs.spent,0).text} of {fmtAmt(bs.budget,0).text}</span>
+            {status && <span style={{fontStyle:"normal",fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.06em",textTransform:"uppercase",fontWeight:700,color:statusColor}}>{status}</span>}
+          </div>
+        );
+      }
+
       // ── Category filter bar (Specimen chips) ────────────────────────────────────
       // One global reminder that figures exclude hidden categories. Tappable →
       // opens Settings to manage the set. Rendered once (below FilterBar), not
@@ -903,7 +957,7 @@
                 <span style={{background:t.accent2,color:t.accent2Ink,padding:"3px 9px",borderRadius:100,fontWeight:700}}>
                   Focus · {filterLabel}
                 </span>
-                {filteredThresholds && (
+                {filteredThresholds && !budgetActiveForView && (
                   <span style={{color:t.inkMuted,textTransform:"none",letterSpacing:"0.02em"}}>
                     judged vs {fmtAmt(filteredThresholds.avg,0).text}/day avg
                   </span>
@@ -1211,6 +1265,7 @@
     loadSpending()
       .then(j => {
         RAW_DATA       = j.data || [];
+        BUDGETS        = j.budgets || {};
         TODAY          = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
         GENERATED_AT   = j.generatedAt || "";
         REFRESH_STATUS = j.refreshStatus || "";

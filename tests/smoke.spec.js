@@ -368,6 +368,64 @@ test('HiddenNote shows the count and opens Settings; absent when none hidden', a
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Category budget goal (Focus mode): focusing a category with a Monarch budget shows
+// "$spent of $budget · status" in the view header, colored by over/under the FULL
+// budget (not the prorated pace line). Fixture pins today = day 15 of June (30 days),
+// so the pace target is budget × 0.5. Restaurants $120 (under pace) → on track;
+// Coffee $80 vs $100 budget but >$50 pace → ahead of pace (still NOT rust);
+// Shopping $320 vs $200 → over budget (rust); Groceries has no budget → relative fallback.
+test('budget goal: header shows $spent of $budget with full-budget color states', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'budget.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+
+  // Restaurants: $120 spent, $300 budget, under the $150 pace → "on track".
+  await page.getByRole('button', { name: 'Restaurants & Bars', exact: true }).click();
+  await expect(page.getByText('$120 of $300')).toBeVisible();
+  await expect(page.getByText('on track')).toBeVisible();
+  // Replace-not-stack: the relative "vs avg" strip text is gone when a budget shows.
+  await expect(page.getByText(/judged vs .*\/day avg/)).toHaveCount(0);
+  await page.screenshot({ path: 'screenshots/budget-on-track.png' });
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+
+  // Coffee: $80 spent, $100 budget — over the $50 pace but UNDER budget → "ahead of
+  // pace" and NOT flagged over-budget (the false-alarm guard).
+  await page.getByRole('button', { name: 'Coffee Shops', exact: true }).click();
+  await expect(page.getByText('$80 of $100')).toBeVisible();
+  await expect(page.getByText('ahead of pace')).toBeVisible();
+  await expect(page.getByText('over budget')).toHaveCount(0);
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+
+  // Shopping: $320 spent, $200 budget → "over budget".
+  await page.getByRole('button', { name: 'Shopping', exact: true }).click();
+  await expect(page.getByText('$320 of $200')).toBeVisible();
+  await expect(page.getByText('over budget')).toBeVisible();
+  await page.screenshot({ path: 'screenshots/budget-over.png' });
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+
+  // Groceries: no budget → no budget line; the relative "vs avg" strip still shows.
+  await page.getByRole('button', { name: 'Groceries', exact: true }).click();
+  await expect(page.getByText(/of \$/)).toHaveCount(0);
+  await expect(page.getByText(/judged vs .*\/day avg/)).toBeVisible();
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+
+  // Today view shows the same month budget line for the focused category.
+  await page.getByRole('button', { name: 'Today', exact: true }).click();
+  await page.getByRole('button', { name: 'Restaurants & Bars', exact: true }).click();
+  await expect(page.getByText('$120 of $300')).toBeVisible();
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
 // Edge + rollup propagation: 06-03's ONLY transaction is Mortgage $1000. Unfiltered
 // it reads "overspent ▲"; once Mortgage is hidden the day has no applicable activity
 // and must read "No spend ●" (not blank/error). And the Year total must drop from

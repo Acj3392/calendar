@@ -1,0 +1,39 @@
+{
+  "today": "2026-06-15",
+  "generatedAt": "2026-06-15T15:00:00+00:00",
+  "refreshStatus": "ok",
+  "budgets": {
+    "2026-06": { "Restaurants & Bars": 300, "Coffee Shops": 100, "Shopping": 200 }
+  },
+  "data": [
+    {
+      "date": "2026-06-03",
+      "total": 160.0,
+      "received": 0.0,
+      "net": -160.0,
+      "transactions": [
+        { "merchant": "Teos Tacos", "amount": 70.0, "category": "Restaurants & Bars", "type": "debit" },
+        { "merchant": "Whole Foods", "amount": 90.0, "category": "Groceries", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-07",
+      "total": 400.0,
+      "received": 0.0,
+      "net": -400.0,
+      "transactions": [
+        { "merchant": "Ozo Coffee Roasters", "amount": 80.0, "category": "Coffee Shops", "type": "debit" },
+        { "merchant": "Amazon", "amount": 320.0, "category": "Shopping", "type": "debit" }
+      ]
+    },
+    {
+      "date": "2026-06-10",
+      "total": 50.0,
+      "received": 0.0,
+      "net": -50.0,
+      "transactions": [
+        { "merchant": "Sushi Zanmai", "amount": 50.0, "category": "Restaurants & Bars", "type": "debit" }
+      ]
+    }
+  ]
+}
