@@ -326,10 +326,19 @@
         const budgetedCats = m ? cats.filter(c => typeof m[c] === "number") : [];
         if (!budgetedCats.length) return null;
         const budget = budgetedCats.reduce((s,c) => s + m[c], 0);
-        const spent = RAW_DATA.reduce((s,d) =>
-          d.date.slice(0,7) !== monthKey ? s :
-          s + d.transactions.reduce((tt,tx) =>
-            (!isCredit(tx) && budgetedCats.includes(tx.category)) ? tt + tx.amount : tt, 0), 0);
+        // Sum the budgeted cats' gross spend (debits) AND money-in (credits) for the month.
+        let gross = 0, received = 0;
+        RAW_DATA.forEach(d => {
+          if (d.date.slice(0,7) !== monthKey) return;
+          d.transactions.forEach(tx => {
+            if (!budgetedCats.includes(tx.category)) return;
+            if (isCredit(tx)) received += tx.amount; else gross += tx.amount;
+          });
+        });
+        // Budget basis follows the Spend/Net toggle: in Net mode, money-in (refunds,
+        // reimbursements) offsets the category's cost, so net is what's judged against
+        // budget — matching the net headline shown right beside this line.
+        const spent = Math.round((netMode ? gross - received : gross) * 100) / 100;
         const cur = TODAY.slice(0,7);
         const dim = new Date(+monthKey.slice(0,4), +monthKey.slice(5,7), 0).getDate();
         const isCur = monthKey === cur, future = monthKey > cur;

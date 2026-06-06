@@ -34,6 +34,15 @@
       "transactions": [
         { "merchant": "Sushi Zanmai", "amount": 50.0, "category": "Restaurants & Bars", "type": "debit" }
       ]
+    },
+    {
+      "date": "2026-06-12",
+      "total": 0.0,
+      "received": 40.0,
+      "net": 40.0,
+      "transactions": [
+        { "merchant": "Friend Venmo (dinner split)", "amount": 40.0, "category": "Restaurants & Bars", "type": "credit" }
+      ]
     }
   ]
 }

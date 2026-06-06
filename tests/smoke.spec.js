@@ -427,6 +427,37 @@ test('budget goal: header shows $spent of $budget with full-budget color states'
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
 });
 
+// Budget basis follows the Spend/Net toggle: money-in (refunds, reimbursements) in a
+// category offsets its cost against budget. Restaurants = $120 spent − $40 Venmo
+// split = $80 net of $300. Spend mode shows gross $120; Net mode shows net $80.
+test('budget line uses NET (money-in offsets the category) when in Net mode', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'budget.sample.json'), 'utf8');
+  await page.route('**/data/spending.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+  await page.getByRole('button', { name: 'Month', exact: true }).click();
+  await page.getByRole('button', { name: 'Restaurants & Bars', exact: true }).click();
+
+  // Spend mode (default): gross $120 of $300.
+  await expect(page.getByText('$120 of $300')).toBeVisible();
+
+  // Flip to Net mode → the $40 refund offsets it → $80 of $300.
+  await page.locator('button[title="Settings"]').click();
+  await page.getByRole('button', { name: 'Net', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('$80 of $300')).toBeVisible();
+  await expect(page.getByText('$120 of $300')).toHaveCount(0);
+
+  const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
+  expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
 // Edge + rollup propagation: 06-03's ONLY transaction is Mortgage $1000. Unfiltered
 // it reads "overspent ▲"; once Mortgage is hidden the day has no applicable activity
 // and must read "No spend ●" (not blank/error). And the Year total must drop from
