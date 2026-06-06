@@ -74,6 +74,16 @@ Gotchas captured this session: [[css-grid-1fr-overflow]] (use `minmax(0,1fr)`),
 the fixture-overlap blind spot ([[smoke-test-fixed-data-blind-spots]]), and the
 refresh-outran-the-code deploy ordering note ([[monarch-auth-and-refresh]]).
 
+## ✅ SHIPPED: Category budget goal in Focus mode (2026-06-06)
+
+Focusing a category with a Monarch budget shows "$spent of $budget · on track /
+ahead of pace / over budget" in the Month + Today headers (reads the `budgets` block
+in `spending.json`). Replaces the relative "vs avg" strip text when active. **Read
+`docs/solutions/goal-color-off-full-budget-not-pace.md`** — the lesson is color the
+alarm off the full budget (unambiguous), never a linear pace line (cries wolf on
+bursty data); pace is text only. Week/Year deferred (budgets cover 3 months).
+`index.html`: `budgetStatus`, `BudgetLine`.
+
 ## ✅ SHIPPED: Year-to-date data window (2026-06-05)
 
 The Monarch fetch window changed from a trailing 90 days to **year-to-date** (Jan 1 →
