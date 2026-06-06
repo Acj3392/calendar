@@ -25,7 +25,9 @@ Note: this (token) path defines the window. The manual MCP path
 pulled in the Claude session, so query Jan 1 → today there to match.
 
 The output shape matches what index.html expects (see scripts/aggregate.py):
-  { "today": "YYYY-MM-DD", "generatedAt": "<iso>", "data": [
+  { "today": "YYYY-MM-DD", "generatedAt": "<iso>",
+    "budgets": { "YYYY-MM": { "<category>": <plannedMonthly>, ... } },  # per-category
+    "data": [
       { "date": "YYYY-MM-DD", "total": <spend>, "received": <credits>, "net": <recv-total>,
         "transactions": [ { "merchant": str, "amount": float, "category": str,
                             "type": "debit"|"credit" } ] }
@@ -43,12 +45,27 @@ from pathlib import Path
 
 from monarchmoney import MonarchMoney
 
-from aggregate import aggregate_by_day, compute_window
+from aggregate import aggregate_by_day, compute_window, extract_budgets
 
 # Categories that move money around rather than represent real spending.
 EXCLUDED_CATEGORIES = {"Credit Card Payment", "Transfer", "Transfers", "Balance Adjustments"}
 
 OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "spending.json"
+
+
+async def fetch_budgets(mm) -> dict:
+    """Pull per-category monthly budgets, keyed { "YYYY-MM": { name: planned } }.
+
+    Uses the same authenticated session as the transaction fetch. Resolves category
+    ids → names via get_transaction_categories(). Covers whatever months Monarch
+    returns (typically prev / current / next). The reshape is the pure
+    aggregate.extract_budgets() so it's unit-tested without the live API.
+    """
+    budgets_resp = await mm.get_budgets()
+    cats_resp = await mm.get_transaction_categories()
+    cat_map = {c["id"]: c["name"] for c in cats_resp["categories"]}
+    monthly = budgets_resp["budgetData"]["monthlyAmountsByCategory"]
+    return extract_budgets(monthly, cat_map)
 
 
 async def fetch() -> dict:
@@ -108,10 +125,18 @@ async def fetch() -> dict:
 
     data = aggregate_by_day(normalized)
 
+    # Budgets are best-effort: a budget API hiccup must never kill the spend refresh.
+    try:
+        budgets = await fetch_budgets(mm)
+    except Exception as e:  # noqa: BLE001 - non-fatal, keep the spend data
+        print(f"Budget fetch failed (non-fatal): {e}", file=sys.stderr)
+        budgets = {}
+
     return {
         "today": end.isoformat(),
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "refreshStatus": "ok",
+        "budgets": budgets,
         "data": data,
     }
 

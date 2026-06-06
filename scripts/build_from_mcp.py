@@ -40,6 +40,19 @@ def load_transactions(path: Path) -> list:
     return inner["data"]
 
 
+def _existing_budgets() -> dict:
+    """Carry forward the budgets block from the current spending.json if present.
+
+    The manual path has no live API access, so fetch_monarch.py (twice daily) is
+    the authoritative budget source. Preserving the existing block ensures a manual
+    transaction rebuild never silently wipes it.
+    """
+    try:
+        return json.loads(OUT_PATH.read_text()).get("budgets", {})
+    except Exception:  # noqa: BLE001 - missing / malformed file is fine
+        return {}
+
+
 def build(transactions: list, today: str) -> dict:
     normalized = []
     for t in transactions:
@@ -64,6 +77,7 @@ def build(transactions: list, today: str) -> dict:
         "today": today,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "refreshStatus": "ok",
+        "budgets": _existing_budgets(),
         "data": data,
     }
 

@@ -30,6 +30,27 @@ def compute_window(today, start_override=None):
     return start, today
 
 
+def extract_budgets(monthly_amounts_by_category, cat_map):
+    """Reshape Monarch's budget data into { "YYYY-MM": { category_name: planned } }.
+
+    `monthly_amounts_by_category` is budgetData.monthlyAmountsByCategory from
+    get_budgets(); `cat_map` maps category id → name (from get_transaction_categories()).
+    Categories with a zero/falsy planned amount are skipped; an unmapped id falls back
+    to the id string. Pure + total — never raises on empty input.
+    """
+    result = {}
+    for entry in monthly_amounts_by_category:
+        cat_id = entry["category"]["id"]
+        name = cat_map.get(cat_id, cat_id)
+        for m in entry["monthlyAmounts"]:
+            planned = m.get("plannedCashFlowAmount")
+            if not planned:
+                continue
+            month = m["month"][:7]  # "2026-06-01" → "2026-06"
+            result.setdefault(month, {})[name] = planned
+    return result
+
+
 def aggregate_by_day(transactions):
     """Aggregate normalized transactions into sorted day records.
 
@@ -100,6 +121,29 @@ def _selftest():
     except ValueError:
         pass
     print("compute_window self-test OK")
+
+    # extract_budgets: {YYYY-MM: {name: planned}}, zeros skipped, id-fallback for
+    # an unmapped category, keyed by name and by month-prefix.
+    monthly = [
+        {"category": {"id": "c1"}, "monthlyAmounts": [
+            {"month": "2026-06-01", "plannedCashFlowAmount": 200.0},
+            {"month": "2026-07-01", "plannedCashFlowAmount": 200.0}]},
+        {"category": {"id": "c2"}, "monthlyAmounts": [
+            {"month": "2026-06-01", "plannedCashFlowAmount": 0}]},        # zero → skipped
+        {"category": {"id": "c3"}, "monthlyAmounts": [
+            {"month": "2026-06-01", "plannedCashFlowAmount": 350.0}]},
+        {"category": {"id": "c4"}, "monthlyAmounts": [
+            {"month": "2026-06-01", "plannedCashFlowAmount": 50.0}]},     # unmapped → id fallback
+    ]
+    cat_map = {"c1": "Amazon", "c3": "Groceries"}
+    budgets = extract_budgets(monthly, cat_map)
+    assert budgets == {
+        "2026-06": {"Amazon": 200.0, "Groceries": 350.0, "c4": 50.0},
+        "2026-07": {"Amazon": 200.0},
+    }, budgets
+    # empty input → empty dict (soft, never raises)
+    assert extract_budgets([], {}) == {}
+    print("extract_budgets self-test OK")
 
 
 if __name__ == "__main__":
