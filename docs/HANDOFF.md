@@ -110,6 +110,19 @@ one-function change. Tests + `tests/fixtures/exclude.sample.json` added.
 
 ---
 
+## Deployment (moved 2026-06-06 — READ THIS)
+
+Production now lives on Anna's **personal** Vercel (`anna-c-projects`, **Hobby/free**),
+at **`calendar-sand-zeta.vercel.app`** — NOT the old CampMinder project (deleted).
+The GitHub repo was renamed to **`Acj3392/calendar`** (`git remote` updated).
+
+Gotcha that bit hard: Hobby won't auto-deploy a **private** repo unless the commit
+author is the account owner. So this repo's git author is set (repo-local) to
+`Acj3392 <206156394+Acj3392@users.noreply.github.com>` — keep it that way, and
+**re-set it if you re-clone**, or auto-deploys (incl. the daily refresh) get blocked.
+Build config is pinned in `vercel.json` (`framework:null`, no build). Full saga:
+[[vercel-repo-rename-and-hobby-private-deploy]].
+
 ## Data refresh (unchanged)
 
 Daily launchd job on Anna's Mac (9am + 4pm local, America/Denver) runs `scripts/refresh_local.sh` →
