@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-07",
-  "generatedAt": "2026-06-07T22:02:12.102862+00:00",
+  "today": "2026-06-08",
+  "generatedAt": "2026-06-08T15:00:09.182710+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6147,10 +6147,22 @@
     },
     {
       "date": "2026-06-06",
-      "total": 42.17,
+      "total": 214.56,
       "received": 0,
-      "net": -42.17,
+      "net": -214.56,
       "transactions": [
+        {
+          "merchant": "Kindle",
+          "amount": 15.28,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 157.11,
+          "category": "Groceries",
+          "type": "debit"
+        },
         {
           "merchant": "Life Cafe",
           "amount": 2.17,
@@ -6167,10 +6179,34 @@
     },
     {
       "date": "2026-06-07",
-      "total": 12.0,
-      "received": 0,
-      "net": -12.0,
+      "total": 33.96,
+      "received": 93.0,
+      "net": 59.04,
       "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 15.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "Breanna Real",
+          "amount": 78.0,
+          "category": "Groceries",
+          "type": "credit"
+        },
+        {
+          "merchant": "Obsidian",
+          "amount": 5.0,
+          "category": "Miscellaneous",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 16.96,
+          "category": "Amazon",
+          "type": "debit"
+        },
         {
           "merchant": "Roku",
           "amount": 12.0,
