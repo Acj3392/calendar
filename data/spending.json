@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-08",
-  "generatedAt": "2026-06-08T22:00:08.865855+00:00",
+  "today": "2026-06-09",
+  "generatedAt": "2026-06-09T15:00:09.851376+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6121,20 +6121,20 @@
     },
     {
       "date": "2026-06-05",
-      "total": 2469.68,
+      "total": 2470.68,
       "received": 0,
-      "net": -2469.68,
+      "net": -2470.68,
       "transactions": [
+        {
+          "merchant": "Gelato Boy",
+          "amount": 9.68,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
         {
           "merchant": "Apple",
           "amount": 9.99,
           "category": "Subscriptions",
-          "type": "debit"
-        },
-        {
-          "merchant": "Gelato Boy",
-          "amount": 8.68,
-          "category": "Restaurants & Bars",
           "type": "debit"
         },
         {
@@ -6152,6 +6152,12 @@
       "net": -214.56,
       "transactions": [
         {
+          "merchant": "Life Time",
+          "amount": 2.17,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
           "merchant": "Kindle",
           "amount": 15.28,
           "category": "Books",
@@ -6164,12 +6170,6 @@
           "type": "debit"
         },
         {
-          "merchant": "Life Cafe",
-          "amount": 2.17,
-          "category": "Restaurants & Bars",
-          "type": "debit"
-        },
-        {
           "merchant": "Breanna Real",
           "amount": 40.0,
           "category": "Restaurants & Bars",
@@ -6179,10 +6179,34 @@
     },
     {
       "date": "2026-06-07",
-      "total": 33.96,
+      "total": 71.0,
       "received": 93.0,
-      "net": 59.04,
+      "net": 22.0,
       "transactions": [
+        {
+          "merchant": "Roku",
+          "amount": 12.0,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Obsidian",
+          "amount": 5.0,
+          "category": "Subscriptions",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 8.95,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Lucky's Market",
+          "amount": 28.09,
+          "category": "Shopping",
+          "type": "debit"
+        },
         {
           "merchant": "Breanna Real",
           "amount": 15.0,
@@ -6196,21 +6220,61 @@
           "type": "credit"
         },
         {
-          "merchant": "Obsidian",
-          "amount": 5.0,
-          "category": "Miscellaneous",
-          "type": "debit"
-        },
-        {
           "merchant": "Amazon",
           "amount": 16.96,
           "category": "Amazon",
           "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-08",
+      "total": 2687.24,
+      "received": 1.0,
+      "net": -2686.24,
+      "transactions": [
+        {
+          "merchant": "Roku",
+          "amount": 1.0,
+          "category": "Streaming",
+          "type": "debit"
         },
         {
           "merchant": "Roku",
-          "amount": 12.0,
+          "amount": 1.0,
           "category": "Streaming",
+          "type": "credit"
+        },
+        {
+          "merchant": "Monarch",
+          "amount": 120.98,
+          "category": "Financial & Legal Services",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 108.76,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "ServiceMac",
+          "amount": 2456.5,
+          "category": "Mortgage",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-09",
+      "total": 22.0,
+      "received": 0,
+      "net": -22.0,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 22.0,
+          "category": "Beer & Liquor",
           "type": "debit"
         }
       ]
