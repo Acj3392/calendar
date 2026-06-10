@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-09",
-  "generatedAt": "2026-06-09T22:15:38.261496+00:00",
+  "today": "2026-06-10",
+  "generatedAt": "2026-06-10T15:00:09.979918+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6184,6 +6184,12 @@
       "net": 22.0,
       "transactions": [
         {
+          "merchant": "Amazon",
+          "amount": 8.95,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
           "merchant": "Roku",
           "amount": 12.0,
           "category": "Streaming",
@@ -6193,12 +6199,6 @@
           "merchant": "Obsidian",
           "amount": 5.0,
           "category": "Subscriptions",
-          "type": "debit"
-        },
-        {
-          "merchant": "Amazon",
-          "amount": 8.95,
-          "category": "Amazon",
           "type": "debit"
         },
         {
@@ -6229,21 +6229,15 @@
     },
     {
       "date": "2026-06-08",
-      "total": 2687.24,
-      "received": 1.0,
+      "total": 2686.24,
+      "received": 0,
       "net": -2686.24,
       "transactions": [
         {
-          "merchant": "Roku",
-          "amount": 1.0,
-          "category": "Streaming",
+          "merchant": "ServiceMac",
+          "amount": 2456.5,
+          "category": "Mortgage",
           "type": "debit"
-        },
-        {
-          "merchant": "Roku",
-          "amount": 1.0,
-          "category": "Streaming",
-          "type": "credit"
         },
         {
           "merchant": "Monarch",
@@ -6256,21 +6250,39 @@
           "amount": 108.76,
           "category": "Amazon",
           "type": "debit"
-        },
-        {
-          "merchant": "ServiceMac",
-          "amount": 2456.5,
-          "category": "Mortgage",
-          "type": "debit"
         }
       ]
     },
     {
       "date": "2026-06-09",
-      "total": 22.0,
+      "total": 335.01,
       "received": 0,
-      "net": -22.0,
+      "net": -335.01,
       "transactions": [
+        {
+          "merchant": "ChargePoint",
+          "amount": 25.0,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 9.84,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 3.76,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "South Boulder Animal",
+          "amount": 274.41,
+          "category": "Pets",
+          "type": "debit"
+        },
         {
           "merchant": "Breanna Real",
           "amount": 22.0,
