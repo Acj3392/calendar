@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-10",
-  "generatedAt": "2026-06-10T22:00:11.406756+00:00",
+  "today": "2026-06-11",
+  "generatedAt": "2026-06-11T15:00:10.042768+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6184,6 +6184,12 @@
       "net": 22.0,
       "transactions": [
         {
+          "merchant": "Lucky's Market",
+          "amount": 28.09,
+          "category": "Shopping",
+          "type": "debit"
+        },
+        {
           "merchant": "Amazon",
           "amount": 8.95,
           "category": "Amazon",
@@ -6199,12 +6205,6 @@
           "merchant": "Obsidian",
           "amount": 5.0,
           "category": "Subscriptions",
-          "type": "debit"
-        },
-        {
-          "merchant": "Lucky's Market",
-          "amount": 28.09,
-          "category": "Shopping",
           "type": "debit"
         },
         {
@@ -6234,6 +6234,12 @@
       "net": -2686.24,
       "transactions": [
         {
+          "merchant": "Amazon",
+          "amount": 108.76,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
           "merchant": "ServiceMac",
           "amount": 2456.5,
           "category": "Mortgage",
@@ -6244,31 +6250,37 @@
           "amount": 120.98,
           "category": "Financial & Legal Services",
           "type": "debit"
-        },
-        {
-          "merchant": "Amazon",
-          "amount": 108.76,
-          "category": "Amazon",
-          "type": "debit"
         }
       ]
     },
     {
       "date": "2026-06-09",
-      "total": 335.01,
+      "total": 314.54,
       "received": 0,
-      "net": -335.01,
+      "net": -314.54,
       "transactions": [
         {
+          "merchant": "Ozo Coffee Roasters",
+          "amount": 10.84,
+          "category": "Coffee Shops",
+          "type": "debit"
+        },
+        {
+          "merchant": "South Boulder Animal Hospital",
+          "amount": 274.41,
+          "category": "Pets",
+          "type": "debit"
+        },
+        {
           "merchant": "ChargePoint",
-          "amount": 25.0,
+          "amount": 2.53,
           "category": "EV Charge",
           "type": "debit"
         },
         {
-          "merchant": "Ozo Coffee Roasters",
-          "amount": 9.84,
-          "category": "Coffee Shops",
+          "merchant": "YouTube",
+          "amount": 1.0,
+          "category": "Streaming",
           "type": "debit"
         },
         {
@@ -6278,15 +6290,41 @@
           "type": "debit"
         },
         {
-          "merchant": "South Boulder Animal",
-          "amount": 274.41,
-          "category": "Pets",
-          "type": "debit"
-        },
-        {
           "merchant": "Breanna Real",
           "amount": 22.0,
           "category": "Beer & Liquor",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-10",
+      "total": 259.23,
+      "received": 0,
+      "net": -259.23,
+      "transactions": [
+        {
+          "merchant": "Alaska Airlines",
+          "amount": 18.1,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Alaska Airlines",
+          "amount": 138.03,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "American Airlines",
+          "amount": 95.47,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
           "type": "debit"
         }
       ]
