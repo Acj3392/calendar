@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-11",
-  "generatedAt": "2026-06-11T22:00:09.141332+00:00",
+  "today": "2026-06-12",
+  "generatedAt": "2026-06-12T15:00:10.472573+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6184,6 +6184,12 @@
       "net": 22.0,
       "transactions": [
         {
+          "merchant": "Amazon",
+          "amount": 16.96,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
           "merchant": "Lucky's Market",
           "amount": 28.09,
           "category": "Shopping",
@@ -6218,12 +6224,6 @@
           "amount": 78.0,
           "category": "Groceries",
           "type": "credit"
-        },
-        {
-          "merchant": "Amazon",
-          "amount": 16.96,
-          "category": "Amazon",
-          "type": "debit"
         }
       ]
     },
@@ -6260,6 +6260,12 @@
       "net": -314.54,
       "transactions": [
         {
+          "merchant": "ChargePoint",
+          "amount": 3.76,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
           "merchant": "Ozo Coffee Roasters",
           "amount": 10.84,
           "category": "Coffee Shops",
@@ -6284,12 +6290,6 @@
           "type": "debit"
         },
         {
-          "merchant": "ChargePoint",
-          "amount": 3.76,
-          "category": "EV Charge",
-          "type": "debit"
-        },
-        {
           "merchant": "Breanna Real",
           "amount": 22.0,
           "category": "Beer & Liquor",
@@ -6299,9 +6299,9 @@
     },
     {
       "date": "2026-06-10",
-      "total": 259.23,
+      "total": 163.76,
       "received": 0,
-      "net": -259.23,
+      "net": -163.76,
       "transactions": [
         {
           "merchant": "Alaska Airlines",
@@ -6316,15 +6316,29 @@
           "type": "debit"
         },
         {
+          "merchant": "Amazon",
+          "amount": 7.63,
+          "category": "Amazon",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-11",
+      "total": 118.23,
+      "received": 0,
+      "net": -118.23,
+      "transactions": [
+        {
           "merchant": "American Airlines",
           "amount": 95.47,
           "category": "Travel & Vacation",
           "type": "debit"
         },
         {
-          "merchant": "Amazon",
-          "amount": 7.63,
-          "category": "Amazon",
+          "merchant": "Teos Tacos",
+          "amount": 22.76,
+          "category": "Restaurants & Bars",
           "type": "debit"
         }
       ]
