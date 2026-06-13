@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-12",
-  "generatedAt": "2026-06-12T22:00:09.631582+00:00",
+  "today": "2026-06-13",
+  "generatedAt": "2026-06-13T15:09:22.597047+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6305,13 +6305,25 @@
       "transactions": [
         {
           "merchant": "Alaska Airlines",
-          "amount": 18.1,
+          "amount": 5.6,
           "category": "Travel & Vacation",
           "type": "debit"
         },
         {
           "merchant": "Alaska Airlines",
-          "amount": 138.03,
+          "amount": 12.5,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Alaska Airlines",
+          "amount": 125.53,
+          "category": "Travel & Vacation",
+          "type": "debit"
+        },
+        {
+          "merchant": "Alaska Airlines",
+          "amount": 12.5,
           "category": "Travel & Vacation",
           "type": "debit"
         },
@@ -6330,15 +6342,59 @@
       "net": -118.23,
       "transactions": [
         {
+          "merchant": "Teos Tacos",
+          "amount": 22.76,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
           "merchant": "American Airlines",
           "amount": 95.47,
           "category": "Travel & Vacation",
           "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-12",
+      "total": 213.29,
+      "received": 84.0,
+      "net": -129.29,
+      "transactions": [
+        {
+          "merchant": "Breanna Real",
+          "amount": 57.0,
+          "category": "Gas & Electric",
+          "type": "credit"
         },
         {
-          "merchant": "Teos Tacos",
-          "amount": 22.76,
+          "merchant": "Breanna Real",
+          "amount": 27.0,
           "category": "Restaurants & Bars",
+          "type": "credit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 14.67,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Amazon",
+          "amount": 31.6,
+          "category": "Amazon",
+          "type": "debit"
+        },
+        {
+          "merchant": "Whole Foods",
+          "amount": 113.72,
+          "category": "Groceries",
+          "type": "debit"
+        },
+        {
+          "merchant": "Chase",
+          "amount": 53.3,
+          "category": "Cash & ATM",
           "type": "debit"
         }
       ]
