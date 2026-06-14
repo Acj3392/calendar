@@ -1,0 +1,4 @@
+# Real personal spending data is NEVER deployed to the public site.
+# The app defaults to data/spending.fake.json; the Personal App view loads
+# data/spending.json only when running locally, where this file exists.
+data/spending.json

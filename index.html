@@ -1374,9 +1374,20 @@
       };
 
       if (status === "error") {
+        // On the shared site the real data file isn't deployed, so Personal mode
+        // can't load it — explain that rather than showing a raw fetch error.
+        const personalUnavailable = mode === "personal";
         return (
           <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#9f2f23",background:"#f7f7f5",minHeight:"100vh"}}>
-            Couldn't load spending data ({String(err && err.message || err)}). Check that {DATA_FILES[mode]} exists and is valid.
+            {personalUnavailable ? (
+              <>
+                Personal data isn't available on the shared site — it's kept local-only for privacy.
+                Run the app on your own machine to view it.{" "}
+                <button onClick={() => setMode("fake")} style={{marginLeft:6,cursor:"pointer"}}>Back to demo data</button>
+              </>
+            ) : (
+              <>Couldn't load spending data ({String(err && err.message || err)}). Check that {DATA_FILES[mode]} exists and is valid.</>
+            )}
           </div>
         );
       }
