@@ -1,6 +1,6 @@
 {
-  "today": "2026-06-13",
-  "generatedAt": "2026-06-13T22:00:08.744031+00:00",
+  "today": "2026-06-14",
+  "generatedAt": "2026-06-14T15:00:10.300195+00:00",
   "refreshStatus": "ok",
   "budgets": {
     "2026-05": {
@@ -6357,10 +6357,22 @@
     },
     {
       "date": "2026-06-12",
-      "total": 213.29,
+      "total": 216.29,
       "received": 84.0,
-      "net": -129.29,
+      "net": -132.29,
       "transactions": [
+        {
+          "merchant": "Chase",
+          "amount": 53.3,
+          "category": "Cash & ATM",
+          "type": "debit"
+        },
+        {
+          "merchant": "Chase",
+          "amount": 3.0,
+          "category": "Financial Fees",
+          "type": "debit"
+        },
         {
           "merchant": "Breanna Real",
           "amount": 57.0,
@@ -6390,11 +6402,75 @@
           "amount": 113.72,
           "category": "Groceries",
           "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-13",
+      "total": 108.56,
+      "received": 4114.81,
+      "net": 4006.25,
+      "transactions": [
+        {
+          "merchant": "Apple",
+          "amount": 14.18,
+          "category": "Subscriptions",
+          "type": "debit"
         },
         {
-          "merchant": "Chase",
-          "amount": 53.3,
-          "category": "Cash & ATM",
+          "merchant": "Organic Sandwich",
+          "amount": 7.1,
+          "category": "Restaurants & Bars",
+          "type": "debit"
+        },
+        {
+          "merchant": "ChargePoint",
+          "amount": 10.8,
+          "category": "EV Charge",
+          "type": "debit"
+        },
+        {
+          "merchant": "Mamu Coffee",
+          "amount": 55.13,
+          "category": "Coffee beans",
+          "type": "debit"
+        },
+        {
+          "merchant": "Prime Video",
+          "amount": 4.36,
+          "category": "Streaming",
+          "type": "debit"
+        },
+        {
+          "merchant": "Kindle",
+          "amount": 10.91,
+          "category": "Books",
+          "type": "debit"
+        },
+        {
+          "merchant": "Campminder Co",
+          "amount": 4114.81,
+          "category": "Paychecks",
+          "type": "credit"
+        },
+        {
+          "merchant": "Allstate",
+          "amount": 6.08,
+          "category": "Insurance",
+          "type": "debit"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-14",
+      "total": 98.26,
+      "received": 0,
+      "net": -98.26,
+      "transactions": [
+        {
+          "merchant": "Roku",
+          "amount": 98.26,
+          "category": "Streaming",
           "type": "debit"
         }
       ]
