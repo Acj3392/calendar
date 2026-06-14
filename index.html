@@ -37,6 +37,13 @@
     let REFRESH_STATUS = "";
     let BUDGETS = {};   // { "YYYY-MM": { category: plannedMonthly } } — from Monarch
 
+    // ─── Data mode (Fake Data Prototype vs Personal App) ───────────────────────
+    // EDIT THIS: the passcode that unlocks the Personal App view. This is a light
+    // client-side gate only — it stops a casual viewer, not a determined one (both
+    // this passcode and the real data file ship in the public bundle).
+    const PERSONAL_PASSCODE = "Rosebud23!";
+    const DATA_FILES = { fake: "data/spending.fake.json", personal: "data/spending.json" };
+
     const MONTH_NAMES     = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const DAY_NAMES_SHORT = ["S","M","T","W","T","F","S"];
     const DAY_NAMES       = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -165,7 +172,7 @@
     );
 
     // ─── App ──────────────────────────────────────────────────────────────────────
-    function SpendingCalendar() {
+    function SpendingCalendar({ dataMode = "fake", unlocked = false, onSwitch = () => {}, onUnlock = () => false }) {
       const [view,         setView]         = useState("month");
       const [lowThreshold, setLowThreshold] = useState(75);
       const [highThreshold,setHighThreshold]= useState(300);
@@ -176,6 +183,10 @@
       const [weekOffset,   setWeekOffset]   = useState(0);
       const [staleDismissed, setStaleDismissed] = useState(false);
       const [activeCats,   setActiveCats]   = useState([]); // [] = all categories
+      // Personal App passcode field (shown when locked user clicks "Personal App")
+      const [pwOpen,       setPwOpen]       = useState(false);
+      const [pwVal,        setPwVal]        = useState("");
+      const [pwErr,        setPwErr]        = useState(false);
       const [mode,         setMode]         = useState(() => {
         try { const s = localStorage.getItem("scTheme"); if (s) return s; } catch {}
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -989,6 +1000,48 @@
           <div style={{textAlign:"center",borderBottom:`3px double ${t.ruleBold}`,paddingBottom:10,marginBottom:14}}>
             <div style={{fontFamily:TOKENS.type.display,fontSize:38,lineHeight:0.9,letterSpacing:"-0.01em",textTransform:"uppercase",color:t.ink}}>The Daily Spend</div>
             <div style={{fontFamily:TOKENS.type.chic,fontSize:10,letterSpacing:"0.14em",textTransform:"uppercase",color:t.inkMuted,marginTop:8}}>{dateline}</div>
+
+            {/* Data-mode toggle: Fake Data Prototype (default) vs 🔒 Personal App */}
+            <div style={{display:"flex",justifyContent:"center",gap:4,marginTop:12,background:t.navBg,borderRadius:100,padding:3,width:"fit-content",marginLeft:"auto",marginRight:"auto"}}>
+              {[{k:"fake",label:"Fake Data Prototype"},{k:"personal",label:"🔒 Personal App"}].map(o => {
+                const active = dataMode === o.k;
+                return (
+                  <button key={o.k} onClick={() => {
+                    if (o.k === "personal" && !unlocked) { setPwOpen(true); setPwErr(false); return; }
+                    setPwOpen(false); onSwitch(o.k);
+                  }} style={{
+                    background: active ? t.navActive : "transparent",
+                    color:      active ? t.navActiveText : t.navInactiveText,
+                    border:"none", borderRadius:100, padding:"6px 14px",
+                    fontWeight: active ? 600 : 500, fontSize:12, cursor:"pointer",
+                    fontFamily:"inherit", letterSpacing:"0.02em", transition:"background 0.15s,color 0.15s",
+                  }}>{o.label}</button>
+                );
+              })}
+            </div>
+
+            {/* Inline passcode field — shown when a locked user picks Personal App */}
+            {pwOpen && !unlocked && (
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (onUnlock(pwVal)) { setPwOpen(false); setPwVal(""); setPwErr(false); }
+                else { setPwErr(true); }
+              }} style={{display:"flex",justifyContent:"center",alignItems:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
+                <input type="password" value={pwVal} autoFocus placeholder="Password"
+                  onChange={(e) => { setPwVal(e.target.value); setPwErr(false); }}
+                  style={{fontFamily:"inherit",fontSize:13,padding:"6px 10px",borderRadius:8,
+                    border:`1px solid ${pwErr ? t.over : t.ruleHair}`,background:t.btnBg,color:t.ink,outline:"none",width:160}}/>
+                <button type="submit" style={{fontFamily:"inherit",fontSize:12,fontWeight:600,padding:"7px 14px",
+                  borderRadius:8,border:"none",background:t.navActive,color:t.navActiveText,cursor:"pointer"}}>Unlock</button>
+                {pwErr && <span style={{fontFamily:TOKENS.type.chic,fontSize:11,color:t.over}}>Incorrect</span>}
+              </form>
+            )}
+
+            {/* Mode badge so it's always clear which dataset is showing */}
+            <div style={{fontFamily:TOKENS.type.chic,fontSize:9,letterSpacing:"0.16em",textTransform:"uppercase",
+              color: dataMode === "personal" ? t.credit : t.inkMuted, marginTop:10, opacity:0.85}}>
+              {dataMode === "personal" ? "● Personal — live data" : "○ Demo data — not real spending"}
+            </div>
           </div>
 
           {/* Header */}
@@ -1256,11 +1309,11 @@
     );
 
     // Fetch with a small retry/backoff — a transient network blip shouldn't blank the app.
-    async function loadSpending(attempts = 3) {
+    async function loadSpending(url, attempts = 3) {
       let lastErr;
       for (let i = 0; i < attempts; i++) {
         try {
-          const r = await fetch("data/spending.json", { cache: "no-store" });
+          const r = await fetch(url, { cache: "no-store" });
           if (!r.ok) throw new Error("HTTP " + r.status);
           return validateSpending(await r.json());
         } catch (err) {
@@ -1271,22 +1324,88 @@
       throw lastErr;
     }
 
-    loadSpending()
-      .then(j => {
-        RAW_DATA       = j.data || [];
-        BUDGETS        = j.budgets || {};
-        TODAY          = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
-        GENERATED_AT   = j.generatedAt || "";
-        REFRESH_STATUS = j.refreshStatus || "";
-        root.render(<ErrorBoundary><SpendingCalendar/></ErrorBoundary>);
-      })
-      .catch(err => {
-        root.render(
+    // App controller — owns the data mode (fake/personal), unlock state, and the
+    // load lifecycle. It sets the module-level data vars before rendering the
+    // calendar, so the rest of the app is untouched. Default mode is "fake" so the
+    // public/shareable view never exposes real numbers without the passcode.
+    function App() {
+      const sessionUnlocked = (() => { try { return sessionStorage.getItem("scUnlocked") === "1"; } catch { return false; } })();
+      const [unlocked, setUnlocked] = useState(sessionUnlocked);
+      const [mode, setMode] = useState(() => {
+        try { if (sessionStorage.getItem("scMode") === "personal" && sessionUnlocked) return "personal"; } catch {}
+        return "fake";
+      });
+      const [status, setStatus] = useState("loading"); // loading | ready | error
+      const [err, setErr] = useState(null);
+      const [version, setVersion] = useState(0);
+
+      useEffect(() => {
+        let cancelled = false;
+        setStatus("loading");
+        loadSpending(DATA_FILES[mode])
+          .then(j => {
+            if (cancelled) return;
+            RAW_DATA       = j.data || [];
+            BUDGETS        = j.budgets || {};
+            TODAY          = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
+            GENERATED_AT   = j.generatedAt || "";
+            REFRESH_STATUS = j.refreshStatus || "";
+            try { sessionStorage.setItem("scMode", mode); } catch {}
+            setVersion(v => v + 1);
+            setStatus("ready");
+          })
+          .catch(e => { if (!cancelled) { setErr(e); setStatus("error"); } });
+        return () => { cancelled = true; };
+      }, [mode]);
+
+      const switchMode = (target) => {
+        if (target === mode) return;
+        if (target === "personal" && !unlocked) return; // password UI handles this
+        setMode(target);
+      };
+      const tryUnlock = (pw) => {
+        if (pw === PERSONAL_PASSCODE) {
+          try { sessionStorage.setItem("scUnlocked", "1"); } catch {}
+          setUnlocked(true);
+          setMode("personal");
+          return true;
+        }
+        return false;
+      };
+
+      if (status === "error") {
+        // On the shared site the real data file isn't deployed, so Personal mode
+        // can't load it — explain that rather than showing a raw fetch error.
+        const personalUnavailable = mode === "personal";
+        return (
           <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#9f2f23",background:"#f7f7f5",minHeight:"100vh"}}>
-            Couldn't load spending data ({String(err && err.message || err)}). Check that data/spending.json exists and is valid.
+            {personalUnavailable ? (
+              <>
+                Personal data isn't available on the shared site — it's kept local-only for privacy.
+                Run the app on your own machine to view it.{" "}
+                <button onClick={() => setMode("fake")} style={{marginLeft:6,cursor:"pointer"}}>Back to demo data</button>
+              </>
+            ) : (
+              <>Couldn't load spending data ({String(err && err.message || err)}). Check that {DATA_FILES[mode]} exists and is valid.</>
+            )}
           </div>
         );
-      });
+      }
+      if (status === "loading") {
+        return (
+          <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#6b6b6b",background:"#f7f7f5",minHeight:"100vh",textAlign:"center"}}>
+            Loading…
+          </div>
+        );
+      }
+      return (
+        <ErrorBoundary key={version}>
+          <SpendingCalendar dataMode={mode} unlocked={unlocked} onSwitch={switchMode} onUnlock={tryUnlock}/>
+        </ErrorBoundary>
+      );
+    }
+
+    root.render(<App/>);
   </script>
 </body>
 </html>

@@ -46,7 +46,7 @@ test('loads cleanly, no console errors, all views in both editions', async ({ pa
 // fixture guarantees a credit day, a refund-offset day, and a pure-income day.
 test('credits render and filter against the sample fixture', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -86,7 +86,7 @@ test('credits render and filter against the sample fixture', async ({ page }) =>
 // unmistakable "you are filtered" signal the feature exists to provide.
 test('filtering engages Focus mode — strip + reframed header', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -122,7 +122,7 @@ test('filtering engages Focus mode — strip + reframed header', async ({ page }
 // leaking onto zero-spend days.
 test('Focus mode fills only category-spend days; zero-spend days recede', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'focus.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -175,7 +175,7 @@ test('rejects non-numeric tx.amount with a clear error card, not $NaN', async ({
       { merchant: 'Mystery', amount: 'oops', category: 'Groceries', type: 'debit' },
     ] }],
   });
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: bad }));
 
   await page.goto('/index.html');
@@ -190,7 +190,7 @@ test('rejects non-numeric tx.amount with a clear error card, not $NaN', async ({
 // June: out 130, in 2042 -> net inflow +$1912, Out $130, In +$2.0k.
 test('Net-mode Month header surfaces Out and In, not just net', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -222,7 +222,7 @@ test('Net-mode Month header surfaces Out and In, not just net', async ({ page })
 // mode reads "No spend", net mode reads "Net positive".
 test('verdict-basis toggle flips Today between No spend and Net positive', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -256,7 +256,7 @@ test('verdict-basis toggle flips Today between No spend and Net positive', async
 // collide with the filter chip "<cat>".
 test('hidden categories drop from totals, hide their chip, and persist', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -303,7 +303,7 @@ test('hidden categories drop from totals, hide their chip, and persist', async (
 // takes the flat (received === 0) path — the riskiest one to get right.
 test('hidden transactions listed muted under "Not applicable", uncounted', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -338,7 +338,7 @@ test('hidden transactions listed muted under "Not applicable", uncounted', async
 // tapping it opens Settings to manage the hidden set.
 test('HiddenNote shows the count and opens Settings; absent when none hidden', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -376,7 +376,7 @@ test('HiddenNote shows the count and opens Settings; absent when none hidden', a
 // Shopping $320 vs $200 → over budget (rust); Groceries has no budget → relative fallback.
 test('budget goal: header shows $spent of $budget with full-budget color states', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'budget.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -432,7 +432,7 @@ test('budget goal: header shows $spent of $budget with full-budget color states'
 // split = $80 net of $300. Spend mode shows gross $120; Net mode shows net $80.
 test('budget line uses NET (money-in offsets the category) when in Net mode', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'budget.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -464,7 +464,7 @@ test('budget line uses NET (money-in offsets the category) when in Net mode', as
 // $2670 to $170 — proving exclusion reaches the annual rollup, not just the headline.
 test('only-excluded day reads "No spend ●"; exclusion reaches the Year rollup', async ({ page }) => {
   const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'exclude.sample.json'), 'utf8');
-  await page.route('**/data/spending.json', (route) =>
+  await page.route('**/data/spending*.json', (route) =>
     route.fulfill({ contentType: 'application/json', body: fixture }));
 
   const errors = [];
@@ -499,4 +499,36 @@ test('only-excluded day reads "No spend ●"; exclusion reaches the Year rollup'
 
   const real = errors.filter((t) => !ALLOWED.some((re) => re.test(t)));
   expect(real, `Unexpected console errors:\n${real.join('\n')}`).toEqual([]);
+});
+
+// Data-mode toggle: the app defaults to the Fake Data Prototype (safe to share).
+// Picking "Personal App" requires the passcode; a wrong code is rejected, the
+// correct code switches to the live-data view.
+test('mode toggle defaults to fake and gates Personal App behind the passcode', async ({ page }) => {
+  const fixture = fs.readFileSync(path.join(__dirname, 'fixtures', 'spending.sample.json'), 'utf8');
+  await page.route('**/data/spending*.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: fixture }));
+
+  await page.goto('/index.html');
+  await expect(page.getByText('The Daily Spend')).toBeVisible();
+
+  // Default: fake mode — both the badge and the active toggle say so.
+  await expect(page.getByText(/Demo data/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Fake Data Prototype' })).toBeVisible();
+
+  // Click Personal App → inline passcode field appears.
+  await page.getByRole('button', { name: /Personal App/ }).click();
+  const pw = page.getByPlaceholder('Password');
+  await expect(pw).toBeVisible();
+
+  // Wrong passcode is rejected, stays in fake mode.
+  await pw.fill('nope');
+  await page.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await expect(page.getByText('Incorrect')).toBeVisible();
+  await expect(page.getByText(/Demo data/)).toBeVisible();
+
+  // Correct passcode unlocks and switches to Personal — live data.
+  await pw.fill('Rosebud23!');
+  await page.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await expect(page.getByText(/Personal — live data/)).toBeVisible();
 });

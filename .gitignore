@@ -14,6 +14,10 @@ venv/
 .env.*
 !.env.local.example
 
+# Real personal spending data — kept local-only, never committed or deployed.
+# The shared site uses data/spending.fake.json instead.
+data/spending.json
+
 # Logs (from launchd refresh job)
 logs/
 
@@ -33,3 +37,4 @@ node_modules/
 
 # Session scratch / handoff notes — not part of the project
 docs/SESSION-HANDOFF.md
+.vercel
