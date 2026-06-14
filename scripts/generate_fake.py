@@ -2,9 +2,13 @@
 """Generate data/spending.fake.json — a realistic but entirely invented dataset.
 
 This mirrors the *structure* of the real data/spending.json (date range, the set of
-categories, the budget-month keys, and the number of transactions per day) but NEVER
-copies any real amounts or merchant names. Every dollar figure here is invented from
-the hardcoded ranges below, so the fake file leaks nothing about real spending.
+categories, the budget-month keys, and the rough volume of transactions per day) but
+NEVER copies any real amounts or merchant names. Every dollar figure here is invented
+from the hardcoded ranges below, so the fake file leaks nothing about real spending.
+
+The numbers are tuned to read like a ~$100k/yr earner: weighted everyday spend with
+rare big-ticket items, recurring monthly bills, paychecks on the 1st/15th, and a
+healthy mix of green / neutral / occasional-red days (not all overspent).
 
 Usage:
     python3 scripts/generate_fake.py            # uses default seed (reproducible)
@@ -23,60 +27,93 @@ FAKE = os.path.join(ROOT, "data", "spending.fake.json")
 # Categories not listed fall back to DEFAULT_RANGE. Income categories are listed in
 # CREDIT_CATEGORIES below and produce money-in (type "credit").
 RANGES = {
-    "Mortgage": (1800, 2600),
-    "Auto Payment": (350, 520),
-    "Loan Repayment": (150, 400),
-    "HOA": (200, 350),
-    "Insurance": (90, 260),
-    "Pet Insurance": (35, 70),
-    "Gas & Electric": (60, 220),
-    "Water": (25, 90),
-    "Internet & Cable": (60, 130),
-    "Business Utilities & Communication": (40, 160),
-    "Groceries": (18, 145),
-    "Restaurants & Bars": (16, 120),
-    "Coffee Shops": (4, 12),
-    "Coffee beans": (12, 28),
-    "Beer & Liquor": (12, 65),
-    "Gas": (28, 78),
-    "EV Charge": (8, 35),
-    "Parking & Tolls": (3, 28),
-    "Taxi & Ride Shares": (9, 45),
-    "Travel & Vacation": (60, 850),
-    "Moving": (80, 600),
-    "Amazon": (10, 120),
-    "Shopping": (15, 200),
-    "Clothing": (20, 180),
-    "Furniture & Housewares": (30, 450),
-    "Home Improvement": (15, 380),
-    "New Home": (40, 700),
-    "Office Supplies & Expenses": (8, 90),
-    "Postage & Shipping": (4, 35),
-    "Books": (10, 45),
-    "Streaming": (8, 25),
-    "Subscriptions": (5, 60),
-    "Fitness": (15, 120),
-    "Therapy": (90, 200),
-    "Medical": (20, 350),
-    "Pets": (12, 110),
-    "Dog food": (25, 80),
-    "Charity": (20, 200),
-    "Gifts": (15, 150),
-    "Entertainment & Recreation": (12, 140),
-    "Fun Money": (10, 80),
-    "Personal": (8, 90),
-    "Cash & ATM": (40, 300),
-    "Financial Fees": (2, 40),
-    "Financial & Legal Services": (50, 400),
-    "Interest": (1, 30),
-    "Advertising & Promotion": (20, 250),
-    "Miscellaneous": (5, 75),
-    "Spanish Lessons": (25, 60),
+    "Mortgage": (1450, 1650),
+    "Auto Payment": (280, 420),
+    "Loan Repayment": (120, 300),
+    "HOA": (150, 280),
+    "Insurance": (70, 180),
+    "Pet Insurance": (30, 55),
+    "Gas & Electric": (45, 160),
+    "Water": (25, 70),
+    "Internet & Cable": (55, 95),
+    "Business Utilities & Communication": (30, 90),
+    "Groceries": (10, 65),
+    "Restaurants & Bars": (10, 48),
+    "Coffee Shops": (4, 9),
+    "Coffee beans": (10, 22),
+    "Beer & Liquor": (10, 45),
+    "Gas": (24, 55),
+    "EV Charge": (6, 22),
+    "Parking & Tolls": (3, 18),
+    "Taxi & Ride Shares": (8, 32),
+    "Travel & Vacation": (45, 480),
+    "Moving": (60, 350),
+    "Amazon": (9, 70),
+    "Shopping": (12, 110),
+    "Clothing": (18, 95),
+    "Furniture & Housewares": (25, 240),
+    "Home Improvement": (12, 200),
+    "New Home": (30, 380),
+    "Office Supplies & Expenses": (7, 55),
+    "Postage & Shipping": (4, 22),
+    "Books": (9, 30),
+    "Streaming": (8, 18),
+    "Subscriptions": (5, 40),
+    "Fitness": (12, 75),
+    "Therapy": (70, 140),
+    "Medical": (18, 180),
+    "Pets": (10, 70),
+    "Dog food": (22, 60),
+    "Charity": (15, 90),
+    "Gifts": (12, 90),
+    "Entertainment & Recreation": (10, 80),
+    "Fun Money": (8, 50),
+    "Personal": (8, 55),
+    "Cash & ATM": (40, 160),
+    "Financial Fees": (2, 25),
+    "Financial & Legal Services": (40, 220),
+    "Interest": (1, 20),
+    "Advertising & Promotion": (18, 140),
+    "Miscellaneous": (5, 55),
+    "Spanish Lessons": (22, 50),
 }
-DEFAULT_RANGE = (10, 90)
+DEFAULT_RANGE = (8, 60)
 
 # Categories that represent money coming in (type "credit").
 CREDIT_CATEGORIES = {"Paychecks", "Other Income", "Investments", "Interest"}
+
+# Relative likelihood a transaction belongs to a category. Everyday spend is
+# common; big-ticket items are rare so most days land green/neutral and only the
+# occasional day trips the "overspent" threshold. Unlisted categories use 1.0.
+WEIGHTS = {
+    "Groceries": 9, "Restaurants & Bars": 8, "Coffee Shops": 7, "Gas": 4,
+    "Amazon": 4, "Parking & Tolls": 3, "Taxi & Ride Shares": 3, "Subscriptions": 3,
+    "Personal": 3, "Fun Money": 3, "Entertainment & Recreation": 3, "Shopping": 3,
+    "Pets": 2, "Beer & Liquor": 2, "Coffee beans": 2, "EV Charge": 2, "Gifts": 2,
+    "Books": 2, "Streaming": 2, "Fitness": 2, "Clothing": 2, "Office Supplies & Expenses": 2,
+    "Miscellaneous": 2, "Postage & Shipping": 2, "Charity": 1, "Dog food": 1.5,
+    # Big-ticket / recurring — deliberately rare as random picks (rent + utilities
+    # are injected separately below so they recur predictably).
+    "Travel & Vacation": 0.6, "Furniture & Housewares": 0.5, "Home Improvement": 0.5,
+    "Medical": 0.5, "New Home": 0.3, "Moving": 0.2, "Financial & Legal Services": 0.3,
+    "Cash & ATM": 0.8, "Therapy": 0.6, "Financial Fees": 0.5, "Advertising & Promotion": 0.3,
+    "Spanish Lessons": 0.4,
+}
+
+# A ~$100k/yr earner: ~$3,150 take-home per paycheck, twice a month (~$75.6k
+# net), plus modest other income → roughly six figures gross.
+PAYCHECK = (3000, 3300)
+
+# Recurring monthly bills, injected on fixed-ish days so they recur predictably
+# (rather than appearing at random). (category, day-of-month, (min, max)).
+MONTHLY_BILLS = [
+    ("Mortgage", 1, (1450, 1650)),
+    ("Gas & Electric", 8, (45, 160)),
+    ("Internet & Cable", 12, (55, 95)),
+    ("Water", 18, (25, 70)),
+    ("Insurance", 22, (70, 180)),
+    ("Subscriptions", 5, (8, 28)),
+]
 
 # Invented merchant pools per category. A category with no pool uses GENERIC_MERCHANTS.
 MERCHANTS = {
@@ -119,12 +156,17 @@ GENERIC_MERCHANTS = ["Maple & Co.", "Corner Shop", "Downtown Co-op", "Sundry Goo
 
 def amount_for(cat, rng):
     lo, hi = RANGES.get(cat, DEFAULT_RANGE)
-    # Two decimals, like real transaction amounts.
-    return round(rng.uniform(lo, hi), 2)
+    # Triangular skewed toward the low end — most spend is small, big hits are rare.
+    return round(rng.triangular(lo, hi, lo), 2)
 
 
 def merchant_for(cat, rng):
     return rng.choice(MERCHANTS.get(cat, GENERIC_MERCHANTS))
+
+
+def weighted_debit_category(debit_cats, rng):
+    weights = [WEIGHTS.get(c, 1.0) for c in debit_cats]
+    return rng.choices(debit_cats, weights=weights, k=1)[0]
 
 
 def main():
@@ -138,23 +180,53 @@ def main():
 
     # The category universe = every category seen in real transactions or budgets.
     seen_cats = {t["category"] for day in real["data"] for t in day["transactions"]}
+    debit_cats = sorted(c for c in seen_cats if c not in CREDIT_CATEGORIES)
     fake_days = []
     for day in real["data"]:
+        dom = int(day["date"][8:10])
         n = len(day["transactions"])
+        # ~55% of days are "light" — a couple of small everyday purchases (green).
+        if rng.random() < 0.55:
+            n = rng.randint(1, 3)
+        else:
+            n = min(n, 5)  # thin out the heaviest days for a realistic spend total
+
         txns = []
         for _ in range(n):
-            cat = rng.choice(sorted(seen_cats))
-            is_credit = cat in CREDIT_CATEGORIES
-            amt = amount_for(cat, rng)
-            if is_credit:
-                # Income is larger; scale paychecks up notably.
-                amt = round(amt * (rng.uniform(30, 60) if cat == "Paychecks" else rng.uniform(2, 6)), 2)
+            cat = weighted_debit_category(debit_cats, rng)
             txns.append({
                 "merchant": merchant_for(cat, rng),
-                "amount": amt,
+                "amount": amount_for(cat, rng),
                 "category": cat,
-                "type": "credit" if is_credit else "debit",
+                "type": "debit",
             })
+
+        # Inject recurring monthly bills on their due day.
+        for cat, due, (lo, hi) in MONTHLY_BILLS:
+            if dom == due:
+                txns.append({
+                    "merchant": merchant_for(cat, rng),
+                    "amount": round(rng.uniform(lo, hi), 2),
+                    "category": cat,
+                    "type": "debit",
+                })
+
+        # Inject paychecks on the 1st and 15th, plus the rare bit of other income.
+        if dom in (1, 15):
+            txns.append({
+                "merchant": merchant_for("Paychecks", rng),
+                "amount": round(rng.uniform(*PAYCHECK), 2),
+                "category": "Paychecks",
+                "type": "credit",
+            })
+        elif rng.random() < 0.03:
+            txns.append({
+                "merchant": merchant_for("Other Income", rng),
+                "amount": round(rng.uniform(40, 220), 2),
+                "category": "Other Income",
+                "type": "credit",
+            })
+
         total = round(sum(t["amount"] for t in txns if t["type"] == "debit"), 2)
         received = round(sum(t["amount"] for t in txns if t["type"] == "credit"), 2)
         fake_days.append({
