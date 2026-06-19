@@ -15,8 +15,18 @@ module.exports = async (req, res) => {
   }
 
   const passcode = process.env.PERSONAL_PASSCODE;
+
+  // Robust body parse: Vercel usually populates req.body, but fall back to
+  // reading the raw stream if it's empty/undefined.
   let body = req.body;
-  if (typeof body === "string") {
+  if (body == null || body === "") {
+    try {
+      const chunks = [];
+      for await (const c of req) chunks.push(c);
+      const raw = Buffer.concat(chunks).toString("utf8");
+      body = raw ? JSON.parse(raw) : {};
+    } catch { body = {}; }
+  } else if (typeof body === "string") {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   const supplied = body && body.password;
@@ -26,7 +36,12 @@ module.exports = async (req, res) => {
     return;
   }
   if (supplied !== passcode) {
-    res.status(401).json({ error: "Incorrect password" });
+    // Temporary diagnostic: whether the request body/password was parsed at all.
+    // Reveals nothing about the server-side passcode. Remove after debugging.
+    res.status(401).json({
+      error: "Incorrect password",
+      debug: { passwordReceived: supplied != null && supplied !== "" },
+    });
     return;
   }
 
