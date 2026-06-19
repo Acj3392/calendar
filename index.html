@@ -187,6 +187,7 @@
       const [pwOpen,       setPwOpen]       = useState(false);
       const [pwVal,        setPwVal]        = useState("");
       const [pwErr,        setPwErr]        = useState(false);
+      const [pwBusy,       setPwBusy]       = useState(false);
       const [mode,         setMode]         = useState(() => {
         try { const s = localStorage.getItem("scTheme"); if (s) return s; } catch {}
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -1022,17 +1023,22 @@
 
             {/* Inline passcode field — shown when a locked user picks Personal App */}
             {pwOpen && !unlocked && (
-              <form onSubmit={(e) => {
+              <form onSubmit={async (e) => {
                 e.preventDefault();
-                if (onUnlock(pwVal)) { setPwOpen(false); setPwVal(""); setPwErr(false); }
+                if (pwBusy) return;
+                setPwBusy(true); setPwErr(false);
+                let ok = false;
+                try { ok = await onUnlock(pwVal); } catch { ok = false; }
+                setPwBusy(false);
+                if (ok) { setPwOpen(false); setPwVal(""); setPwErr(false); }
                 else { setPwErr(true); }
               }} style={{display:"flex",justifyContent:"center",alignItems:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
-                <input type="password" value={pwVal} autoFocus placeholder="Password"
+                <input type="password" value={pwVal} autoFocus placeholder="Password" disabled={pwBusy}
                   onChange={(e) => { setPwVal(e.target.value); setPwErr(false); }}
                   style={{fontFamily:"inherit",fontSize:13,padding:"6px 10px",borderRadius:8,
                     border:`1px solid ${pwErr ? t.over : t.ruleHair}`,background:t.btnBg,color:t.ink,outline:"none",width:160}}/>
-                <button type="submit" style={{fontFamily:"inherit",fontSize:12,fontWeight:600,padding:"7px 14px",
-                  borderRadius:8,border:"none",background:t.navActive,color:t.navActiveText,cursor:"pointer"}}>Unlock</button>
+                <button type="submit" disabled={pwBusy} style={{fontFamily:"inherit",fontSize:12,fontWeight:600,padding:"7px 14px",
+                  borderRadius:8,border:"none",background:t.navActive,color:t.navActiveText,cursor:pwBusy?"default":"pointer",opacity:pwBusy?0.7:1}}>{pwBusy ? "Checking…" : "Unlock"}</button>
                 {pwErr && <span style={{fontFamily:TOKENS.type.chic,fontSize:11,color:t.over}}>Incorrect</span>}
               </form>
             )}
@@ -1329,69 +1335,77 @@
     // calendar, so the rest of the app is untouched. Default mode is "fake" so the
     // public/shareable view never exposes real numbers without the passcode.
     function App() {
-      const sessionUnlocked = (() => { try { return sessionStorage.getItem("scUnlocked") === "1"; } catch { return false; } })();
-      const [unlocked, setUnlocked] = useState(sessionUnlocked);
-      const [mode, setMode] = useState(() => {
-        try { if (sessionStorage.getItem("scMode") === "personal" && sessionUnlocked) return "personal"; } catch {}
-        return "fake";
-      });
-      const [status, setStatus] = useState("loading"); // loading | ready | error
-      const [err, setErr] = useState(null);
-      const [version, setVersion] = useState(0);
+      const [mode, setMode]                 = useState("fake"); // sessions start on fake
+      const [unlocked, setUnlocked]         = useState(false);
+      const [fakeData, setFakeData]         = useState(null);
+      const [personalData, setPersonalData] = useState(null);
+      const [status, setStatus]             = useState("loading"); // loading | ready | error
+      const [err, setErr]                   = useState(null);
 
+      // Load the fake dataset once on mount — it's the public default.
       useEffect(() => {
         let cancelled = false;
-        setStatus("loading");
-        loadSpending(DATA_FILES[mode])
-          .then(j => {
-            if (cancelled) return;
-            RAW_DATA       = j.data || [];
-            BUDGETS        = j.budgets || {};
-            TODAY          = j.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
-            GENERATED_AT   = j.generatedAt || "";
-            REFRESH_STATUS = j.refreshStatus || "";
-            try { sessionStorage.setItem("scMode", mode); } catch {}
-            setVersion(v => v + 1);
-            setStatus("ready");
-          })
+        loadSpending(DATA_FILES.fake)
+          .then(j => { if (!cancelled) { setFakeData(j); setStatus("ready"); } })
           .catch(e => { if (!cancelled) { setErr(e); setStatus("error"); } });
         return () => { cancelled = true; };
-      }, [mode]);
+      }, []);
 
       const switchMode = (target) => {
         if (target === mode) return;
-        if (target === "personal" && !unlocked) return; // password UI handles this
+        if (target === "personal" && !personalData) return; // must unlock first
         setMode(target);
       };
-      const tryUnlock = (pw) => {
-        if (pw === PERSONAL_PASSCODE) {
-          try { sessionStorage.setItem("scUnlocked", "1"); } catch {}
-          setUnlocked(true);
-          setMode("personal");
-          return true;
+
+      // Unlock Personal by asking the server. The password is verified server-side
+      // (POST /api/personal); the real data is returned only on success and never
+      // lives at a public URL. On localhost (static server, no functions) it falls
+      // back to reading the local file, gated by the same passcode client-side.
+      const tryUnlock = async (pw) => {
+        try {
+          const r = await fetch("/api/personal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw }),
+          });
+          if (r.ok) {
+            const j = validateSpending(await r.json());
+            setPersonalData(j); setUnlocked(true); setMode("personal");
+            return true;
+          }
+          if (r.status === 401) return false; // wrong password
+          // other statuses (e.g. no /api route locally) → try the local fallback
+        } catch { /* network error → try the local fallback */ }
+
+        const onLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+        if (onLocalhost && pw === PERSONAL_PASSCODE) {
+          try {
+            const j = await loadSpending(DATA_FILES.personal);
+            setPersonalData(j); setUnlocked(true); setMode("personal");
+            return true;
+          } catch { return false; }
         }
         return false;
       };
 
+      // Publish the active dataset to the module-level vars the calendar reads.
+      const active = mode === "personal" ? personalData : fakeData;
+      if (active) {
+        RAW_DATA       = active.data || [];
+        BUDGETS        = active.budgets || {};
+        TODAY          = active.today || (RAW_DATA.length ? RAW_DATA[RAW_DATA.length-1].date : new Date().toISOString().slice(0,10));
+        GENERATED_AT   = active.generatedAt || "";
+        REFRESH_STATUS = active.refreshStatus || "";
+      }
+
       if (status === "error") {
-        // On the shared site the real data file isn't deployed, so Personal mode
-        // can't load it — explain that rather than showing a raw fetch error.
-        const personalUnavailable = mode === "personal";
         return (
           <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#9f2f23",background:"#f7f7f5",minHeight:"100vh"}}>
-            {personalUnavailable ? (
-              <>
-                Personal data isn't available on the shared site — it's kept local-only for privacy.
-                Run the app on your own machine to view it.{" "}
-                <button onClick={() => setMode("fake")} style={{marginLeft:6,cursor:"pointer"}}>Back to demo data</button>
-              </>
-            ) : (
-              <>Couldn't load spending data ({String(err && err.message || err)}). Check that {DATA_FILES[mode]} exists and is valid.</>
-            )}
+            Couldn't load spending data ({String(err && err.message || err)}). Check that {DATA_FILES.fake} exists and is valid.
           </div>
         );
       }
-      if (status === "loading") {
+      if (status === "loading" || !active) {
         return (
           <div style={{fontFamily:"Inter,system-ui,sans-serif",padding:40,color:"#6b6b6b",background:"#f7f7f5",minHeight:"100vh",textAlign:"center"}}>
             Loading…
@@ -1399,7 +1413,7 @@
         );
       }
       return (
-        <ErrorBoundary key={version}>
+        <ErrorBoundary key={mode}>
           <SpendingCalendar dataMode={mode} unlocked={unlocked} onSwitch={switchMode} onUnlock={tryUnlock}/>
         </ErrorBoundary>
       );
