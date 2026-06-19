@@ -38,3 +38,4 @@ node_modules/
 # Session scratch / handoff notes — not part of the project
 docs/SESSION-HANDOFF.md
 .vercel
+.env*
