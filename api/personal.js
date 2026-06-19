@@ -21,8 +21,14 @@ module.exports = async (req, res) => {
   let body = req.body;
   if (body == null || body === "") {
     try {
+      const MAX = 64 * 1024; // 64 KB is ample for a {password} payload
+      let total = 0;
       const chunks = [];
-      for await (const c of req) chunks.push(c);
+      for await (const c of req) {
+        total += c.length;
+        if (total > MAX) { res.status(413).json({ error: "Payload too large" }); return; }
+        chunks.push(c);
+      }
       const raw = Buffer.concat(chunks).toString("utf8");
       body = raw ? JSON.parse(raw) : {};
     } catch { body = {}; }
