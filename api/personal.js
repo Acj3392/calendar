@@ -42,12 +42,7 @@ module.exports = async (req, res) => {
     return;
   }
   if (supplied !== passcode) {
-    // Temporary diagnostic: whether the request body/password was parsed at all.
-    // Reveals nothing about the server-side passcode. Remove after debugging.
-    res.status(401).json({
-      error: "Incorrect password",
-      debug: { passwordReceived: supplied != null && supplied !== "" },
-    });
+    res.status(401).json({ error: "Incorrect password" });
     return;
   }
 
