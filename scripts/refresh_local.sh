@@ -28,13 +28,13 @@ fi
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fetching Monarch transactions..."
 "$PYTHON" "$REPO/scripts/fetch_monarch.py"
 
-# ── Commit + push only if data changed ───────────────────────────────────────
-if git diff --quiet data/spending.json; then
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] No new transactions — nothing to push."
-  exit 0
+# ── Upload to the private Blob so the live site's Personal App stays current ───
+# data/spending.json is kept local-only (gitignored, never deployed). Instead of
+# committing it, we push it to a PRIVATE Vercel Blob that the password-gated
+# /api/personal function reads. BLOB_READ_WRITE_TOKEN comes from .env.local.
+if [[ -z "${BLOB_READ_WRITE_TOKEN:-}" ]]; then
+  echo "[ERROR] BLOB_READ_WRITE_TOKEN not set in .env.local — cannot upload personal data." >&2
+  exit 1
 fi
-
-git add data/spending.json
-git commit -m "chore: refresh spending data $(date '+%Y-%m-%d')"
-git push origin main
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pushed. Vercel will redeploy shortly."
+node "$REPO/scripts/push_personal.mjs"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Personal data uploaded to private Blob; live site is current."
